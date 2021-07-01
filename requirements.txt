@@ -1,0 +1,4 @@
+Django==3.2.2
+coverage==5.5
+selenium==3.141.0
+tchappui-webdrivers==0.3.7

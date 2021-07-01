@@ -1,0 +1,28 @@
+dist: bionic
+language: python
+
+python:
+  - "3.8"
+
+branches:
+  only:
+    - staging
+
+addons:
+  chrome: stable
+
+install:
+  - pip install pipenv
+  - pipenv install --dev
+
+before_script:
+  # ajouter tchappui-webdrivers dans requirements.txt
+  - install-webdrivers --path webdrivers
+
+env: DJANGO_SETTINGS_MODULE="unlimited_studies_project.settings.travis"
+
+services:
+  - postgresql
+
+script:
+  - python3 manage.py test
