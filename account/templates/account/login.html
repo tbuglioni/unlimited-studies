@@ -1,0 +1,26 @@
+{% extends 'account/base.html' %}
+
+{% block title %}Login{% endblock title %}
+
+{% block account_body %}
+  <form method="post">
+    {% csrf_token %} {% for field in login_form %}
+    <p>
+      {{field.label_tag}} {{field}} {% if field.help_text %}
+      <small>{{field.help_text}}</small>
+      {% endif %}
+    </p>
+    {% endfor %} {% for field in login_form %} {% for error in field.errors %}
+    <p>{{error}}</p>
+    {% endfor %} {% endfor %} {% if login_form.non_field_errors %}
+    <div>
+      <p>{{login_form.non_field_errors}}</p>
+    </div>
+
+    {% endif %}
+    <button id="submit_login" type="submit" class="btn btn-primary">Log in</button>
+  </form>
+  <div><a href="{% url 'reset_password'%}">Forgot your password ?</a></div>
+</div>
+{% endblock account_body %}
+
