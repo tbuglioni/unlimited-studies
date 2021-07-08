@@ -22,7 +22,8 @@ from .views import home_screen_view
 
 urlpatterns = [
     path("", home_screen_view, name="home"),
-    
+    path("studies/", include('studies.urls')),
+
     path("admin/", admin.site.urls, name="admin"),
     path("register/", views.registration_view, name="register"),
     path("logout/", views.logout_view, name="logout"),
@@ -42,5 +43,5 @@ urlpatterns = [
          auth_views.PasswordResetCompleteView.as_view(
              template_name="account/password_reset_done.html"),
          name="password_reset_complete"),
-    
+
 ]
