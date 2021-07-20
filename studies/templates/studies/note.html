@@ -1,0 +1,26 @@
+{% extends 'base.html' %}{% load static %}
+
+<div>
+  {% block content %} {% if instance_note %}
+  <form
+    action="{% url 'studies:specific_note' chapter=instance_note.chapter.id note=instance_note.id %}"
+    method="POST"
+  >
+    {% csrf_token %}
+    <div>{{form}}</div>
+
+    <input type="submit" />
+  </form>
+
+  {% else %}
+  <form
+    action="{% url 'studies:specific_note' chapter=chapter %}"
+    method="POST"
+  >
+    {% csrf_token %}
+    <div>{{form}}</div>
+
+    <input type="submit" />
+  </form>
+  {% endif %}{% endblock content %}
+</div>

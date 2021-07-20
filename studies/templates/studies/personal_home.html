@@ -1,8 +1,16 @@
 {% extends 'base.html' %}{% load static %}
-
 <div>
   {% block content %}
+  <a href="{% url 'studies:feed_db'%}">feed db</a>
+
   <p>Hello personal home</p>
-  <p>{{some_string}}</p>
-  {% endblock content %}
+  <br />
+  <p>all books :</p>
+  {% for book in books %}
+  <li>
+    <a href="{% url 'studies:book_only' book=book.id%}">{{book.name}}</a> |
+    <a href="{% url 'studies:delete_book' book=book.id%}">delete</a>
+  </li>
+
+  {% endfor %} {% endblock content %}
 </div>

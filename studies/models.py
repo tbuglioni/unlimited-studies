@@ -17,6 +17,7 @@ class Book(models.Model):
         return f"{self.name}-{self.id}"
 
     class Meta:
+        ordering = ["order_book"]
         indexes = [
             models.Index(fields=["order_book"]),
         ]

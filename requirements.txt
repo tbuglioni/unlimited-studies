@@ -1,12 +1,12 @@
 asgiref==3.4.1
 certifi==2021.5.30
-chardet==4.0.0
+charset-normalizer==2.0.3
 click==8.0.1
 coverage==5.5
 Django==3.2.2
-idna==2.10
+idna==3.2
 pytz==2021.1
-requests==2.25.1
+requests==2.26.0
 selenium==3.141.0
 sqlparse==0.4.1
 tchappui-webdrivers==0.3.7

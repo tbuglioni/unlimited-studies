@@ -1,0 +1,38 @@
+{% extends 'base.html' %}{% load static %}
+
+<div>
+  {% block content %}
+  <p>Hello personal home</p>
+  <div>
+    <p>{{book.name}}</p>
+    <p>{{book.description}}</p>
+    <p>{{book.source_info}}</p>
+  </div>
+
+  {% for chapter in chapters %}
+  <div>
+    <li>
+      <a href="{% url 'studies:book_chapter' book=book.id chapter=chapter.id %}"
+        >{{chapter.name}}</a
+      >
+      |
+      <a href="{% url 'studies:delete_chapter' chapter=chapter.id %}">Delete</a>
+      <a href="{% url 'studies:specific_note' chapter=chapter.id%}">add note</a>
+    </li>
+  </div>
+
+  <br />
+
+  {% endfor %} {% if notes %} {% for note in notes %}
+  <div>
+    <li>
+      {{note.text_recto}} {{note.text_verso}}
+      <a
+        href="{% url 'studies:specific_note' chapter=note.chapter.id note=note.id %}"
+        >Update</a
+      >
+      <a href="{% url 'studies:delete_note' note=note.id %}">Delete</a>
+    </li>
+  </div>
+  {% endfor %} {% endif %} {% endblock content %}
+</div>
