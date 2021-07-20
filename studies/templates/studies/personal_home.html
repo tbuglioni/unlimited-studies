@@ -8,9 +8,17 @@
   <p>all books :</p>
   {% for book in books %}
   <li>
-    <a href="{% url 'studies:book_only' book=book.id%}">{{book.name}}</a> |
+    <a href="{% url 'studies:book_page' book=book.id%}">{{book.name}}</a> |
     <a href="{% url 'studies:delete_book' book=book.id%}">delete</a>
   </li>
 
-  {% endfor %} {% endblock content %}
+  {% endfor %}
+  <form action="{% url 'studies:personal_home' %}" method="POST">
+    {% csrf_token %}
+    <div>{{form_book}}</div>
+
+    <input type="submit" value="add book" />
+  </form>
+
+  {% endblock content %}
 </div>

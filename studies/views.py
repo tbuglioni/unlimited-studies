@@ -2,7 +2,8 @@ from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import *
 from studies.logic.userAction import UserAction
-from studies.forms import StudiesNotesForm
+from studies.forms import StudiesNotesForm, BookForm, ChapterForm
+from django.db.models import Avg, Max, Min
 
 user_action = UserAction()
 
@@ -11,32 +12,53 @@ def personal_home_view(request):
     if not request.user.is_authenticated:
         return redirect("login")
 
+    context = {}
+    # context["form_chapter"] = ChapterForm()
+    # context["books"] = user_action.get_books(request)
     context = user_action.get_books(request)
+    if request.POST:
+        form_book = BookForm(request.POST)
+        if form_book.is_valid():
+
+            book = form_book.save(commit=False)
+            book.order_book = len(Book.objects.filter(users=request.user)) + 1
+            book.save()
+            book.users.add(request.user, through_defaults={
+                'user_fonction': "owner", "level_chapter": 1})
+            book.save()
+            return redirect('studies:personal_home')
+        else:
+            context["form_book"] = form_book
 
     return render(request, "studies/personal_home.html", context)
 
 
-def book_view_only(request, book):
-    """ book with no chapter selected"""
-
-    context = user_action.get_one_book(request, book)
-
-    return render(request, "studies/book.html", context)
-
-
-def book_view_chapter(request, book, chapter):
-    """ book with one selected chapter"""
+def book_view(request, book, chapter=None):
+    """ book with 0/1 selected chapter"""
     context = {}
     context["book"] = get_object_or_404(Book,
                                         users=request.user, pk=book)
     context["chapters"] = Chapter.objects.filter(book=book)
 
-    context["notes"] = StudiesNotes.objects.filter(chapter=chapter)
+    if chapter is not None:
+        context["notes"] = StudiesNotes.objects.filter(chapter=chapter)
+
+    if request.POST:
+        form_chapter = ChapterForm(request.POST)
+        context["form_chapter"] = form_chapter
+        if form_chapter.is_valid():
+            chapter = Chapter.objects.create(
+                book=Book.objects.get(pk=book, users=request.user), name=form_chapter.cleaned_data["name"],
+                order_chapter=len(Chapter.objects.filter(book=book)) + 1)
+            return redirect('studies:book_page', book=book, chapter=chapter.id)
+    else:
+        form_chapter = ChapterForm()
+        context["form_chapter"] = form_chapter
 
     return render(request, "studies/book.html", context)
 
 
-def custom_note_view(request, chapter=None, note=None):
+def note_add_or_update(request, chapter=None, note=None):
     """ 1 note to add / change """
     context = {}
     context["chapter"] = chapter
@@ -46,25 +68,30 @@ def custom_note_view(request, chapter=None, note=None):
         instance_note = StudiesNotes.objects.get(
             chapter__book__users=request.user, pk=note)
 
-        context["instance_note"] = instance_note
+        context["instance_note"] = instance_note  # update note
 
     else:
-        instance_note = None
+        instance_note = None  # new note
 
-    context["instance_note"] = instance_note
-    print(f"-------------ID = {note}--------------")
-    print(f"-------------Instance = {instance_note}--------------")
+        context["instance_note"] = instance_note
 
     if request.POST:
-        print(f"-------------POST--------------")
+
         form = StudiesNotesForm(request.POST, instance=instance_note)
         context["form"] = form
 
         if form.is_valid():
-            print("------ CLEAN = ", form.cleaned_data, "------")
-            form.save()
+            if instance_note is not None:
+                form.save()
+            else:
+                obj = form.save(commit=False)
 
-            return redirect('studies:book_chapter', chapter=chapter, book=book)
+                obj.order_note = len(
+                    StudiesNotes.objects.filter(users=request.user, chapter__pk=chapter)) + 1
+                obj.chapter = Chapter.objects.get(pk=chapter)
+                obj.save()
+
+            return redirect('studies:book_page', chapter=chapter, book=book)
 
     else:
         context["form"] = StudiesNotesForm(instance=instance_note)
@@ -83,7 +110,7 @@ def delete_chapter(request, chapter):
         Chapter, pk=chapter, book__users=request.user)
     book = selected_chapter.book.id
     selected_chapter.delete()
-    return redirect('studies:book_only', book=book)
+    return redirect('studies:book_page', book=book)
 
 
 def delete_note(request, note):
@@ -92,7 +119,7 @@ def delete_note(request, note):
     book = selected_note.chapter.book.id
     chapter = selected_note.chapter.id
     selected_note.delete()
-    return redirect('studies:book_chapter', book=book, chapter=chapter)
+    return redirect('studies:book_page', book=book, chapter=chapter)
 
 
 def add_data_in_db(request):

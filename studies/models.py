@@ -6,7 +6,7 @@ from django.utils import timezone
 
 class Book(models.Model):
     name = models.CharField(max_length=255, null=False)
-    order_book = models.PositiveSmallIntegerField()
+    order_book = models.PositiveSmallIntegerField(default=1)
     users = models.ManyToManyField(
         settings.AUTH_USER_MODEL, through="UserBookMany", related_name="books"
     )
@@ -55,7 +55,7 @@ class UserBookMany(models.Model):
 
 class Chapter(models.Model):
     name = models.CharField(max_length=255, null=False)
-    order_chapter = models.PositiveSmallIntegerField()
+    order_chapter = models.PositiveSmallIntegerField(default=1)
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -71,7 +71,7 @@ class Chapter(models.Model):
 class StudiesNotes(models.Model):
 
     # data and order
-    order_note = models.PositiveSmallIntegerField()
+    order_note = models.PositiveSmallIntegerField(default=1)
     text_recto = models.TextField(max_length=1000, null=False)
     text_verso = models.TextField(max_length=1000, null=False)
 

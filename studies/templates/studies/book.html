@@ -12,7 +12,7 @@
   {% for chapter in chapters %}
   <div>
     <li>
-      <a href="{% url 'studies:book_chapter' book=book.id chapter=chapter.id %}"
+      <a href="{% url 'studies:book_page' book=book.id chapter=chapter.id %}"
         >{{chapter.name}}</a
       >
       |
@@ -21,9 +21,14 @@
     </li>
   </div>
 
-  <br />
-
-  {% endfor %} {% if notes %} {% for note in notes %}
+  {% endfor %}
+  <form action="{% url 'studies:book_page' book=book.id%}" method="POST">
+    {% csrf_token %}
+    <div>new chapter :</div>
+    <div>{{form_chapter}}</div>
+  </form>
+  <hr />
+  {% if notes %} {% for note in notes %}
   <div>
     <li>
       {{note.text_recto}} {{note.text_verso}}
