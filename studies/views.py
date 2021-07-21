@@ -1,11 +1,18 @@
+from datetime import timedelta
+from django.http import JsonResponse
+import datetime
+from django.db.models import Q
+import random
+from itertools import chain
+from django.shortcuts import render, get_object_or_404, redirect
 from django.conf import settings
-from django.shortcuts import render, redirect, get_object_or_404
 from .models import *
 from studies.logic.userAction import UserAction
 from studies.forms import StudiesNotesForm, BookForm, ChapterForm
 from django.db.models import Avg, Max, Min
 
 user_action = UserAction()
+TIME_NOW = datetime.date.today()
 
 
 def personal_home_view(request):
@@ -89,6 +96,8 @@ def note_add_or_update(request, chapter=None, note=None):
                 obj.order_note = len(
                     StudiesNotes.objects.filter(users=request.user, chapter__pk=chapter)) + 1
                 obj.chapter = Chapter.objects.get(pk=chapter)
+                obj.save()
+                obj.users.add(request.user, through_defaults={})
                 obj.save()
 
             return redirect('studies:book_page', chapter=chapter, book=book)
@@ -203,3 +212,211 @@ def add_data_in_db(request):
         'lvl_recto': "2", "lvl_verso": 1})
 
     return redirect('studies:personal_home')
+
+
+def start_game_view(request):
+    context = {}
+    context["game_list_auto"] = []
+    context["today"] = TIME_NOW
+
+# SPEED GROUP
+    speed = StudiesNotesProgression.objects.filter(
+        (
+            Q(lvl_recto__lt=6)
+            & Q(notes__studie_recto=True)
+            & Q(next_studied_date_recto__lte=TIME_NOW)
+        )
+        | (
+            Q(lvl_verso__lt=6)
+            & Q(notes__studie_verso=True)
+            & Q(next_studied_date_verso__lte=TIME_NOW)
+        )
+    ).order_by("notes__chapter__book", "notes__chapter")[:10]
+
+    for elt in speed:
+        if elt.next_studied_date_recto <= TIME_NOW and elt.notes.studie_recto is True:
+            context["game_list_auto"].append({
+                "id": elt.id,
+                "sens": "recto",
+                "text": elt.notes.text_recto,
+                "response": elt.notes.text_verso,
+                "class_button_true": "ajax-true-recto",
+                "class_button_wrong": "ajax-wrong-recto",
+
+            })
+        elif elt.next_studied_date_verso <= TIME_NOW and elt.notes.studie_verso is True:
+            context["game_list_auto"].append({
+                "id": elt.id,
+                "sens": "verso",
+                "text": elt.notes.text_verso,
+                "response": elt.notes.text_recto,
+                "class_button_true": "ajax-true-verso",
+                "class_button_wrong": "ajax-wrong-verso",
+
+
+            })
+# LONG GROUP
+    long = StudiesNotesProgression.objects.filter(
+        (
+            Q(lvl_recto__gt=5)
+            & Q(notes__studie_verso=True)
+            & Q(next_studied_date_recto__lte=TIME_NOW)
+        )
+        | (
+            Q(lvl_verso__gt=5)
+            & Q(notes__studie_recto=True)
+            & Q(next_studied_date_verso__lte=TIME_NOW)
+        )
+    ).order_by("notes__chapter__book", "notes__chapter")[:40]
+
+    for elt in long:
+        if elt.next_studied_date_recto <= TIME_NOW and elt.notes.studie_recto is True:
+            context["game_list_auto"].append({
+                "id": elt.id,
+                "sens": "recto",
+                "text": elt.notes.text_recto,
+                "response": elt.notes.text_verso,
+                "class_button_true": "ajax-true-recto",
+                "class_button_wrong": "ajax-wrong-recto",
+
+            })
+        elif elt.next_studied_date_verso <= TIME_NOW and elt.notes.studie_verso is True:
+            context["game_list_auto"].append({
+                "id": elt.id,
+                "sens": "verso",
+                "text": elt.notes.text_verso,
+                "response": elt.notes.text_recto,
+                "class_button_true": "ajax-true-verso",
+                "class_button_wrong": "ajax-wrong-verso",
+
+
+            })
+
+    # 1 +1j date.today()
+    # 2 +1 week
+    # 3 +4 week
+    # 4 +12 week
+    # 5 24 week
+# ENDING
+    random.shuffle(context["game_list_auto"])
+
+    return render(request, "studies/auto_game.html", context)
+
+
+def note_true_recto(request):
+    id = request.POST.get("Product_id")
+    result = get_object_or_404(
+        StudiesNotesProgression, pk=id, user=request.user)
+    if result.lvl_recto <= 5:
+        result.lvl_recto += 1
+        result.last_studied_date_recto = TIME_NOW
+        result.next_studied_date_recto = TIME_NOW + \
+            timedelta(days=1)
+
+    elif result.lvl_recto == 6:
+        result.lvl_recto += 1
+        result.last_studied_date_recto = TIME_NOW
+        result.next_studied_date_recto = TIME_NOW + \
+            timedelta(weeks=1)
+
+    elif result.lvl_recto == 7:
+        result.lvl_recto += 1
+        result.last_studied_date_recto = TIME_NOW
+        result.next_studied_date_recto = TIME_NOW + \
+            timedelta(weeks=4)
+
+    elif result.lvl_recto == 8:
+        result.lvl_recto += 1
+        result.last_studied_date_recto = TIME_NOW
+        result.next_studied_date_recto = TIME_NOW + \
+            timedelta(weeks=12)
+
+    elif result.lvl_recto == 9:
+        result.lvl_recto += 1
+        result.last_studied_date_recto = TIME_NOW
+        result.next_studied_date_recto = TIME_NOW + \
+            timedelta(weeks=24)
+
+    elif result.lvl_recto == 10:
+        result.last_studied_date_recto = TIME_NOW
+        result.next_studied_date_recto = TIME_NOW + \
+            timedelta(weeks=36)
+
+    result.save()
+
+    return JsonResponse({"operation_result": result.notes.text_recto})
+
+
+def note_true_verso(request):
+    id = request.POST.get("Product_id")
+    result = get_object_or_404(
+        StudiesNotesProgression, pk=id, user=request.user)
+    if result.lvl_verso <= 5:
+        result.lvl_verso += 1
+        result.last_studied_date_verso = TIME_NOW
+        result.next_studied_date_verso = TIME_NOW + \
+            timedelta(days=1)
+
+    elif result.lvl_verso == 6:
+        result.lvl_verso += 1
+        result.last_studied_date_verso = TIME_NOW
+        result.next_studied_date_verso = TIME_NOW + \
+            timedelta(weeks=1)
+
+    elif result.lvl_verso == 7:
+        result.lvl_verso += 1
+        result.last_studied_date_verso = TIME_NOW
+        result.next_studied_date_verso = TIME_NOW + \
+            timedelta(weeks=4)
+
+    elif result.lvl_verso == 8:
+        result.lvl_verso += 1
+        result.last_studied_date_verso = TIME_NOW
+        result.next_studied_date_verso = TIME_NOW + \
+            timedelta(weeks=12)
+
+    elif result.lvl_verso == 9:
+        result.lvl_verso += 1
+        result.last_studied_date_verso = TIME_NOW
+        result.next_studied_date_verso = TIME_NOW + \
+            timedelta(weeks=24)
+
+    elif result.lvl_verso == 10:
+        result.last_studied_date_verso = TIME_NOW
+        result.next_studied_date_verso = TIME_NOW + \
+            timedelta(weeks=36)
+
+    result.save()
+
+    return JsonResponse({"operation_result": result.notes.text_recto})
+
+
+def note_wrong_recto(request):
+    id = request.POST.get("Product_id")
+    result = get_object_or_404(
+        StudiesNotesProgression, pk=id, user=request.user)
+    result.lvl_recto = 1
+    result.last_studied_date_recto = TIME_NOW
+    result.next_studied_date_recto = TIME_NOW + \
+        timedelta(days=1)
+    result.save()
+
+    fav = request.POST.get("fav")
+    print("A EGAL ", fav, "_false_recto")
+
+    return JsonResponse({"operation_result": fav})
+
+
+def note_wrong_verso(request):
+    id = request.POST.get("Product_id")
+    result = get_object_or_404(
+        StudiesNotesProgression, pk=id, user=request.user)
+    result.lvl_verso = 1
+    result.last_studied_date_verso = TIME_NOW
+    result.next_studied_date_verso = TIME_NOW + \
+        timedelta(days=1)
+    result.save()
+
+    fav = request.POST.get("fav")
+
+    return JsonResponse({"operation_result": fav})

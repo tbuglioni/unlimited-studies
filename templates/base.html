@@ -11,6 +11,7 @@
       <p>{{user.email}}</p>
       <li><a href="{% url 'home' %}">Home</a></li>
       <li><a href="{% url 'studies:personal_home' %}">Perso-Home</a></li>
+      <li><a href="{% url 'studies:game_auto' %}">Game Auto</a></li>
       <li><a href="{% url 'admin:index' %}">Admin</a></li>
       {% if user.is_authenticated == False %}
       <li><a href="{% url 'login' %}">login</a></li>

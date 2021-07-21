@@ -1,0 +1,71 @@
+{% extends 'base.html' %} {% block content %}
+<div>
+  <h1>Studies session</h1>
+
+  {% for elt in game_list_auto %}
+  <div>
+    <div>
+      <div id="{{elt.id}}">{{elt.text}}</div>
+      <p>
+        <button onclick="myFunction{{elt.id}}()">Click Me</button>
+      </p>
+      <script type="text/javascript">
+        function myFunction{{elt.id}}() {
+          var x = document.getElementById("{{elt.id}}");
+          if (x.innerHTML === "{{elt.text}}") {
+            x.innerHTML = "{{elt.response}}";
+          } else {
+            x.innerHTML = "{{elt.text}}";
+          }
+        }
+      </script>
+      <button class="{{elt.class_button_true}}" value="{{elt.id}}">true</button>
+      <button class="{{elt.class_button_wrong}}" value="{{elt.id}}">
+        wrong
+      </button>
+      <div>_________</div>
+    </div>
+    {% empty %}
+    <div>Fini</div>
+    {% endfor %}
+  </div>
+
+  {% csrf_token %}
+  <p id="operation"></p>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+  <script type="text/javascript">
+    function ajax_test(balise, link_to_views) {
+      $(document).ready(function () {
+        $(balise).click(function () {
+          event.preventDefault();
+
+          let form = new FormData();
+
+          form.append("Product_id", $(this).val());
+
+          let csrfTokenValue = document.querySelector(
+            "[name=csrfmiddlewaretoken]"
+          ).value;
+          let request = new Request(link_to_views, {
+            method: "POST",
+            body: form,
+            headers: { "X-CSRFToken": csrfTokenValue },
+          });
+          fetch(request)
+            .then((response) => response.json())
+            .then((result) => {
+              $(this).parent().remove();
+            });
+        });
+      });
+    }
+    ajax_test(".ajax-true-recto", "{% url 'studies:note_true_recto' %}");
+    ajax_test(".ajax-true-verso", "{% url 'studies:note_true_verso' %}");
+    ajax_test(".ajax-wrong-recto", "{% url 'studies:note_wrong_recto' %}");
+    ajax_test(".ajax-wrong-verso", "{% url 'studies:note_wrong_verso' %}");
+  </script>
+
+  {% endblock content %}
+</div>
