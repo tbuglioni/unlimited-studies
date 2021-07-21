@@ -1,4 +1,5 @@
 from datetime import timedelta
+from django.forms.models import fields_for_model
 from django.http import JsonResponse
 import datetime
 from django.db.models import Q
@@ -8,6 +9,8 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.conf import settings
 from .models import *
 from studies.logic.userAction import UserAction
+from studies.logic.FeedDb import FeedDb
+
 from studies.forms import StudiesNotesForm, BookForm, ChapterForm
 from django.db.models import Avg, Max, Min
 
@@ -135,86 +138,21 @@ def add_data_in_db(request):
     if not request.user.is_authenticated:
         return redirect("login")
 
-    italien, created = Book.objects.get_or_create(
-        name="italien",
-        order_book=1,
-        description="hello world in italia", source_info='wikipedia is bad :)')
-
-    italien.users.add(request.user, through_defaults={
-                      'user_fonction': "owner", "level_chapter": 3})
-
-    anglais, created = Book.objects.get_or_create(
-        name="anglais",
-        order_book=2,
-        description="hello world in england", source_info='wikipedia is bad :)')
-
-    anglais.users.add(request.user, through_defaults={
-                      'user_fonction': "owner", "level_chapter": 2})
-
-    francais, created = Book.objects.get_or_create(
-        name="francais",
-        order_book=3,
-        description="hello world in france", source_info='wikipedia is bad :)')
-
-    francais.users.add(request.user, through_defaults={
-        'user_fonction': "owner", "level_chapter": 2})
-
-    vocabulaire_it, created = Chapter.objects.get_or_create(
-        name="vocabulaire",
-        order_chapter=1,
-        book=italien,
-    )
-
-    vocabulaire_en, created = Chapter.objects.get_or_create(
-        name="vocabulaire",
-        order_chapter=1,
-        book=anglais,
-    )
-    vocabulaire_fr, created = Chapter.objects.get_or_create(
-        name="vocabulaire",
-        order_chapter=1,
-        book=francais,
-    )
-
-    word_it_1, created = StudiesNotes.objects.get_or_create(
-        text_recto="bongiorno",
-        text_verso="bonjour",
-        chapter=vocabulaire_it,
-        order_note=1,
-        studie_verso=True,
-
-    )
-
-    word_it_1.users.add(request.user, through_defaults={
-        'lvl_recto': "4", "lvl_verso": 3})
-
-    word_it_2, created = StudiesNotes.objects.get_or_create(
-        text_recto="ciao",
-        text_verso="salut",
-        chapter=vocabulaire_it,
-        order_note=2,
-        studie_verso=True,
-
-    )
-    word_it_2.users.add(request.user, through_defaults={
-        'lvl_recto': "3", "lvl_verso": 2})
-
-    word_it_3, created = StudiesNotes.objects.get_or_create(
-        text_recto="grazie",
-        text_verso="merci",
-        chapter=vocabulaire_it,
-        order_note=3,
-        studie_verso=True,
-
-    )
-
-    word_it_3.users.add(request.user, through_defaults={
-        'lvl_recto': "2", "lvl_verso": 1})
+    feed_db = FeedDb(request)
+    feed_db.add_book("anglais")
+    feed_db.add_chapter_in_book('vocabulaire 1')
+    feed_db.add_note_from_csv()
+    feed_db.add_chapter_in_book('vocabulaire 2')
+    feed_db.add_note_from_csv()
+    feed_db.add_chapter_in_book('vocabulaire 3')
+    feed_db.add_note_from_csv()
 
     return redirect('studies:personal_home')
 
 
 def start_game_view(request):
+    if not request.user.is_authenticated:
+        return redirect("login")
     context = {}
     context["game_list_auto"] = []
     context["today"] = TIME_NOW
@@ -224,12 +162,12 @@ def start_game_view(request):
         (
             Q(lvl_recto__lt=6)
             & Q(notes__studie_recto=True)
-            & Q(next_studied_date_recto__lte=TIME_NOW)
+            & Q(next_studied_date_recto__lte=TIME_NOW, user=request.user)
         )
         | (
             Q(lvl_verso__lt=6)
             & Q(notes__studie_verso=True)
-            & Q(next_studied_date_verso__lte=TIME_NOW)
+            & Q(next_studied_date_verso__lte=TIME_NOW, user=request.user)
         )
     ).order_by("notes__chapter__book", "notes__chapter")[:10]
 
@@ -260,12 +198,12 @@ def start_game_view(request):
         (
             Q(lvl_recto__gt=5)
             & Q(notes__studie_verso=True)
-            & Q(next_studied_date_recto__lte=TIME_NOW)
+            & Q(next_studied_date_recto__lte=TIME_NOW, user=request.user)
         )
         | (
             Q(lvl_verso__gt=5)
             & Q(notes__studie_recto=True)
-            & Q(next_studied_date_verso__lte=TIME_NOW)
+            & Q(next_studied_date_verso__lte=TIME_NOW, user=request.user)
         )
     ).order_by("notes__chapter__book", "notes__chapter")[:40]
 
@@ -310,37 +248,31 @@ def note_true_recto(request):
     if result.lvl_recto <= 5:
         result.lvl_recto += 1
         result.last_studied_date_recto = TIME_NOW
-        result.next_studied_date_recto = TIME_NOW + \
-            timedelta(days=1)
+        result.next_studied_date_recto = TIME_NOW + timedelta(days=1)
 
     elif result.lvl_recto == 6:
         result.lvl_recto += 1
         result.last_studied_date_recto = TIME_NOW
-        result.next_studied_date_recto = TIME_NOW + \
-            timedelta(weeks=1)
+        result.next_studied_date_recto = TIME_NOW + timedelta(weeks=1)
 
     elif result.lvl_recto == 7:
         result.lvl_recto += 1
         result.last_studied_date_recto = TIME_NOW
-        result.next_studied_date_recto = TIME_NOW + \
-            timedelta(weeks=4)
+        result.next_studied_date_recto = TIME_NOW + timedelta(weeks=4)
 
     elif result.lvl_recto == 8:
         result.lvl_recto += 1
         result.last_studied_date_recto = TIME_NOW
-        result.next_studied_date_recto = TIME_NOW + \
-            timedelta(weeks=12)
+        result.next_studied_date_recto = TIME_NOW + timedelta(weeks=12)
 
     elif result.lvl_recto == 9:
         result.lvl_recto += 1
         result.last_studied_date_recto = TIME_NOW
-        result.next_studied_date_recto = TIME_NOW + \
-            timedelta(weeks=24)
+        result.next_studied_date_recto = TIME_NOW + timedelta(weeks=24)
 
     elif result.lvl_recto == 10:
         result.last_studied_date_recto = TIME_NOW
-        result.next_studied_date_recto = TIME_NOW + \
-            timedelta(weeks=36)
+        result.next_studied_date_recto = TIME_NOW + timedelta(weeks=36)
 
     result.save()
 
@@ -354,37 +286,31 @@ def note_true_verso(request):
     if result.lvl_verso <= 5:
         result.lvl_verso += 1
         result.last_studied_date_verso = TIME_NOW
-        result.next_studied_date_verso = TIME_NOW + \
-            timedelta(days=1)
+        result.next_studied_date_verso = TIME_NOW + timedelta(days=1)
 
     elif result.lvl_verso == 6:
         result.lvl_verso += 1
         result.last_studied_date_verso = TIME_NOW
-        result.next_studied_date_verso = TIME_NOW + \
-            timedelta(weeks=1)
+        result.next_studied_date_verso = TIME_NOW + timedelta(weeks=1)
 
     elif result.lvl_verso == 7:
         result.lvl_verso += 1
         result.last_studied_date_verso = TIME_NOW
-        result.next_studied_date_verso = TIME_NOW + \
-            timedelta(weeks=4)
+        result.next_studied_date_verso = TIME_NOW + timedelta(weeks=4)
 
     elif result.lvl_verso == 8:
         result.lvl_verso += 1
         result.last_studied_date_verso = TIME_NOW
-        result.next_studied_date_verso = TIME_NOW + \
-            timedelta(weeks=12)
+        result.next_studied_date_verso = TIME_NOW + timedelta(weeks=12)
 
     elif result.lvl_verso == 9:
         result.lvl_verso += 1
         result.last_studied_date_verso = TIME_NOW
-        result.next_studied_date_verso = TIME_NOW + \
-            timedelta(weeks=24)
+        result.next_studied_date_verso = TIME_NOW + timedelta(weeks=24)
 
     elif result.lvl_verso == 10:
         result.last_studied_date_verso = TIME_NOW
-        result.next_studied_date_verso = TIME_NOW + \
-            timedelta(weeks=36)
+        result.next_studied_date_verso = TIME_NOW + timedelta(weeks=36)
 
     result.save()
 
@@ -397,8 +323,8 @@ def note_wrong_recto(request):
         StudiesNotesProgression, pk=id, user=request.user)
     result.lvl_recto = 1
     result.last_studied_date_recto = TIME_NOW
-    result.next_studied_date_recto = TIME_NOW + \
-        timedelta(days=1)
+    result.next_studied_date_recto = TIME_NOW + timedelta(days=1)
+
     result.save()
 
     fav = request.POST.get("fav")
@@ -413,8 +339,8 @@ def note_wrong_verso(request):
         StudiesNotesProgression, pk=id, user=request.user)
     result.lvl_verso = 1
     result.last_studied_date_verso = TIME_NOW
-    result.next_studied_date_verso = TIME_NOW + \
-        timedelta(days=1)
+    result.next_studied_date_verso = TIME_NOW + timedelta(days=1)
+
     result.save()
 
     fav = request.POST.get("fav")
