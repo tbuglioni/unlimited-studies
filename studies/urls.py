@@ -5,6 +5,7 @@ app_name = "studies"
 
 urlpatterns = [
     path("", views.personal_home_view, name="personal_home"),
+    path("<int:book>", views.personal_home_view, name="personal_home"),
 
     # get
     path("book/<int:book>", views.book_view, name="book_page"),

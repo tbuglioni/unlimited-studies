@@ -18,24 +18,34 @@ user_action = UserAction()
 TIME_NOW = datetime.date.today()
 
 
-def personal_home_view(request):
+def personal_home_view(request, book=None):
     if not request.user.is_authenticated:
         return redirect("login")
 
     context = {}
-    # context["form_chapter"] = ChapterForm()
-    # context["books"] = user_action.get_books(request)
     context = user_action.get_books(request)
-    if request.POST:
-        form_book = BookForm(request.POST)
-        if form_book.is_valid():
 
-            book = form_book.save(commit=False)
-            book.order_book = len(Book.objects.filter(users=request.user)) + 1
-            book.save()
-            book.users.add(request.user, through_defaults={
-                'user_fonction': "owner", "level_chapter": 1})
-            book.save()
+    context["books"] = Book.objects.filter(users=request.user)
+
+    if book is not None:
+        context["selectedBook"] = get_object_or_404(Book,
+                                            users=request.user, pk=book)
+
+    else:
+        context["selectedBook"] = None
+
+    if request.POST:
+        form_book = BookForm(request.POST, instance=context["selectedBook"])
+        if form_book.is_valid():
+            if context["selectedBook"] is not None:
+                form_book.save()
+            else:
+                newBook = form_book.save(commit=False)
+                newBook.order_book = len(
+                    Book.objects.filter(users=request.user)) + 1
+                newBook.save()
+                newBook.users.add(request.user, through_defaults={})
+                newBook.save()
             return redirect('studies:personal_home')
         else:
             context["form_book"] = form_book
@@ -51,16 +61,28 @@ def book_view(request, book, chapter=None):
     context["chapters"] = Chapter.objects.filter(book=book)
 
     if chapter is not None:
+        context["chapter"] = Chapter.objects.get(id=chapter)
         context["notes"] = StudiesNotes.objects.filter(chapter=chapter)
+    else:
+        context["chapter"] = None
 
     if request.POST:
-        form_chapter = ChapterForm(request.POST)
+        form_chapter = ChapterForm(request.POST, instance=context["chapter"])
         context["form_chapter"] = form_chapter
+
         if form_chapter.is_valid():
-            chapter = Chapter.objects.create(
-                book=Book.objects.get(pk=book, users=request.user), name=form_chapter.cleaned_data["name"],
-                order_chapter=len(Chapter.objects.filter(book=book)) + 1)
-            return redirect('studies:book_page', book=book, chapter=chapter.id)
+            if context["chapter"] is not None:
+                form_chapter.save()
+                return redirect('studies:book_page', book=book, chapter=chapter)
+            else:
+                chapter = form_chapter.save(commit=False)
+                chapter.book = Book.objects.get(pk=book, users=request.user)
+                chapter.name = form_chapter.cleaned_data["name"]
+                chapter.order_chapter = len(
+                    Chapter.objects.filter(book=book)) + 1
+                chapter.save()
+
+                return redirect('studies:book_page', book=book)
     else:
         form_chapter = ChapterForm()
         context["form_chapter"] = form_chapter
@@ -144,7 +166,7 @@ def add_data_in_db(request):
     feed_db.add_note_from_csv()
     feed_db.add_chapter_in_book('vocabulaire 2')
     feed_db.add_note_from_csv()
-    feed_db.add_chapter_in_book('vocabulaire 3')
+    feed_db.add_chapter_in_book('vocabulaire ')
     feed_db.add_note_from_csv()
 
     return redirect('studies:personal_home')

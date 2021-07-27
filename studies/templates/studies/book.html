@@ -3,6 +3,7 @@
 <div>
   {% block content %}
   <p>Hello personal home</p>
+
   <div>
     <p>{{book.name}}</p>
     <p>{{book.description}}</p>
@@ -18,17 +19,15 @@
       |
       <a href="{% url 'studies:delete_chapter' chapter=chapter.id %}">Delete</a>
       <a href="{% url 'studies:specific_note' chapter=chapter.id%}">add note</a>
+      {% include 'studies/snippets/add_chapter_snippet.html' with chapter_selected=chapter book_id=book.id%}
     </li>
   </div>
 
   {% endfor %}
-  <form action="{% url 'studies:book_page' book=book.id%}" method="POST">
-    {% csrf_token %}
-    <div>new chapter :</div>
-    <div>{{form_chapter}}</div>
-  </form>
   <hr />
-  {% if notes %} {% for note in notes %}
+  {% include 'studies/snippets/add_chapter_snippet.html' with book_id=book.id%} {% if notes %}
+  <hr />
+  {% for note in notes %}
   <div>
     <li>
       {{note.text_recto}} {{note.text_verso}}

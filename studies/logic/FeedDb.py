@@ -18,8 +18,7 @@ class FeedDb:
             order_book=self.book_order_loop,
             description="hello world", source_info='wikipedia is bad :)')
 
-        self.book.users.add(self.request.user, through_defaults={
-            'user_fonction': "owner", "level_chapter": 1})
+        self.book.users.add(self.request.user, through_defaults={})
         self.book_order_loop += 1
 
     def add_chapter_in_book(self, name):

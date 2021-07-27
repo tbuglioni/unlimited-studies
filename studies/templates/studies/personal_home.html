@@ -10,9 +10,12 @@
   <li>
     <a href="{% url 'studies:book_page' book=book.id%}">{{book.name}}</a> |
     <a href="{% url 'studies:delete_book' book=book.id%}">delete</a>
+    {% include 'studies/snippets/add_book_snippet.html' with book_selected=book%}
   </li>
 
-  {% endfor %}
+  {% endfor %} 
+  
+  {% include 'studies/snippets/add_book_snippet.html'%}
   <form action="{% url 'studies:personal_home' %}" method="POST">
     {% csrf_token %}
     <div>{{form_book}}</div>

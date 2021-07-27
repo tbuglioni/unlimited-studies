@@ -9,8 +9,7 @@ class BookAdmin(admin.ModelAdmin):
 
 
 class UserBookManyAdmin(admin.ModelAdmin):
-    list_display = ("user", "book", "user_fonction",
-                    "level_chapter", "__str__")
+    list_display = ("user", "book", "user_fonction", "__str__")
 
     search_fields = ("user", "book")
 

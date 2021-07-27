@@ -1,0 +1,190 @@
+<!-- Button to Open the Modal -->
+{% if not book_selected %}
+<button
+  type="button"
+  class="btn btn-primary"
+  data-bs-toggle="modal"
+  data-bs-target="#bookAddModal"
+  id="bookAddButton"
+>
+  add
+</button>
+
+<!-- Modal -->
+<div
+  class="modal fade"
+  id="bookAddModal"
+  tabindex="-1"
+  aria-labelledby="bookAddModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="bookAddModalLabel">Add Book</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'studies:personal_home'%}" method="POST">
+          {% csrf_token %}
+          <tr>
+            <th><label for="id_name">Name :</label></th>
+            <td>
+              <input
+                type="text"
+                name="name"
+                maxlength="255"
+                required
+                id="id_name"
+              />
+            </td>
+          </tr>
+          <tr>
+            <th><label for="id_description">Description :</label></th>
+            <td>
+              <textarea
+                name="description"
+                cols="40"
+                rows="10"
+                maxlength="1000"
+                id="id_description"
+              ></textarea>
+            </td>
+          </tr>
+          <tr>
+            <th><label for="id_source_info">Source info :</label></th>
+            <td>
+              <textarea
+                name="source_info"
+                cols="40"
+                rows="10"
+                maxlength="1000"
+                id="id_source_info"
+              ></textarea>
+            </td>
+          </tr>
+          <button type="submit" class="btn btn-primary">save</button>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+  var myModal = document.getElementById("bookAddModal");
+  var myInput = document.getElementById("id_name");
+
+  myModal.addEventListener("shown.bs.modal", function () {
+    myInput.focus();
+  });
+</script>
+
+{% else %}
+<button
+  type="button"
+  class="btn btn-primary"
+  data-bs-toggle="modal"
+  data-bs-target="#bookAddModal{{book_selected.id}}"
+  id="{{book_selected.id}}"
+>
+  modify
+</button>
+
+<!-- Modal -->
+<div
+  class="modal fade"
+  id="bookAddModal{{book_selected.id}}"
+  tabindex="-1"
+  aria-labelledby="bookAddModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="bookAddModalLabel">modify Chapter</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form
+          action="{% url 'studies:personal_home' book=book.id%}"
+          method="POST"
+        >
+          {% csrf_token %}
+          <tr>
+            <th><label for="id_name">Name :</label></th>
+            <td>
+              <input
+                type="text"
+                name="name"
+                maxlength="255"
+                required
+                id="id_name{{book_selected.name}}"
+                value="{{book_selected.name}}"
+                autofocus
+                onfocus="this.value = this.value;"
+              />
+            </td>
+          </tr>
+          <tr>
+            <th><label for="id_description">Description :</label></th>
+            <td>
+              <textarea
+                name="description"
+                cols="40"
+                rows="10"
+                maxlength="1000"
+                id="id_description"
+                value="{{book_selected.description}}"
+              ></textarea>
+            </td>
+          </tr>
+          <tr>
+            <th><label for="id_source_info">Source info :</label></th>
+            <td>
+              <textarea
+                name="source_info"
+                cols="40"
+                rows="10"
+                maxlength="1000"
+                id="id_source_info"
+                value="{{book_selected.source_info}}"
+              ></textarea>
+            </td>
+          </tr>
+          <button type="submit" class="btn btn-primary">save</button>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+  var myModal{{book_selected.id}} = document.getElementById('bookAddModal{{book_selected.id}}')
+  var myInput{{book_selected.id}} = document.getElementById('id_name{{book_selected.name}}')
+
+  myModal{{book_selected.id}}.addEventListener('shown.bs.modal', function () {
+    myInput{{book_selected.id}}.focus()
+  })
+</script>
+
+{% endif %}
