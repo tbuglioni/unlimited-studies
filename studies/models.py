@@ -37,7 +37,6 @@ class UserBookMany(models.Model):
         max_length=255, null=False, default="owner", choices=FONCTION
     )
     # level to make a progressive access to chapter
-    level_chapter = models.PositiveSmallIntegerField(null=False, default=1)
 
     def __str__(self):
         return f"{self.user} - {self.book} - {self.user_fonction}"
