@@ -69,7 +69,7 @@ def book_view(request, book, chapter=None):
     if request.POST:
         form_chapter = ChapterForm(request.POST, instance=context["chapter"])
         context["form_chapter"] = form_chapter
-
+        
         if form_chapter.is_valid():
             if context["chapter"] is not None:
                 form_chapter.save()
@@ -78,10 +78,9 @@ def book_view(request, book, chapter=None):
                 chapter = form_chapter.save(commit=False)
                 chapter.book = Book.objects.get(pk=book, users=request.user)
                 chapter.name = form_chapter.cleaned_data["name"]
-                chapter.order_chapter = len(
-                    Chapter.objects.filter(book=book)) + 1
+                chapter.order_chapter=len(Chapter.objects.filter(book=book)) + 1
                 chapter.save()
-
+            
                 return redirect('studies:book_page', book=book)
     else:
         form_chapter = ChapterForm()
