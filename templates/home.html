@@ -2,9 +2,21 @@
 
 <div>
   {% block content %}
-  <p>{{some_string}}</p>
+
+  <div
+    class="container-fluid"
+    style="
+      background-image: url('static/img/fisherman.jpg');
+      background-size: cover;
+      background-repeat: no-repeat;
+      width: 100vw;
+      height: 100vh;
+    "
+  >
+    {% include "snippets/navebar.html" %}
+  </div>
+
   <!-- Button trigger modal -->
 
-  
   {% endblock content %}
 </div>

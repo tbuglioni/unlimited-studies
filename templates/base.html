@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
+    
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -14,20 +14,9 @@
 
     <title>Unlimited-S</title>
   </head>
-  <body>
-    <nav>
-      <p>{{user.email}}</p>
-      <li><a href="{% url 'home' %}">Home</a></li>
-      <li><a href="{% url 'studies:personal_home' %}">Perso-Home</a></li>
-      <li><a href="{% url 'studies:game_auto' %}">Game Auto</a></li>
-      <li><a href="{% url 'admin:index' %}">Admin</a></li>
-      {% if user.is_authenticated == False %}
-      <li><a href="{% url 'login' %}">login</a></li>
-      {% else %}
-      <li><a href="{% url 'logout' %}">logout</a></li>
-      {% endif %}
-    </nav>
-
+  <body style="background-color: #1d2228" class="text-white">
+    
+    </div>
     {% block content %}{% endblock content %}
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"

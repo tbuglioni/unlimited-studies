@@ -1,16 +1,33 @@
 <!-- Button to Open the Modal -->
 {% if not chapter_selected %}
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal{{book_id}}" id="{{book_id}}">
+<button
+  type="button"
+  class="btn btn-primary"
+  data-bs-toggle="modal"
+  data-bs-target="#exampleModal{{book_id}}"
+  id="{{book_id}}"
+>
   add
 </button>
 
 <!-- Modal -->
-<div class="modal fade" id="exampleModal{{book_id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div
+  class="modal fade"
+  id="exampleModal{{book_id}}"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel">Add Chapter</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
       </div>
       <div class="modal-body">
         <form action="{% url 'studies:book_page' book=book_id%}" method="POST">
@@ -37,37 +54,58 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
         <button type="button" class="btn btn-primary">Save changes</button>
       </div>
     </div>
   </div>
 </div>
 <script type="text/javascript">
-var myModal = document.getElementById('exampleModal{{book_id}}')
-var myInput = document.getElementById('id_input{{book_id}}')
+  var myModal = document.getElementById("exampleModal{{book_id}}");
+  var myInput = document.getElementById("id_input{{book_id}}");
 
-myModal.addEventListener('shown.bs.modal', function () {
-  myInput.focus()
-})
+  myModal.addEventListener("shown.bs.modal", function () {
+    myInput.focus();
+  });
 </script>
 
-
 {% else %}
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal{{chapter_selected.id}}" id="{{chapter_selected.id}}">
+<button
+  type="button"
+  class="btn btn-primary"
+  data-bs-toggle="modal"
+  data-bs-target="#exampleModal{{chapter_selected.id}}"
+  id="{{chapter_selected.id}}"
+>
   modify
 </button>
 
 <!-- Modal -->
-<div class="modal fade" id="exampleModal{{chapter_selected.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div
+  class="modal fade"
+  id="exampleModal{{chapter_selected.id}}"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel">modify Chapter</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
       </div>
       <div class="modal-body">
-        <form action="{% url 'studies:book_page' book=book_id chapter=chapter_selected.id%}" method="POST">
+        <form
+          action="{% url 'studies:book_page' book=book_id chapter=chapter_selected.id%}"
+          method="POST"
+        >
           {% csrf_token %}
           <tr>
             <th><label class="form-label" for="id_name">Name :</label></th>
@@ -93,20 +131,21 @@ myModal.addEventListener('shown.bs.modal', function () {
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
         <button type="button" class="btn btn-primary">Save changes</button>
       </div>
     </div>
   </div>
 </div>
 <script type="text/javascript">
-var myModal{{chapter_selected.id}} = document.getElementById('exampleModal{{chapter_selected.id}}')
-var myInput{{chapter_selected.id}} = document.getElementById('id_input{{chapter_selected.id}}')
+  var myModal{{chapter_selected.id}} = document.getElementById('exampleModal{{chapter_selected.id}}')
+  var myInput{{chapter_selected.id}} = document.getElementById('id_input{{chapter_selected.id}}')
 
-myModal{{chapter_selected.id}}.addEventListener('shown.bs.modal', function () {
-  myInput{{chapter_selected.id}}.focus()
-})
+  myModal{{chapter_selected.id}}.addEventListener('shown.bs.modal', function () {
+    myInput{{chapter_selected.id}}.focus()
+  })
 </script>
 
 {% endif %}
-
