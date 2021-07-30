@@ -1,12 +1,8 @@
+from django.contrib.auth.decorators import login_required
 from datetime import timedelta
-from django.forms.models import fields_for_model
 from django.http import JsonResponse
 import datetime
-from django.db.models import Q
-import random
-from itertools import chain
 from django.shortcuts import render, get_object_or_404, redirect
-from django.conf import settings
 from .models import *
 from studies.logic.userAction import UserAction
 from studies.logic.FeedDb import FeedDb
@@ -18,77 +14,47 @@ user_action = UserAction()
 TIME_NOW = datetime.date.today()
 
 
+@login_required
 def personal_home_view(request, book=None):
-    if not request.user.is_authenticated:
-        return redirect("login")
 
     context = {}
-    context = user_action.get_books(request)
-
-    context["books"] = Book.objects.filter(users=request.user)
+    context["books"] = user_action.get_books(request)
 
     if book is not None:
-        context["selectedBook"] = get_object_or_404(Book,
-                                            users=request.user, pk=book)
-
+        context["selectedBook"] = user_action.get_book_404(request, book)
     else:
         context["selectedBook"] = None
 
     if request.POST:
-        form_book = BookForm(request.POST, instance=context["selectedBook"])
-        if form_book.is_valid():
-            if context["selectedBook"] is not None:
-                form_book.save()
-            else:
-                newBook = form_book.save(commit=False)
-                newBook.order_book = len(
-                    Book.objects.filter(users=request.user)) + 1
-                newBook.save()
-                newBook.users.add(request.user, through_defaults={})
-                newBook.save()
-            return redirect('studies:personal_home')
-        else:
-            context["form_book"] = form_book
+        user_action.create_or_update_book(request, context)
 
     return render(request, "studies/personal_home.html", context)
 
 
+@login_required
 def book_view(request, book, chapter=None):
     """ book with 0/1 selected chapter"""
     context = {}
-    context["book"] = get_object_or_404(Book,
-                                        users=request.user, pk=book)
+    context["book"] = user_action.get_book_404(request, book)
     context["chapters"] = Chapter.objects.filter(book=book)
 
     if chapter is not None:
-        context["chapter"] = Chapter.objects.get(id=chapter)
-        context["notes"] = StudiesNotes.objects.filter(chapter=chapter)
+        context["chapter"] = user_action.get_chapter_404(
+            request, chapter=chapter)
+        context["notes"] = user_action.get_notes(request, chapter)
     else:
         context["chapter"] = None
 
     if request.POST:
-        form_chapter = ChapterForm(request.POST, instance=context["chapter"])
-        context["form_chapter"] = form_chapter
-        
-        if form_chapter.is_valid():
-            if context["chapter"] is not None:
-                form_chapter.save()
-                return redirect('studies:book_page', book=book, chapter=chapter)
-            else:
-                chapter = form_chapter.save(commit=False)
-                chapter.book = Book.objects.get(pk=book, users=request.user)
-                chapter.name = form_chapter.cleaned_data["name"]
-                chapter.order_chapter=len(Chapter.objects.filter(book=book)) + 1
-                chapter.save()
-            
-                return redirect('studies:book_page', book=book)
+        user_action.create_or_update_chapter(request, context, book, chapter)
     else:
-        form_chapter = ChapterForm()
+        form_chapter = ChapterForm(instance=context["chapter"])
         context["form_chapter"] = form_chapter
 
     return render(request, "studies/book.html", context)
 
 
+@login_required
 def note_add_or_update(request, chapter=None, note=None):
     """ 1 note to add / change """
     context = {}
@@ -96,30 +62,26 @@ def note_add_or_update(request, chapter=None, note=None):
     book = Chapter.objects.get(pk=chapter).book.id
 
     if note is not None:
-        instance_note = StudiesNotes.objects.get(
-            chapter__book__users=request.user, pk=note)
-
-        context["instance_note"] = instance_note  # update note
+        context["instance_note"] = user_action.get_note_404(request, note)
 
     else:
-        instance_note = None  # new note
-
-        context["instance_note"] = instance_note
+        context["instance_note"] = None  # new note
 
     if request.POST:
 
-        form = StudiesNotesForm(request.POST, instance=instance_note)
+        form = StudiesNotesForm(
+            request.POST, instance=context["instance_note"])
         context["form"] = form
 
         if form.is_valid():
-            if instance_note is not None:
+            if context["instance_note"] is not None:
                 form.save()
             else:
                 obj = form.save(commit=False)
 
                 obj.order_note = len(
-                    StudiesNotes.objects.filter(users=request.user, chapter__pk=chapter)) + 1
-                obj.chapter = Chapter.objects.get(pk=chapter)
+                    user_action.get_notes(request, chapter)) + 1
+                obj.chapter = user_action.get_chapter_404(request, chapter)
                 obj.save()
                 obj.users.add(request.user, through_defaults={})
                 obj.save()
@@ -127,10 +89,11 @@ def note_add_or_update(request, chapter=None, note=None):
             return redirect('studies:book_page', chapter=chapter, book=book)
 
     else:
-        context["form"] = StudiesNotesForm(instance=instance_note)
+        context["form"] = StudiesNotesForm(instance=context["instance_note"])
     return render(request, "studies/note.html", context)
 
 
+@login_required
 def delete_book(request, book):
     selected_book = get_object_or_404(Book, pk=book, users=request.user)
     selected_book.delete()
@@ -138,23 +101,25 @@ def delete_book(request, book):
     return redirect('studies:personal_home')
 
 
+@login_required
 def delete_chapter(request, chapter):
-    selected_chapter = get_object_or_404(
-        Chapter, pk=chapter, book__users=request.user)
+    selected_chapter = user_action.get_chapter_404(request, chapter)
+
     book = selected_chapter.book.id
     selected_chapter.delete()
     return redirect('studies:book_page', book=book)
 
 
+@login_required
 def delete_note(request, note):
-    selected_note = get_object_or_404(
-        StudiesNotes, pk=note, chapter__book__users=request.user)
+    selected_note = user_action.get_note_404(request, note)
     book = selected_note.chapter.book.id
     chapter = selected_note.chapter.id
     selected_note.delete()
     return redirect('studies:book_page', book=book, chapter=chapter)
 
 
+@login_required
 def add_data_in_db(request):
     if not request.user.is_authenticated:
         return redirect("login")
@@ -171,97 +136,18 @@ def add_data_in_db(request):
     return redirect('studies:personal_home')
 
 
+@login_required
 def start_game_view(request):
     if not request.user.is_authenticated:
         return redirect("login")
     context = {}
-    context["game_list_auto"] = []
-    context["today"] = TIME_NOW
-
-# SPEED GROUP
-    speed = StudiesNotesProgression.objects.filter(
-        (
-            Q(lvl_recto__lt=6)
-            & Q(notes__studie_recto=True)
-            & Q(next_studied_date_recto__lte=TIME_NOW, user=request.user)
-        )
-        | (
-            Q(lvl_verso__lt=6)
-            & Q(notes__studie_verso=True)
-            & Q(next_studied_date_verso__lte=TIME_NOW, user=request.user)
-        )
-    ).order_by("notes__chapter__book", "notes__chapter")[:10]
-
-    for elt in speed:
-        if elt.next_studied_date_recto <= TIME_NOW and elt.notes.studie_recto is True:
-            context["game_list_auto"].append({
-                "id": elt.id,
-                "sens": "recto",
-                "text": elt.notes.text_recto,
-                "response": elt.notes.text_verso,
-                "class_button_true": "ajax-true-recto",
-                "class_button_wrong": "ajax-wrong-recto",
-
-            })
-        elif elt.next_studied_date_verso <= TIME_NOW and elt.notes.studie_verso is True:
-            context["game_list_auto"].append({
-                "id": elt.id,
-                "sens": "verso",
-                "text": elt.notes.text_verso,
-                "response": elt.notes.text_recto,
-                "class_button_true": "ajax-true-verso",
-                "class_button_wrong": "ajax-wrong-verso",
-
-
-            })
-# LONG GROUP
-    long = StudiesNotesProgression.objects.filter(
-        (
-            Q(lvl_recto__gt=5)
-            & Q(notes__studie_verso=True)
-            & Q(next_studied_date_recto__lte=TIME_NOW, user=request.user)
-        )
-        | (
-            Q(lvl_verso__gt=5)
-            & Q(notes__studie_recto=True)
-            & Q(next_studied_date_verso__lte=TIME_NOW, user=request.user)
-        )
-    ).order_by("notes__chapter__book", "notes__chapter")[:40]
-
-    for elt in long:
-        if elt.next_studied_date_recto <= TIME_NOW and elt.notes.studie_recto is True:
-            context["game_list_auto"].append({
-                "id": elt.id,
-                "sens": "recto",
-                "text": elt.notes.text_recto,
-                "response": elt.notes.text_verso,
-                "class_button_true": "ajax-true-recto",
-                "class_button_wrong": "ajax-wrong-recto",
-
-            })
-        elif elt.next_studied_date_verso <= TIME_NOW and elt.notes.studie_verso is True:
-            context["game_list_auto"].append({
-                "id": elt.id,
-                "sens": "verso",
-                "text": elt.notes.text_verso,
-                "response": elt.notes.text_recto,
-                "class_button_true": "ajax-true-verso",
-                "class_button_wrong": "ajax-wrong-verso",
-
-
-            })
-
-    # 1 +1j date.today()
-    # 2 +1 week
-    # 3 +4 week
-    # 4 +12 week
-    # 5 24 week
-# ENDING
-    random.shuffle(context["game_list_auto"])
+    context["game_list_auto"] = user_action.get_notes_todo(
+        request, nbr_speed=3, nbr_long=2)
 
     return render(request, "studies/auto_game.html", context)
 
 
+@login_required
 def note_true_recto(request):
     id = request.POST.get("Product_id")
     result = get_object_or_404(
@@ -300,6 +186,7 @@ def note_true_recto(request):
     return JsonResponse({"operation_result": result.notes.text_recto})
 
 
+@login_required
 def note_true_verso(request):
     id = request.POST.get("Product_id")
     result = get_object_or_404(
@@ -338,6 +225,7 @@ def note_true_verso(request):
     return JsonResponse({"operation_result": result.notes.text_recto})
 
 
+@login_required
 def note_wrong_recto(request):
     id = request.POST.get("Product_id")
     result = get_object_or_404(
@@ -354,6 +242,7 @@ def note_wrong_recto(request):
     return JsonResponse({"operation_result": fav})
 
 
+@login_required
 def note_wrong_verso(request):
     id = request.POST.get("Product_id")
     result = get_object_or_404(
