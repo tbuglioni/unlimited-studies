@@ -4,7 +4,7 @@
   type="button"
   class="btn btn-primary"
   data-bs-toggle="modal"
-  data-bs-target="#exampleModal{{book_id}}"
+  data-bs-target="#chapterModal{{book_id}}"
   id="{{book_id}}"
 >
   add
@@ -13,15 +13,15 @@
 <!-- Modal -->
 <div
   class="modal fade"
-  id="exampleModal{{book_id}}"
+  id="chapterModal{{book_id}}"
   tabindex="-1"
-  aria-labelledby="exampleModalLabel"
+  aria-labelledby="chapterModalLabel"
   aria-hidden="true"
 >
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Add Chapter</h5>
+        <h5 class="modal-title" id="chapterModalLabel">Add Chapter</h5>
         <button
           type="button"
           class="btn-close"
@@ -63,7 +63,7 @@
   </div>
 </div>
 <script type="text/javascript">
-  var myModal = document.getElementById("exampleModal{{book_id}}");
+  var myModal = document.getElementById("chapterModal{{book_id}}");
   var myInput = document.getElementById("id_input{{book_id}}");
 
   myModal.addEventListener("shown.bs.modal", function () {
@@ -76,7 +76,7 @@
   type="button"
   class="btn btn-primary"
   data-bs-toggle="modal"
-  data-bs-target="#exampleModal{{chapter_selected.id}}"
+  data-bs-target="#chapterModal{{chapter_selected.id}}"
   id="{{chapter_selected.id}}"
 >
   modify
@@ -85,15 +85,15 @@
 <!-- Modal -->
 <div
   class="modal fade"
-  id="exampleModal{{chapter_selected.id}}"
+  id="chapterModal{{chapter_selected.id}}"
   tabindex="-1"
-  aria-labelledby="exampleModalLabel"
+  aria-labelledby="chapterModalLabel"
   aria-hidden="true"
 >
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">modify Chapter</h5>
+        <h5 class="modal-title" id="chapterModalLabel">modify Chapter</h5>
         <button
           type="button"
           class="btn-close"
@@ -140,7 +140,7 @@
   </div>
 </div>
 <script type="text/javascript">
-  var myModal{{chapter_selected.id}} = document.getElementById('exampleModal{{chapter_selected.id}}')
+  var myModal{{chapter_selected.id}} = document.getElementById('chapterModal{{chapter_selected.id}}')
   var myInput{{chapter_selected.id}} = document.getElementById('id_input{{chapter_selected.id}}')
 
   myModal{{chapter_selected.id}}.addEventListener('shown.bs.modal', function () {

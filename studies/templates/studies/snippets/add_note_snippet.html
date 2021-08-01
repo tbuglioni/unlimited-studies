@@ -1,33 +1,81 @@
 <!-- Button to Open the Modal -->
-{% if not chapter_selected %}
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal{{book_id}}" id="{{book_id}}">
+{% if not note_selected %}
+<button
+  type="button"
+  class="btn btn-primary"
+  data-bs-toggle="modal"
+  data-bs-target="#noteModalAdd{{chapter_id}}"
+  id="buttonModalNoteAdd{{chapter_id}}"
+>
   add
 </button>
 
 <!-- Modal -->
-<div class="modal fade" id="exampleModal{{book_id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div
+  class="modal fade"
+  id="noteModalAdd{{chapter_id}}"
+  tabindex="-1"
+  aria-labelledby="noteModalLabel"
+  aria-hidden="true"
+>
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Add Chapter</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <h5 class="modal-title" id="noteModalLabel">Add Chapter</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
       </div>
       <div class="modal-body">
-        <form action="{% url 'studies:book_page' book=book_id%}" method="POST">
+        <form
+          action="{% url 'studies:specific_note' chapter=chapter_id%}"
+          method="POST"
+        >
           {% csrf_token %}
           <tr>
-            <th><label class="form-label" for="id_name">Name :</label></th>
+            <th><label for="id_text_recto">Text recto :</label></th>
+            <td>
+              <textarea
+                name="text_recto"
+                cols="40"
+                rows="10"
+                maxlength="1000"
+                required
+                id="id_text_recto{{chapter_id}}"
+              ></textarea>
+            </td>
+          </tr>
+          <tr>
+            <th><label for="id_text_verso">Text verso :</label></th>
+            <td>
+              <textarea
+                name="text_verso"
+                cols="40"
+                rows="10"
+                maxlength="1000"
+                required
+                id="id_text_verso"
+              ></textarea>
+            </td>
+          </tr>
+          <tr>
+            <th><label for="id_studie_recto">Studie recto :</label></th>
             <td>
               <input
-                type="text"
-                name="name"
-                maxlength="255"
-                required
-                id="id_input{{book_id}}"
-                tag="bg-primary"
-                class="form-control"
-                autofocus
+                type="checkbox"
+                name="studie_recto"
+                id="id_studie_recto"
+                checked
               />
+            </td>
+          </tr>
+          <tr>
+            <th><label for="id_studie_verso">Studie verso :</label></th>
+            <td>
+              <input type="checkbox" name="studie_verso" id="id_studie_verso" />
             </td>
           </tr>
           <button type="submit" class="btn btn-primary">save</button>
@@ -37,52 +85,109 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
         <button type="button" class="btn btn-primary">Save changes</button>
       </div>
     </div>
   </div>
 </div>
 <script type="text/javascript">
-var myModal = document.getElementById('exampleModal{{book_id}}')
-var myInput = document.getElementById('id_input{{book_id}}')
+  var myModal = document.getElementById("noteModal{{chapter_id}}");
+  var myInput = document.getElementById("id_text_recto{{chapter_id}}");
 
-myModal.addEventListener('shown.bs.modal', function () {
-  myInput.focus()
-})
+  myModal.addEventListener("shown.bs.modal", function () {
+    myInput.focus();
+  });
 </script>
 
-
 {% else %}
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal{{chapter_selected.id}}" id="{{chapter_selected.id}}">
+<button
+  type="button"
+  class="btn btn-primary"
+  data-bs-toggle="modal"
+  data-bs-target="#noteModal{{note_selected.id}}"
+  id="buttonModalNote{{note_selected.id}}"
+>
   modify
 </button>
 
 <!-- Modal -->
-<div class="modal fade" id="exampleModal{{chapter_selected.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div
+  class="modal fade"
+  id="noteModal{{note_selected.id}}"
+  tabindex="-1"
+  aria-labelledby="noteModalLabel"
+  aria-hidden="true"
+>
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">modify Chapter</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <h5 class="modal-title" id="noteModalLabel">modify Chapter</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
       </div>
       <div class="modal-body">
-        <form action="{% url 'studies:book_page' book=book_id chapter=chapter_selected.id%}" method="POST">
+        <form
+          action="{% url 'studies:specific_note' chapter=chapter_id note=note_selected.id %}"
+          method="POST"
+        >
           {% csrf_token %}
           <tr>
-            <th><label class="form-label" for="id_name">Name :</label></th>
+            <th><label for="id_text_recto">Text recto :</label></th>
             <td>
-              <input
-                type="text"
-                name="name"
-                maxlength="255"
+              <textarea
+                name="text_recto"
+                cols="40"
+                rows="10"
+                maxlength="1000"
                 required
-                id="id_input{{chapter_selected.id}}"
-                tag="bg-primary"
-                class="form-control"
-                value="{{chapter_selected.name}}"
+                id="id_text_recto{{note_selected.id}}"
                 autofocus
                 onfocus="this.value = this.value;"
+              >
+{{note_selected.text_recto}}</textarea
+              >
+            </td>
+          </tr>
+          <tr>
+            <th><label for="id_text_verso">Text verso :</label></th>
+            <td>
+              <textarea
+                name="text_verso"
+                cols="40"
+                rows="10"
+                maxlength="1000"
+                required
+                id="id_text_verso"
+              >
+{{note_selected.text_verso}}</textarea
+              >
+            </td>
+          </tr>
+          <tr>
+            <th><label for="id_studie_recto">Studie recto :</label></th>
+            <td>
+              <input
+                type="checkbox"
+                name="studie_recto"
+                id="id_studie_recto{{note_selected.id}}"
+                checked
+              />
+            </td>
+          </tr>
+          <tr>
+            <th><label for="id_studie_verso">Studie verso :</label></th>
+            <td>
+              <input
+                type="checkbox"
+                name="studie_verso"
+                id="id_studie_verso{{note_selected.id}}"
               />
             </td>
           </tr>
@@ -93,20 +198,22 @@ myModal.addEventListener('shown.bs.modal', function () {
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
         <button type="button" class="btn btn-primary">Save changes</button>
       </div>
     </div>
   </div>
 </div>
 <script type="text/javascript">
-var myModal{{chapter_selected.id}} = document.getElementById('exampleModal{{chapter_selected.id}}')
-var myInput{{chapter_selected.id}} = document.getElementById('id_input{{chapter_selected.id}}')
 
-myModal{{chapter_selected.id}}.addEventListener('shown.bs.modal', function () {
-  myInput{{chapter_selected.id}}.focus()
-})
+
+  checkRadio(id, choice=true) {
+           document.getElementById(id).checked = choice;
+       }
+  checkRadio("id_studie_recto{{note_selected.id}}", {{note_selected.studie_recto|yesno:"true,false"}} )
+  checkRadio("id_studie_verso{{note_selected.id}}", {{note_selected.studie_verso|yesno:"true,false"}} )
 </script>
 
 {% endif %}
-
