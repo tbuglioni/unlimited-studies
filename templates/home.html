@@ -13,7 +13,58 @@
       height: 100vh;
     "
   >
-    {% include "snippets/navebar.html" %}
+    {% include "snippets/navebar.html" with user=user %}
+    <div class="d-flex h-100 align-items-center justify-content-center">
+      {% include "snippets/home_animated_title.html" %}
+    </div>
+  </div>
+
+  <div class="container min-vh-100 p-3">
+    <div class="row p-2">
+      <div class="col-lg-6">
+        <h1 class="new_font_daniel">L'apprentissage, toute une histoire</h1>
+        <p>
+          Ah apprendre ... On peut en apprendre choses, des cours, des langues,
+          des histoires des "tout et n'importe quoi". Enfin bref tout ce qui
+          peut rentrer dans notre cerveau.
+        </p>
+        <p>
+          Mais qui a le temps et l'energie pour apprendre tout ce qu'il voudrait
+          avec des journées de 24 heures :/ ??
+        </p>
+        <p>C'est ainsi que je me suis poser la question</p>
+        <p class="new_font_daniel-sm">
+          " Comment apprendre plus en faisant le moins possible ? "
+        </p>
+        <p>
+          ET après avoir était d'application en application pour mémoriser je me
+          suis mis à creer mon application.
+        </p>
+        <br />
+        <br />
+        <p class="new_font_daniel-sm">MAIS !! Mais mais, oui il y a un mais</p>
+        SI l'application vous fera apprendre:
+        <li>un savoir rapidement</li>
+        <li>un savoir pour longtemps</li>
+        <li>avec le plus bas effort possible à fournir</li>
+        <br />
+        ELLE ne fera pas :
+        <li>faire des liens entre les elements</li>
+        <li>vous fournir le savoir à votre place</li>
+        <li>apprendre à votre place</li>
+        <br />
+        Enfin je la déconseille pour :
+        <li>travailler un savoir faire</li>
+        <li>travailler un savoir être</li>
+      </div>
+      <div class="col-lg-6 min-vh-100">
+        {% include "snippets/home_graph_sun.html" %}
+      </div>
+    </div>
+  </div>
+  <div class="container-fluid vw-100 vh-100 bg-danger p-3">
+    <h1 class="new_font_daniel">Bon et comment ca marche ??</h1>
+    <p></p>
   </div>
 
   <!-- Button trigger modal -->

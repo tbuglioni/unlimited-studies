@@ -1,0 +1,35 @@
+<style>
+  .ml3 {
+    font-weight: 900;
+    font-size: 3.5em;
+  }
+</style>
+<h1 class="ml3 new_font_daniel">Unlimited Studies</h1>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/2.0.2/anime.min.js"></script>
+
+<script>
+  // Wrap every letter in a span
+  var textWrapper = document.querySelector(".ml3");
+  textWrapper.innerHTML = textWrapper.textContent.replace(
+    /\S/g,
+    "<span class='letter'>$&</span>"
+  );
+
+  anime
+    .timeline({ loop: true })
+    .add({
+      targets: ".ml3 .letter",
+      opacity: [0, 1],
+      easing: "easeInOutQuad",
+      duration: 6250,
+      delay: (el, i) => 150 * (i + 1),
+    })
+    .add({
+      targets: ".ml3",
+      opacity: 0,
+      duration: 1000,
+      easing: "easeOutExpo",
+      delay: 10000,
+    });
+</script>

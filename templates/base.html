@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -11,11 +12,27 @@
       integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
       crossorigin="anonymous"
     />
+    <style>
+      @font-face {
+        font-family: "daniel hand";
+        src: url("static/font/daniel.ttf");
+      }
+  
+      .new_font_daniel {
+        font-family: "daniel hand";
+        font-size: 2rem;}
+
+      .new_font_daniel-sm {
+      font-family: "daniel hand";
+      font-size: 1rem;
+      }
+    </style>
 
     <title>Unlimited-S</title>
   </head>
   <body style="background-color: #1d2228" class="text-white">
     
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     </div>
     {% block content %}{% endblock content %}
     <script
