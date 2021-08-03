@@ -134,5 +134,6 @@ AUTH_USER_MODEL = "account.Account"
 LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "studies/"
 
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
+# SESSION_COOKIE_SECURE = True # Set to True to use https
+# CSRF_COOKIE_SECURE = True 
+# SESSION_COOKIE_SAMESITE = None # Set to None to allow all sites to use the cookie.

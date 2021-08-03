@@ -2,46 +2,66 @@
 
 <div>
   {% block content %}
-  <p>Hello personal home</p>
+  <div
+    class="container-fluid"
+    style="
+      background-image: url('static/img/fisherman.jpg');
+      background-size: cover;
+      background-repeat: no-repeat;
+      width: 100vw;
+      height: 100vh;
+    "
+  >
+    <div>{% include "snippets/navebar.html" with user=user %}</div>
 
-  <div>
-    <p>{{book.name}}</p>
-    <p>{{book.description}}</p>
-    <p>{{book.source_info}}</p>
+    <p>Hello personal home</p>
+
+    <div>
+      <p>{{book.name}}</p>
+      <p>{{book.description}}</p>
+      <p>{{book.source_info}}</p>
+    </div>
+
+    {% for chapter in chapters %}
+    <div>
+      <li>
+        <a href="{% url 'studies:book_page' book=book.id chapter=chapter.id %}"
+          >{{chapter.name}}</a
+        >
+        |
+        <a href="{% url 'studies:delete_chapter' chapter=chapter.id %}"
+          >Delete</a
+        >
+        <a href="{% url 'studies:specific_note' chapter=chapter.id%}"
+          >add note</a
+        >
+        {% include 'studies/snippets/add_chapter_snippet.html' with chapter_selected=chapter book_id=book.id%}
+      </li>
+    </div>
+
+    {% endfor %}
+    <hr />
+    {% include 'studies/snippets/add_chapter_snippet.html' with book_id=book.id%} 
+    
+    {% if notes %}
+    <hr />
+    {% for note in notes %}
+    <div>
+      <li>
+        {{note.text_recto}} {{note.text_verso}}
+        <a
+          href="{% url 'studies:specific_note' chapter=note.chapter.id note=note.id %}"
+          >Update</a
+        >
+        {% include 'studies/snippets/add_note_snippet.html' with note_selected=note chapter_id=chapter.id%}
+
+        <a href="{% url 'studies:delete_note' note=note.id %}">Delete</a>
+      </li>
+    </div>
+    {% endfor %} 
+    
+    {% include 'studies/snippets/add_note_snippet.html' with chapter_id=chapter.id %} 
+    {% endif %} 
+    {% endblock content %}
   </div>
-
-  {% for chapter in chapters %}
-  <div>
-    <li>
-      <a href="{% url 'studies:book_page' book=book.id chapter=chapter.id %}"
-        >{{chapter.name}}</a
-      >
-      |
-      <a href="{% url 'studies:delete_chapter' chapter=chapter.id %}">Delete</a>
-      <a href="{% url 'studies:specific_note' chapter=chapter.id%}">add note</a>
-      {% include 'studies/snippets/add_chapter_snippet.html' with chapter_selected=chapter book_id=book.id%}
-    </li>
-  </div>
-
-  {% endfor %}
-  <hr />
-  {% include 'studies/snippets/add_chapter_snippet.html' with book_id=book.id%} {% if notes %}
-  <hr />
-  {% for note in notes %}
-  <div>
-    <li>
-      {{note.text_recto}} {{note.text_verso}}
-      <a
-        href="{% url 'studies:specific_note' chapter=note.chapter.id note=note.id %}"
-        >Update</a
-      >
-      {% include 'studies/snippets/add_note_snippet.html' with note_selected=note chapter_id=chapter.id%}
-
-      <a href="{% url 'studies:delete_note' note=note.id %}">Delete</a>
-    </li>
-  </div>
-  {% endfor %} 
-  {% include 'studies/snippets/add_note_snippet.html' with chapter_id=chapter.id%}
-
-  {% endif %} {% endblock content %}
 </div>

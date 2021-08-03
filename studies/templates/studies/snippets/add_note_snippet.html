@@ -150,9 +150,7 @@
                 id="id_text_recto{{note_selected.id}}"
                 autofocus
                 onfocus="this.value = this.value;"
-              >
-{{note_selected.text_recto}}</textarea
-              >
+              >{{note_selected.text_recto}}</textarea>
             </td>
           </tr>
           <tr>
@@ -165,30 +163,29 @@
                 maxlength="1000"
                 required
                 id="id_text_verso"
-              >
-{{note_selected.text_verso}}</textarea
-              >
+              >{{note_selected.text_verso}}</textarea>
             </td>
           </tr>
           <tr>
             <th><label for="id_studie_recto">Studie recto :</label></th>
             <td>
-              <input
-                type="checkbox"
-                name="studie_recto"
-                id="id_studie_recto{{note_selected.id}}"
-                checked
-              />
+            {% if note_selected.studie_recto %}
+            <input type="checkbox" name="studie_recto" id="id_studie_recto" checked />
+              {% else %}
+              <input type="checkbox" name="studie_recto" id="id_studie_recto"/>
+            
+            {% endif %}
+              
             </td>
           </tr>
           <tr>
             <th><label for="id_studie_verso">Studie verso :</label></th>
             <td>
-              <input
-                type="checkbox"
-                name="studie_verso"
-                id="id_studie_verso{{note_selected.id}}"
-              />
+            {% if note_selected.studie_verso %}
+            <input type="checkbox" name="studie_verso" id="id_studie_verso" checked />
+            {% else %}
+            <input type="checkbox" name="studie_verso" id="id_studie_verso"/>
+            {% endif %}
             </td>
           </tr>
           <button type="submit" class="btn btn-primary">save</button>
@@ -206,14 +203,5 @@
     </div>
   </div>
 </div>
-<script type="text/javascript">
-
-
-  checkRadio(id, choice=true) {
-           document.getElementById(id).checked = choice;
-       }
-  checkRadio("id_studie_recto{{note_selected.id}}", {{note_selected.studie_recto|yesno:"true,false"}} )
-  checkRadio("id_studie_verso{{note_selected.id}}", {{note_selected.studie_verso|yesno:"true,false"}} )
-</script>
 
 {% endif %}
