@@ -2,8 +2,9 @@
 
 <div>
   {% block content %}
-  <div
-    class="container-fluid"
+  {% include "snippets/navebar.html" with user=user %}
+  <section
+    class="container-fluid mt-5"
     style="
       background-image: url('static/img/fisherman.jpg');
       background-size: cover;
@@ -12,7 +13,6 @@
       height: 100vh;
     "
   >
-    <div>{% include "snippets/navebar.html" with user=user %}</div>
 
     <p>Hello personal home</p>
 
@@ -53,7 +53,7 @@
           href="{% url 'studies:specific_note' chapter=note.chapter.id note=note.id %}"
           >Update</a
         >
-        {% include 'studies/snippets/add_note_snippet.html' with note_selected=note chapter_id=chapter.id%}
+        {% include 'studies/snippets/add_note_snippet.html' with note_selected=note chapter_id=chapter.id %}
 
         <a href="{% url 'studies:delete_note' note=note.id %}">Delete</a>
       </li>
@@ -63,5 +63,5 @@
     {% include 'studies/snippets/add_note_snippet.html' with chapter_id=chapter.id %} 
     {% endif %} 
     {% endblock content %}
-  </div>
+  </section>
 </div>

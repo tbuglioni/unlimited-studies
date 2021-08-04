@@ -1,0 +1,17 @@
+@font-face {
+  font-family: "daniel hand";
+  src: url("../font/daniel.ttf");
+}
+
+.new_font_daniel {
+  font-family: "daniel hand";
+  font-size: 2rem;}
+
+.new_font_daniel-sm {
+font-family: "daniel hand";
+font-size: 1rem;
+}
+
+.half-black {
+  background: rgba(black, 0.5);
+}

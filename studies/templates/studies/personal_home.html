@@ -1,8 +1,9 @@
 {% extends 'base.html' %}{% load static %}
 <div>
   {% block content %}
+  {% include "snippets/navebar.html" with user=user %}
   <div
-    class="container-fluid"
+    class="container-fluid mt-5"
     style="
       background-image: url('static/img/fisherman.jpg');
       background-size: cover;
@@ -11,7 +12,6 @@
       height: 100vh;
     "
   >
-    <div>{% include "snippets/navebar.html" with user=user %}</div>
     <a href="{% url 'studies:feed_db'%}">feed db</a>
 
     <p>Hello personal home</p>
