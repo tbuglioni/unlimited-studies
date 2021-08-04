@@ -14,7 +14,8 @@ class MyAccountManager(BaseUserManager):  # comportement en creant un user
 
         # creer l'utilisateur:
         user = self.model(
-            email=self.normalize_email(email),  # convertie les caracteres en minuscule
+            # convertie les caracteres en minuscule
+            email=self.normalize_email(email),
             username=username,
         )
 
@@ -44,8 +45,10 @@ class Account(AbstractBaseUser):
     email = models.EmailField(verbose_name="email", max_length=60, unique=True)
     # required any time:
     username = models.CharField(max_length=30, unique=True)
-    date_joined = models.DateTimeField(verbose_name="date joined", auto_now_add=True)
-    last_login = models.DateTimeField(verbose_name="last login", auto_now_add=True)
+    date_joined = models.DateTimeField(
+        verbose_name="date joined", auto_now_add=True)
+    last_login = models.DateTimeField(
+        verbose_name="last login", auto_now_add=True)
     is_admin = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -64,7 +67,7 @@ class Account(AbstractBaseUser):
     objects = MyAccountManager()  # indiquer ou est le manager
 
     def __str__(self):
-        return self.email
+        return f"{self.id},{self.email}"
 
     def has_perm(self, perm, obj=None):
         return self.is_admin

@@ -14,7 +14,7 @@ class Book(models.Model):
     source_info = models.TextField(max_length=1000, null=True, blank=True)
 
     def __str__(self):
-        return f"{self.name}-{self.id}"
+        return f"{self.id}-{self.name}"
 
     class Meta:
         ordering = ["order_book"]
@@ -58,7 +58,7 @@ class Chapter(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.name
+        return f"{self.id}-{self.name}"
 
     class Meta:
         ordering = ["book", "order_chapter"]

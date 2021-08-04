@@ -30,7 +30,27 @@ class AccountAdmin(UserAdmin):
         "is_student",
         "is_teacher",
     )
-    fieldsets = ()
+    fieldsets = (
+        (None, {'fields': ('email', 'username', 'password')}),
+        ('Permissions', {'fields': ("is_admin",
+                                    "is_staff",
+                                    "is_student",
+                                    "is_teacher")}),
+    )
+
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('email',
+                       'username',
+                       'password1',
+                       'password2',
+                       "is_admin",
+                       "is_staff",
+                       "is_student",
+                       "is_teacher",)}
+         ),
+    )
 
 
 admin.site.register(Account, AccountAdmin)
