@@ -1,25 +1,65 @@
+from django.urls import reverse
+from django.utils.http import urlencode
 from django.contrib import admin
 from .models import Book, Chapter, StudiesNotes, StudiesNotesProgression, UserBookMany
+from django.utils.html import format_html
 
 
+class ChapterAdminForm(admin.TabularInline):
+    model = Chapter
+
+
+class NoteAdminForm(admin.TabularInline):
+    model = StudiesNotes
+
+
+@admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
-    list_display = ("id", "name", "order_book")
+    list_display = ("id", "name", "order_book", "view_chapter_link")
+    search_fields = ("name", "id", "users__email")
+    inlines = [ChapterAdminForm]
 
-    search_fields = ("name",)
+    def view_chapter_link(self, obj):
+        count = obj.chapter_set.count()
+        url = (
+            reverse("admin:studies_chapter_changelist")
+            + "?"
+            + urlencode({"book": f"{obj.id}"})
+        )
+        return format_html('<a href="{}">{} Chapter</a>', url, count)
+
+    view_chapter_link.short_description = "Chapter"
 
 
+@admin.register(UserBookMany)
 class UserBookManyAdmin(admin.ModelAdmin):
-    list_display = ("user", "book", "user_fonction", "__str__")
+    list_display = ("id", "user", "book", "user_fonction", "__str__")
+    search_fields = ("book", "id", "user")
 
-    search_fields = ("user", "book")
 
-
+@admin.register(Chapter)
 class ChapterAdmin(admin.ModelAdmin):
-    list_display = ("id", "name", "order_chapter", "book")
+    list_display = ("id", "name", "order_chapter", "book",
+                    "view_book_link", "view_notes_link")
+    search_fields = ("name", "id", "book__users__email")
+    inlines = [NoteAdminForm]
 
-    search_fields = ("name",)
+    def view_book_link(self, obj):
+        return format_html('<a href="/admin/studies/book/%s/">%s</a>' % (obj.book.id, obj.book.name))
+
+    def view_notes_link(self, obj):
+        count = obj.studiesnotes_set.count()
+        url = (
+            reverse("admin:studies_studiesnotes_changelist")
+            + "?"
+            + urlencode({"chapter": f"{obj.id}"})
+        )
+        return format_html('<a href="{}">{} Notes</a>', url, count)
+
+    view_notes_link.short_description = "Notes"
 
 
+@ admin.register(StudiesNotes)
 class StudiesNotesAdmin(admin.ModelAdmin):
     list_display = (
         "id",
@@ -29,14 +69,27 @@ class StudiesNotesAdmin(admin.ModelAdmin):
         "studie_recto",
         "studie_verso",
         "chapter",
+        "view_chapter_link"
 
     )
+    search_fields = ("id", "chapter__book__users__email", "chapter__book__name",
+                     "chapter__name", "text_recto", "text_verso")
 
-    search_fields = ("text_recto", "text_verso")
+    def view_chapter_link(self, obj):
+        url = (
+            reverse("admin:studies_chapter_changelist")
+            + "?"
+            + urlencode({"id": f"{obj.chapter.id}"})
+        )
+        return format_html('<a href="{}"> link</a>', url)
+
+    view_chapter_link.short_description = "chapter"
 
 
+@ admin.register(StudiesNotesProgression)
 class StudiesNotesProgressionAdmin(admin.ModelAdmin):
     list_display = (
+        "id",
         "user",
         "notes",
         "flaged",
@@ -47,17 +100,9 @@ class StudiesNotesProgressionAdmin(admin.ModelAdmin):
         "next_studied_date_recto",
         "next_studied_date_verso",
     )
-
-    search_fields = ("user",)
+    search_fields = ("id", "user",)
     list_filter = (
         "flaged",
         "lvl_recto",
         "lvl_verso",
     )
-
-
-admin.site.register(Book, BookAdmin)
-admin.site.register(Chapter, ChapterAdmin)
-admin.site.register(StudiesNotes, StudiesNotesAdmin)
-admin.site.register(StudiesNotesProgression, StudiesNotesProgressionAdmin)
-admin.site.register(UserBookMany, UserBookManyAdmin)

@@ -1,23 +1,47 @@
+from django.urls import reverse
+from django.utils.http import urlencode
+from django.utils.html import format_html
 from django.contrib import admin
 from account.models import Account
 from django.contrib.auth.admin import UserAdmin
+from studies.models import Book
 
 
+class ChapterBookForm(admin.TabularInline):
+    model = Book.users.through
+
+
+@admin.register(Account)
 class AccountAdmin(UserAdmin):
     list_display = (
+        "id",
         "email",
         "username",
         "date_joined",
         "last_login",
+        "view_books_link",
         "is_admin",
         "is_staff",
         "is_student",
         "is_teacher",
     )
+
+    def view_books_link(self, obj):
+        count = obj.books.count()
+        url = (
+            reverse("admin:studies_book_changelist")
+            + "?"
+            + urlencode({"users": f"{obj.id}"})
+        )
+        return format_html('<a href="{}">{} link(s)</a>', url, count)
+
+    view_books_link.short_description = "books"
+
     search_fields = (
         "email",
         "username",
     )
+
     readonly_fields = (
         "date_joined",
         "last_login",
@@ -51,6 +75,4 @@ class AccountAdmin(UserAdmin):
                        "is_teacher",)}
          ),
     )
-
-
-admin.site.register(Account, AccountAdmin)
+    inlines = [ChapterBookForm]
