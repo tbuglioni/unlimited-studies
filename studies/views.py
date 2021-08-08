@@ -1,5 +1,4 @@
 from django.contrib.auth.decorators import login_required
-from datetime import timedelta
 from django.http import JsonResponse
 import datetime
 from django.shortcuts import render, get_object_or_404, redirect
@@ -7,8 +6,7 @@ from .models import *
 from studies.logic.userAction import UserAction
 from studies.logic.FeedDb import FeedDb
 
-from studies.forms import StudiesNotesForm, BookForm, ChapterForm
-from django.db.models import Avg, Max, Min
+from studies.forms import StudiesNotesForm, ChapterForm
 
 user_action = UserAction()
 TIME_NOW = datetime.date.today()
@@ -16,6 +14,7 @@ TIME_NOW = datetime.date.today()
 
 @login_required
 def personal_home_view(request, book=None):
+    """ personal page with books and feedback"""
 
     context = {}
     context["books"] = user_action.get_books(request)
@@ -47,9 +46,6 @@ def book_view(request, book, chapter=None):
 
     if request.POST:
         user_action.create_or_update_chapter(request, context, book, chapter)
-    else:
-        form_chapter = ChapterForm(instance=context["chapter"])
-        context["form_chapter"] = form_chapter
 
     return render(request, "studies/book.html", context)
 
@@ -68,33 +64,14 @@ def note_add_or_update(request, chapter=None, note=None):
         context["instance_note"] = None  # new note
 
     if request.POST:
+        user_action.create_or_update_note(request, context, chapter)
 
-        form = StudiesNotesForm(
-            request.POST, instance=context["instance_note"])
-        context["form"] = form
-
-        if form.is_valid():
-            if context["instance_note"] is not None:
-                form.save()
-            else:
-                obj = form.save(commit=False)
-
-                obj.order_note = len(
-                    user_action.get_notes(request, chapter)) + 1
-                obj.chapter = user_action.get_chapter_404(request, chapter)
-                obj.save()
-                obj.users.add(request.user, through_defaults={})
-                obj.save()
-
-            return redirect('studies:book_page', chapter=chapter, book=book)
-
-    else:
-        context["form"] = StudiesNotesForm(instance=context["instance_note"])
-    return render(request, "studies/note.html", context)
+    return redirect('studies:book_page', chapter=chapter, book=book)
 
 
 @login_required
 def delete_book(request, book):
+    """ delete 1 book"""
     selected_book = get_object_or_404(Book, pk=book, users=request.user)
     selected_book.delete()
 
@@ -103,6 +80,7 @@ def delete_book(request, book):
 
 @login_required
 def delete_chapter(request, chapter):
+    """ delete 1 chapter"""
     selected_chapter = user_action.get_chapter_404(request, chapter)
 
     book = selected_chapter.book.id
@@ -112,6 +90,7 @@ def delete_chapter(request, chapter):
 
 @login_required
 def delete_note(request, note):
+    """ delete 1 note"""
     selected_note = user_action.get_note_404(request, note)
     book = selected_note.chapter.book.id
     chapter = selected_note.chapter.id
@@ -121,6 +100,7 @@ def delete_note(request, note):
 
 @login_required
 def add_data_in_db(request):
+    """ feed db with data """
     if not request.user.is_authenticated:
         return redirect("login")
 
@@ -138,121 +118,43 @@ def add_data_in_db(request):
 
 @login_required
 def start_game_view(request):
+    """ start auto game in a specific page """
     if not request.user.is_authenticated:
         return redirect("login")
     context = {}
     context["game_list_auto"] = user_action.get_notes_todo(
-        request, nbr_speed=3, nbr_long=2)
+        request, nbr_speed=20, nbr_long=20)
 
     return render(request, "studies/auto_game.html", context)
 
 
 @login_required
 def note_true_recto(request):
-    id = request.POST.get("Product_id")
-    result = get_object_or_404(
-        StudiesNotesProgression, pk=id, user=request.user)
-    if result.lvl_recto <= 5:
-        result.lvl_recto += 1
-        result.last_studied_date_recto = TIME_NOW
-        result.next_studied_date_recto = TIME_NOW + timedelta(days=1)
-
-    elif result.lvl_recto == 6:
-        result.lvl_recto += 1
-        result.last_studied_date_recto = TIME_NOW
-        result.next_studied_date_recto = TIME_NOW + timedelta(weeks=1)
-
-    elif result.lvl_recto == 7:
-        result.lvl_recto += 1
-        result.last_studied_date_recto = TIME_NOW
-        result.next_studied_date_recto = TIME_NOW + timedelta(weeks=4)
-
-    elif result.lvl_recto == 8:
-        result.lvl_recto += 1
-        result.last_studied_date_recto = TIME_NOW
-        result.next_studied_date_recto = TIME_NOW + timedelta(weeks=12)
-
-    elif result.lvl_recto == 9:
-        result.lvl_recto += 1
-        result.last_studied_date_recto = TIME_NOW
-        result.next_studied_date_recto = TIME_NOW + timedelta(weeks=24)
-
-    elif result.lvl_recto == 10:
-        result.last_studied_date_recto = TIME_NOW
-        result.next_studied_date_recto = TIME_NOW + timedelta(weeks=36)
-
-    result.save()
-
-    return JsonResponse({"operation_result": result.notes.text_recto})
+    """ valid 1 note recto and change lvl/next studie """
+    note_id = request.POST.get("Product_id")
+    user_action.change_lvl(request, note_id, sens="recto", win=True)
+    return JsonResponse({"status": "ok"})
 
 
 @login_required
 def note_true_verso(request):
-    id = request.POST.get("Product_id")
-    result = get_object_or_404(
-        StudiesNotesProgression, pk=id, user=request.user)
-    if result.lvl_verso <= 5:
-        result.lvl_verso += 1
-        result.last_studied_date_verso = TIME_NOW
-        result.next_studied_date_verso = TIME_NOW + timedelta(days=1)
-
-    elif result.lvl_verso == 6:
-        result.lvl_verso += 1
-        result.last_studied_date_verso = TIME_NOW
-        result.next_studied_date_verso = TIME_NOW + timedelta(weeks=1)
-
-    elif result.lvl_verso == 7:
-        result.lvl_verso += 1
-        result.last_studied_date_verso = TIME_NOW
-        result.next_studied_date_verso = TIME_NOW + timedelta(weeks=4)
-
-    elif result.lvl_verso == 8:
-        result.lvl_verso += 1
-        result.last_studied_date_verso = TIME_NOW
-        result.next_studied_date_verso = TIME_NOW + timedelta(weeks=12)
-
-    elif result.lvl_verso == 9:
-        result.lvl_verso += 1
-        result.last_studied_date_verso = TIME_NOW
-        result.next_studied_date_verso = TIME_NOW + timedelta(weeks=24)
-
-    elif result.lvl_verso == 10:
-        result.last_studied_date_verso = TIME_NOW
-        result.next_studied_date_verso = TIME_NOW + timedelta(weeks=36)
-
-    result.save()
-
-    return JsonResponse({"operation_result": result.notes.text_recto})
+    """ valid 1 note verso and change lvl/next studie """
+    note_id = request.POST.get("Product_id")
+    user_action.change_lvl(request, note_id, sens="verso", win=True)
+    return JsonResponse({"status": "ok"})
 
 
 @login_required
 def note_wrong_recto(request):
-    id = request.POST.get("Product_id")
-    result = get_object_or_404(
-        StudiesNotesProgression, pk=id, user=request.user)
-    result.lvl_recto = 1
-    result.last_studied_date_recto = TIME_NOW
-    result.next_studied_date_recto = TIME_NOW + timedelta(days=1)
-
-    result.save()
-
-    fav = request.POST.get("fav")
-    print("A EGAL ", fav, "_false_recto")
-
-    return JsonResponse({"operation_result": fav})
+    """ unvalid 1 note recto and change lvl/next studie """
+    note_id = request.POST.get("Product_id")
+    user_action.change_lvl(request, note_id, sens="recto", win=False)
+    return JsonResponse({"status": "ok"})
 
 
 @login_required
 def note_wrong_verso(request):
-    id = request.POST.get("Product_id")
-    result = get_object_or_404(
-        StudiesNotesProgression, pk=id, user=request.user)
-    result.lvl_verso = 1
-    result.last_studied_date_verso = TIME_NOW
-    result.next_studied_date_verso = TIME_NOW + timedelta(days=1)
-
-    result.save()
-
-    fav = request.POST.get("fav")
-
-    return JsonResponse({"operation_result": fav})
+    """ unvalid 1 note verso and change lvl/next studie """
+    note_id = request.POST.get("Product_id")
+    user_action.change_lvl(request, note_id, sens="verso", win=False)
+    return JsonResponse({"status": "ok"})

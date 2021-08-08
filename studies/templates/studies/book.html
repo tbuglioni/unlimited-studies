@@ -1,8 +1,7 @@
 {% extends 'base.html' %}{% load static %}
 
 <div>
-  {% block content %}
-  {% include "snippets/navebar.html" with user=user %}
+  {% block content %} {% include "snippets/navebar.html" with user=user %}
   <section
     class="container-fluid mt-5"
     style="
@@ -13,7 +12,6 @@
       height: 100vh;
     "
   >
-
     <p>Hello personal home</p>
 
     <div>
@@ -29,39 +27,26 @@
           >{{chapter.name}}</a
         >
         |
+        {% include 'studies/snippets/add_chapter_snippet.html' with chapter_selected=chapter book_id=book.id%}
         <a href="{% url 'studies:delete_chapter' chapter=chapter.id %}"
           >Delete</a
         >
-        <a href="{% url 'studies:specific_note' chapter=chapter.id%}"
-          >add note</a
-        >
-        {% include 'studies/snippets/add_chapter_snippet.html' with chapter_selected=chapter book_id=book.id%}
       </li>
     </div>
 
     {% endfor %}
     <hr />
-    {% include 'studies/snippets/add_chapter_snippet.html' with book_id=book.id%} 
-    
-    {% if notes %}
+    {% include 'studies/snippets/add_chapter_snippet.html' with book_id=book.id%} {% if notes %}
     <hr />
     {% for note in notes %}
     <div>
       <li>
         {{note.text_recto}} {{note.text_verso}}
-        <a
-          href="{% url 'studies:specific_note' chapter=note.chapter.id note=note.id %}"
-          >Update</a
-        >
         {% include 'studies/snippets/add_note_snippet.html' with note_selected=note chapter_id=chapter.id %}
 
         <a href="{% url 'studies:delete_note' note=note.id %}">Delete</a>
       </li>
     </div>
-    {% endfor %} 
-    
-    {% include 'studies/snippets/add_note_snippet.html' with chapter_id=chapter.id %} 
-    {% endif %} 
-    {% endblock content %}
+    {% endfor %} {% include 'studies/snippets/add_note_snippet.html' with chapter_id=chapter.id %} {% endif %} {% endblock content %}
   </section>
 </div>

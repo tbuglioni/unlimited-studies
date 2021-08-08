@@ -36,7 +36,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 
   <script type="text/javascript">
-    function ajax_test(balise, link_to_views) {
+    function ajax_button_game(balise, link_to_views) {
       $(document).ready(function () {
         $(balise).click(function () {
           event.preventDefault();
@@ -61,10 +61,16 @@
         });
       });
     }
-    ajax_test(".ajax-true-recto", "{% url 'studies:note_true_recto' %}");
-    ajax_test(".ajax-true-verso", "{% url 'studies:note_true_verso' %}");
-    ajax_test(".ajax-wrong-recto", "{% url 'studies:note_wrong_recto' %}");
-    ajax_test(".ajax-wrong-verso", "{% url 'studies:note_wrong_verso' %}");
+    ajax_button_game(".ajax-true-recto", "{% url 'studies:note_true_recto' %}");
+    ajax_button_game(".ajax-true-verso", "{% url 'studies:note_true_verso' %}");
+    ajax_button_game(
+      ".ajax-wrong-recto",
+      "{% url 'studies:note_wrong_recto' %}"
+    );
+    ajax_button_game(
+      ".ajax-wrong-verso",
+      "{% url 'studies:note_wrong_verso' %}"
+    );
   </script>
 
   {% endblock content %}
