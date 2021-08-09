@@ -6,8 +6,6 @@ from .models import *
 from studies.logic.userAction import UserAction
 from studies.logic.FeedDb import FeedDb
 
-from studies.forms import StudiesNotesForm, ChapterForm
-
 user_action = UserAction()
 TIME_NOW = datetime.date.today()
 

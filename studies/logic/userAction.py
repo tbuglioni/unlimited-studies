@@ -170,61 +170,61 @@ class UserAction:
         """ Update the current level of the given note"""
         if sens == "recto":
             note.lvl_recto += 1
-            note.last_studied_date_verso = self.TIME_NOW
-            note.next_studied_date_verso = self.TIME_NOW + timedelta(days=days)
+            note.last_studied_date_recto = self.TIME_NOW
+            note.next_studied_date_recto = self.TIME_NOW + timedelta(days=days)
 
         elif sens == "verso":
             note.lvl_verso += 1
-            note.last_studied_date_recto = self.TIME_NOW
-            note.next_studied_date_recto = self.TIME_NOW + timedelta(days=days)
+            note.last_studied_date_verso = self.TIME_NOW
+            note.next_studied_date_verso = self.TIME_NOW + timedelta(days=days)
         note.save()
 
     def __conditional_update(self, note, sens):
         """ update note in a conditional lvl """
         if sens == "recto":
-            if note.lvl_verso <= 5:
+            if note.lvl_recto <= 5:
                 self.__update_lvl(note, sens, 1)  # 1 day
 
-            elif note.lvl_verso == 6:
+            elif note.lvl_recto == 6:
                 self.__update_lvl(note, sens, 7)  # 1 week
 
-            elif note.lvl_verso == 7:
+            elif note.lvl_recto == 7:
                 self.__update_lvl(note, sens, 30)  # 1 month
 
-            elif note.lvl_verso == 8:
+            elif note.lvl_recto == 8:
                 self.__update_lvl(note, sens, 90)  # 3 month
 
-            elif note.lvl_verso == 9:
+            elif note.lvl_recto == 9:
                 self.__update_lvl(note, sens, 182)  # 6 month
 
-            elif note.lvl_verso == 10:
+            elif note.lvl_recto == 10:
                 self.__update_lvl(note, sens, 364)  # 1 year
 
         elif sens == "verso":
-            if note.lvl_recto <= 5:
+            if note.lvl_verso <= 5:
                 self.__update_lvl(note, sens, 1)  # 1 day
-            elif note.lvl_recto == 6:
+            elif note.lvl_verso == 6:
                 self.__update_lvl(note, sens, 7)  # 1 week
-            elif note.lvl_recto == 7:
+            elif note.lvl_verso == 7:
                 self.__update_lvl(note, sens, 30)  # 1 month
-            elif note.lvl_recto == 8:
+            elif note.lvl_verso == 8:
                 self.__update_lvl(note, sens, 90)  # 3 month
-            elif note.lvl_recto == 9:
+            elif note.lvl_verso == 9:
                 self.__update_lvl(note, sens, 182)  # 6 month
-            elif note.lvl_recto == 10:
+            elif note.lvl_verso == 10:
                 self.__update_lvl(note, sens, 364)  # 1 year
 
     def __reset_lvl(self, note, sens):
         """ Reset the level of the note"""
         if sens == "recto":
             note.lvl_recto = 1
-            note.last_studied_date_verso = self.TIME_NOW
-            note.next_studied_date_verso = self.TIME_NOW + timedelta(days=1)
+            note.last_studied_date_recto = self.TIME_NOW
+            note.next_studied_date_recto = self.TIME_NOW + timedelta(days=1)
 
         elif sens == "verso":
             note.lvl_verso = 1
-            note.last_studied_date_recto = self.TIME_NOW
-            note.next_studied_date_recto = self.TIME_NOW + timedelta(days=1)
+            note.last_studied_date_verso = self.TIME_NOW
+            note.next_studied_date_verso = self.TIME_NOW + timedelta(days=1)
         note.save()
 
     def change_lvl(self, request, note_id, sens, win=True):

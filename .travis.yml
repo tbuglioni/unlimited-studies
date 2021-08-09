@@ -6,7 +6,7 @@ python:
 
 branches:
   only:
-    - staging
+    - main
 
 addons:
   chrome: stable

@@ -6,21 +6,14 @@ app_name = "studies"
 urlpatterns = [
     path("", views.personal_home_view, name="personal_home"),
     path("<int:book>", views.personal_home_view, name="personal_home"),
-
     # get
     path("book/<int:book>", views.book_view, name="book_page"),
     path("book/<int:book>/<int:chapter>",
          views.book_view, name="book_page"),
 
-    #add or update
-    # book
-
-
-    # chapter
-
     # note:
-    path("note/<int:chapter>", views.note_add_or_update, name="specific_note"),
-    path("note/<int:chapter>/<int:note>",
+    path("chapter/<int:chapter>", views.note_add_or_update, name="specific_note"),
+    path("chapter/<int:chapter>/<int:note>",
          views.note_add_or_update, name="specific_note"),
 
     # delete
