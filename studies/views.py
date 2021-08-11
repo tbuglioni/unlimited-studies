@@ -4,8 +4,9 @@ import datetime
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import *
 from studies.logic.userAction import UserAction
+from studies.logic.analyse import Analyse
 from studies.logic.FeedDb import FeedDb
-
+from django.db.models import Q
 user_action = UserAction()
 TIME_NOW = datetime.date.today()
 
@@ -16,6 +17,14 @@ def personal_home_view(request, book=None):
 
     context = {}
     context["books"] = user_action.get_books(request)
+    current_analyse = Analyse(request)
+                
+    context["todoo"] = current_analyse.get_nbr_notes_todoo()
+    context["all_notes"] = current_analyse.get_nbr_of_notes()
+    context["all_notes_avg"] = current_analyse.get_lvl_avg()
+    context["books_avg"] = current_analyse.get_list_lvl_avg_each_book()
+    context["Today_recap"]= current_analyse.get_notes_studied_today()
+    context["month_recap"]= current_analyse.get_notes_studied_this_month()
 
     if book is not None:
         context["selectedBook"] = user_action.get_book_404(request, book)

@@ -1,16 +1,11 @@
-{% extends 'base.html' %}{% load static %}
+{% extends 'base.html' %}
 
 <div>
   {% block content %}
 
   {% include "snippets/navebar.html" with user=user %}
   <div
-    class="container-fluid vh-100"
-    style="
-      background-image: url('static/img/fisherman.jpg');
-      background-size: cover;
-      background-repeat: no-repeat;
-    "
+    class="container-fluid vh-100 img_custom1"
   >
     
     <div class="d-flex h-100 align-items-center justify-content-center">

@@ -39,18 +39,25 @@
   </nav>
 </section>
 <script type="text/javascript">
-$(function() {
-    var header = $(".navbar");
-    $(window).scroll(function() {    
-        var scroll = $(window).scrollTop();
-    
-        if (scroll >= 100) {
-            header.removeClass('navbar-dark bg-transparent').addClass("bg-white navbar-light bg-light");
-        } else {
-            header.removeClass("navbar-light bg-light").addClass('navbar-dark bg-transparent');
-        }
-    });
-});
+if ($(window).scrollTop() > 10 || window.innerWidth < 1000) {
+      $('.navbar').removeClass('navbar-dark bg-transparent').addClass("bg-white navbar-light bg-light");
+    }
+    else {
+      $('.navbar').removeClass("navbar-light bg-light").addClass('navbar-dark bg-transparent');
+        
+    }
+function listener (e) {
+    e.preventDefault();
+    if ($(window).scrollTop() > 10 || window.innerWidth < 1000) {
+      $('.navbar').removeClass('navbar-dark bg-transparent').addClass("bg-white navbar-light bg-light");
+    }
+    else {
+      $('.navbar').removeClass("navbar-light bg-light").addClass('navbar-dark bg-transparent');
+        
+    }
+}
+$(window).scroll(listener);
+$(window).resize(listener);
 
 
 </script>

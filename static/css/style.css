@@ -12,6 +12,32 @@ font-family: "daniel hand";
 font-size: 1rem;
 }
 
-.half-black {
-  background: rgba(black, 0.5);
+.new_font_daniel-lg {
+font-family: "daniel hand";
+font-size: 3rem;
 }
+
+
+.half-black {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.img_custom1 {
+  
+  background-size: cover;
+  background-repeat: no-repeat;
+    }
+
+@media screen and (max-width: 767px){   
+  .img_custom1{      
+    background-image: url('../img/fractal.jpg');
+      } 
+  }
+  
+@media screen and (min-width: 768px) {      
+  .img_custom1{      
+    background-image: url('../img/fisherman.jpg');
+       } 
+  }
+
+

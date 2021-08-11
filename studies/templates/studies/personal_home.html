@@ -1,36 +1,66 @@
 {% extends 'base.html' %}{% load static %}
 <div>
-  {% block content %}
+  {% block content %} 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.3.0/echarts.min.js"></script>
+  
   {% include "snippets/navebar.html" with user=user %}
-  <div
-    class="container-fluid mt-5"
-    style="
-      background-image: url('static/img/fisherman.jpg');
-      background-size: cover;
-      background-repeat: no-repeat;
-      width: 100vw;
-      height: 100vh;
-    "
-  >
-    <a href="{% url 'studies:feed_db'%}">feed db</a>
-
-    <p>Hello personal home</p>
+  <div class="container-fluid mt-5 pt-5 ">
+    <h1 class="text-center new_font_daniel-lg" >Home</h1>
+    <p class="text-center">{{user.username}}</p>
     <br />
     <p>all books :</p>
-    {% for book in books %}
-    <li>
-      <a href="{% url 'studies:book_page' book=book.id%}">{{book.name}}</a> |
-      <a href="{% url 'studies:delete_book' book=book.id%}">delete</a>
-      {% include 'studies/snippets/add_book_snippet.html' with book_selected=book%}
-    </li>
+    <div class="row">
+      <!-- small data -->
+      <section class="col-3 border m-1">total note {{all_notes}}</section>
+      <section class="col-3 border m-1">todoo note recto / verso {{todoo}}</section>
+      <section class="col-3 border m-1">lvl average note {{all_notes_avg}}</section>
+      <section class="col-3 border m-1">daily strike</section>
+      <section class="col-3 border m-1">Today recap {{Today_recap}}</section>
+      <section class="col-3 border m-1">Month recap {{month_recap}}</section>
 
-    {% endfor %} {% include 'studies/snippets/add_book_snippet.html'%}
-    <form action="{% url 'studies:personal_home' %}" method="POST">
-      {% csrf_token %}
-      <div>{{form_book}}</div>
-
-      <input type="submit" value="add book" />
-    </form>
+      <!-- big graph -->
+      <section class="col-xl-6 border" style="height:25em">
+        {% include "studies/snippets/smooth_graph_snippet.html" %}
+      </section>
+      <section class="col-xl-6 border" style="height:25em">
+        {% include "studies/snippets/spider_graph_snippet.html" with books_avg=books_avg books=books %}
+      </section>
+      
+    </div>
+    
+    <a href="{% url 'studies:feed_db'%}">feed db</a>
+    <section name="book table" class="col-md-6 border">
+      <table class="table-dark table-striped table">
+        <thead>
+          <tr>
+            <th scope="col">Ordre</th>
+            <th scope="col">Livre</th>
+            <th scope="col">supprimer</th>
+            <th scope="col">modifier</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for book in books %}
+          <tr>
+            <th scope="row">1</th>
+            <td>
+              <a href="{% url 'studies:book_page' book=book.id%}"
+                >{{book.name}}</a
+              >
+            </td>
+            <td>
+              <a href="{% url 'studies:delete_book' book=book.id%}">delete</a>
+            </td>
+            <td>
+              {% include 'studies/snippets/add_book_snippet.html' with book_selected=book%}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% include 'studies/snippets/add_book_snippet.html'%}
+    </section>
   </div>
 
   {% endblock content %}

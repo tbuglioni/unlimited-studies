@@ -151,7 +151,7 @@ class GlobalDailyAnalysis(models.Model):
     all_studied_1_time = models.PositiveIntegerField(default=0, null=False)
 
     def __str__(self):
-        return self.user
+        return f"day, {self.user}"
 
     class Meta:
         ordering = ["user", "date"]
@@ -172,7 +172,7 @@ class GlobalMonthlyAnalysis(models.Model):
     all_studied_1_time = models.PositiveIntegerField(default=0)
 
     def __str__(self):
-        return self.user
+        return f"month, {self.user}"
 
     class Meta:
         ordering = ["user", "date"]

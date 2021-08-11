@@ -1,0 +1,128 @@
+
+<div
+  id="myChartSpider" style="min-height: 100px ;width: 100%; height: 100%;" ></div>
+<script type="text/javascript">
+
+  // start effect
+  var chartDomSpider = document.getElementById("myChartSpider");
+  var myChartSpider = echarts.init(chartDomSpider, 'dark');
+
+  // manage font size change (responsive)
+  function autoFontSize() {
+    let widthSpider = document.getElementById('myChartSpider').offsetWidth;
+    let heightSpider = document.getElementById('myChartSpider').offsetHeight;
+    if (widthSpider >= heightSpider) {
+      let newFontSizeSpider = Math.round((heightSpider) / 40);
+      return newFontSizeSpider;
+    }
+    else {
+      let newFontSizeSpider = Math.round((widthSpider) / 40);
+      return newFontSizeSpider;
+    }
+    console.log(`Current width : ${widthSpider}, Updating Fontsize to ${newFontSize}`);
+    return newFontSize;
+  };
+
+var optionSpider;
+
+// Schema:
+// date,AQIindex,PM2.5,PM10,CO,NO2,SO2
+var dataBJ = [
+    {{books_avg}},
+    
+];
+
+var lineStyle = {
+    normal: {
+        width: 1,
+        opacity: 0.5
+    }
+};
+
+optionSpider = {
+    backgroundColor: "#333333",
+    title: {
+        text: 'Books',
+        left: 'center',
+        textStyle: {
+            color: '#eee'
+        }
+    },
+    legend: {
+        bottom: 5,
+        data: ['北京', '上海', '广州'],
+        itemGap: 20,
+        textStyle: {
+            color: '#fff',
+            fontSize: 14
+        },
+        selectedMode: 'single'
+    },
+    // visualMap: {
+    //     show: true,
+    //     min: 0,
+    //     max: 20,
+    //     dimension: 6,
+    //     inRange: {
+    //         colorLightness: [0.5, 0.8]
+    //     }
+    // },
+    radar: {
+        indicator: [
+            {% if books %}
+            {% for book in books %}
+            {name: "{{book.name}}", max: 10},
+            {% endfor %}
+            {% else %}
+            {name: "", max: 10}
+            {% endif %}
+        ],
+        shape: 'circle',
+        splitNumber: 10,
+        name: {
+            textStyle: {
+                color: 'rgb(238, 197, 102)'
+            }
+        },
+        splitLine: {
+            lineStyle: {
+                color: [
+                    'rgba(238, 197, 102, 0.1)', 'rgba(238, 197, 102, 0.2)',
+                    'rgba(238, 197, 102, 0.4)', 'rgba(238, 197, 102, 0.6)',
+                    'rgba(238, 197, 102, 0.8)', 'rgba(238, 197, 102, 1)'
+                ].reverse()
+            }
+        },
+        splitArea: {
+            show: false
+        },
+        axisLine: {
+            lineStyle: {
+                color: 'rgba(238, 197, 102, 0.5)'
+            }
+        }
+    },
+    
+};
+
+optionSpider && myChartSpider.setOption(optionSpider);
+
+  // active responsive update for chart and fontSize
+  $(window).on('resize', function() {
+  if (myChartSpider != null && myChartSpider != undefined) {
+    myChartSpider.resize({
+      width: 'auto',
+      height: 'auto'
+    });
+    myChartSpider.setOption({
+      series: {
+        label: {
+          textStyle: {
+            fontSize: autoFontSize()
+          }
+        }
+      }
+    })
+  }
+});
+</script>

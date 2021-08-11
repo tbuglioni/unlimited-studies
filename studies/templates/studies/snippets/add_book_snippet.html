@@ -20,7 +20,7 @@
 >
   <div class="modal-dialog">
     <div class="modal-content">
-      <div class="modal-header">
+      <div class="modal-header bg-dark">
         <h5 class="modal-title" id="bookAddModalLabel">Add Book</h5>
         <button
           type="button"
@@ -29,12 +29,12 @@
           aria-label="Close"
         ></button>
       </div>
-      <div class="modal-body">
+      <div class="modal-body ">
         <form action="{% url 'studies:personal_home'%}" method="POST">
           {% csrf_token %}
-          <tr>
-            <th><label for="id_name">Name :</label></th>
-            <td>
+          <div>
+            <p><label for="id_name">Name :</label></p>
+            <p>
               <input
                 type="text"
                 name="name"
@@ -42,11 +42,11 @@
                 required
                 id="id_name"
               />
-            </td>
-          </tr>
-          <tr>
-            <th><label for="id_description">Description :</label></th>
-            <td>
+            </div>
+          </p>
+          <div>
+            <p><label for="id_description">Description :</label></p>
+            <p>
               <textarea
                 name="description"
                 cols="40"
@@ -54,11 +54,11 @@
                 maxlength="1000"
                 id="id_description"
               ></textarea>
-            </td>
-          </tr>
-          <tr>
-            <th><label for="id_source_info">Source info :</label></th>
-            <td>
+            </div>
+          </p>
+          <div>
+            <p><label for="id_source_info">Source info :</label></p>
+            <p>
               <textarea
                 name="source_info"
                 cols="40"
@@ -66,8 +66,8 @@
                 maxlength="1000"
                 id="id_source_info"
               ></textarea>
-            </td>
-          </tr>
+            </div>
+          </p>
           <button type="submit" class="btn btn-primary">save</button>
         </form>
       </div>
@@ -97,7 +97,7 @@
   data-bs-target="#bookAddModal{{book_selected.id}}"
   id="{{book_selected.id}}"
 >
-  modify
+Modify Book
 </button>
 
 <!-- Modal -->
@@ -109,9 +109,9 @@
   aria-hidden="true"
 >
   <div class="modal-dialog">
-    <div class="modal-content">
+    <div class="modal-content bg-dark">
       <div class="modal-header">
-        <h5 class="modal-title" id="bookAddModalLabel">modify Chapter</h5>
+        <h5 class="modal-title" id="bookAddModalLabel">Modify book</h5>
         <button
           type="button"
           class="btn-close"
@@ -125,9 +125,9 @@
           method="POST"
         >
           {% csrf_token %}
-          <tr>
-            <th><label for="id_name">Name :</label></th>
-            <td>
+          <div>
+            <p><label for="id_name">Name :</label></p>
+            <p>
               <input
                 type="text"
                 name="name"
@@ -138,11 +138,11 @@
                 autofocus
                 onfocus="this.value = this.value;"
               />
-            </td>
-          </tr>
-          <tr>
-            <th><label for="id_description">Description :</label></th>
-            <td>
+            </div>
+          </p>
+          <div>
+            <p><label for="id_description">Description :</label></p>
+            <p>
               <textarea
                 name="description"
                 cols="40"
@@ -151,11 +151,11 @@
                 id="id_description"
                 value="{{book_selected.description}}"
               ></textarea>
-            </td>
-          </tr>
-          <tr>
-            <th><label for="id_source_info">Source info :</label></th>
-            <td>
+            </div>
+          </p>
+          <div>
+            <p><label for="id_source_info">Source info :</label></p>
+            <p>
               <textarea
                 name="source_info"
                 cols="40"
@@ -164,8 +164,8 @@
                 id="id_source_info"
                 value="{{book_selected.source_info}}"
               ></textarea>
-            </td>
-          </tr>
+            </div>
+          </p>
           <button type="submit" class="btn btn-primary">save</button>
         </form>
       </div>
