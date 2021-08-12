@@ -1,77 +1,169 @@
-{% extends 'base.html' %} {% block content %}
-<div>
-  <h1>Studies session</h1>
+{% extends 'base.html' %}{% load static %} {% block content %}{% csrf_token %}
 
-  {% for elt in game_list_auto %}
-  <div>
-    <div>
-      <div id="{{elt.id}}">{{elt.text}}</div>
-      <p>
-        <button onclick="myFunction{{elt.id}}()">Click Me</button>
-      </p>
-      <script type="text/javascript">
-        function myFunction{{elt.id}}() {
-          var x = document.getElementById("{{elt.id}}");
-          if (x.innerHTML === "{{elt.text}}") {
-            x.innerHTML = "{{elt.response}}";
-          } else {
-            x.innerHTML = "{{elt.text}}";
-          }
-        }
-      </script>
-      <button class="{{elt.class_button_true}}" value="{{elt.id}}">true</button>
-      <button class="{{elt.class_button_wrong}}" value="{{elt.id}}">
-        wrong
-      </button>
-      <div>_________</div>
+<link
+  style="text/css"
+  rel="stylesheet"
+  href="{% static 'studies/css/glide.core.min.css' %}"
+/>
+<link
+  style="text/css"
+  rel="stylesheet"
+  href="{% static 'studies/css/glide.theme.min.css' %}"
+/>
+<!-- BODY (glide library)-->
+<div class="container">
+  <h1>Studies session</h1>
+  <div class="glide">
+    <div class="glide__track" data-glide-el="track">
+      <!-- slides -->
+      <ul class="glide__slides" style="height: 50vh">
+        <li class="glide__slide border">Start</li>
+        {% for elt in game_list_auto %}
+        <li id="slide{{elt.id}}{{elt.sens}}" class="glide__slide border">
+          <!-- slide data -->
+          <p id="{{elt.id}}{{elt.sens}}">{{elt.text}}</p>
+          <!-- response buttons -->
+          <button
+            onclick="showResponse('{{elt.id}}{{elt.sens}}', '{{elt.text}}', '{{elt.response}}')"
+          >
+            Response
+          </button>
+          <!-- validation buttons -->
+          <div data-glide-el="controls">
+            <button
+              data-glide-dir=">"
+              onclick="myFunction('slide{{elt.id}}{{elt.sens}}', true,'{{elt.id}}', '{{elt.sens}}' )"
+            >
+              Valid
+            </button>
+            <button
+              data-glide-dir=">"
+              onclick="myFunction('slide{{elt.id}}{{elt.sens}}', false,'{{elt.id}}', '{{elt.sens}}' )"
+            >
+              Fail
+            </button>
+          </div>
+        </li>
+        {% endfor %}
+        <li id="ending slide" class="glide__slide border">
+          <p>End</p>
+          <button onclick="saveAndQuit()">save and quit</button>
+        </li>
+      </ul>
     </div>
-    {% empty %}
-    <div>Fini</div>
-    {% endfor %}
+    <div class="glide__arrows" data-glide-el="controls">
+      <button class="glide__arrow glide__arrow--left" data-glide-dir="<">
+        prev
+      </button>
+      <button class="glide__arrow glide__arrow--right" data-glide-dir=">">
+        next
+      </button>
+    </div>
+    <div data-glide-el="controls">
+      <button data-glide-dir="<<">Start</button>
+      <button data-glide-dir=">>">End</button>
+    </div>
+  </div>
+  <div>
+    Result:
+    <p id="result"></p>
+    <p id="exit"></p>
+    <button onclick="saveAndQuit()">save and quit</button>
   </div>
 
-  {% csrf_token %}
-  <p id="operation"></p>
-
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@glidejs/glide"></script>
 
   <script type="text/javascript">
-    function ajax_button_game(balise, link_to_views) {
-      $(document).ready(function () {
-        $(balise).click(function () {
-          event.preventDefault();
+    // Glide setup
+    new Glide(".glide").mount();
 
-          let form = new FormData();
+    class GameData {
+      constructor() {
+        this.win_id_list = [];
+        this.fail_id_list = [];
+        this.data_db = [];
+      }
 
-          form.append("Product_id", $(this).val());
+      updateBackgroundColor(elt, win) {
+        var x = document.getElementById(elt);
+        if (win) {
+          x.classList.add("bg-primary");
+        } else {
+          x.classList.add("bg-danger");
+        }
+      }
 
-          let csrfTokenValue = document.querySelector(
-            "[name=csrfmiddlewaretoken]"
-          ).value;
-          let request = new Request(link_to_views, {
-            method: "POST",
-            body: form,
-            headers: { "X-CSRFToken": csrfTokenValue },
-          });
-          fetch(request)
-            .then((response) => response.json())
-            .then((result) => {
-              $(this).parent().remove();
-            });
+      updateListed(elt, win, note_id, note_sens) {
+        if (
+          win &&
+          !this.win_id_list.includes(elt) &&
+          !this.fail_id_list.includes(elt)
+        ) {
+          this.win_id_list.push(elt);
+          this.data_db.push({ id: note_id, sens: note_sens, win: win });
+        } else if (
+          !win &&
+          !this.fail_id_list.includes(elt) &&
+          !this.win_id_list.includes(elt)
+        ) {
+          this.fail_id_list.push(elt);
+          this.data_db.push({ id: "hello", sens: note_sens, win: win });
+        }
+      }
+
+      updateResult(elt, result) {
+        var result = document.getElementById("result");
+        result.innerHTML = this.win_id_list.length + this.fail_id_list.length;
+        var ending_slide = document.getElementById("ending slide");
+        ending_slide.innerHTML =
+          this.win_id_list.length +
+          "/" +
+          (this.win_id_list.length + this.fail_id_list.length);
+      }
+
+      showResponse(elt, text, response) {
+        var x = document.getElementById(elt);
+        if (x.innerHTML === text) {
+          x.innerHTML = response;
+        } else {
+          x.innerHTML = text;
+        }
+      }
+
+      sendData() {
+        alert("sending");
+        let form = new FormData();
+        form.append("exit_list", JSON.stringify(this.data_db));
+
+        let csrfTokenValue = document.querySelector(
+          "[name=csrfmiddlewaretoken]"
+        ).value;
+        let request = new Request("{% url 'studies:game_auto' %}", {
+          method: "POST",
+          body: form,
+          headers: { "X-CSRFToken": csrfTokenValue },
         });
-      });
+        fetch(request);
+      }
     }
-    ajax_button_game(".ajax-true-recto", "{% url 'studies:note_true_recto' %}");
-    ajax_button_game(".ajax-true-verso", "{% url 'studies:note_true_verso' %}");
-    ajax_button_game(
-      ".ajax-wrong-recto",
-      "{% url 'studies:note_wrong_recto' %}"
-    );
-    ajax_button_game(
-      ".ajax-wrong-verso",
-      "{% url 'studies:note_wrong_verso' %}"
-    );
-  </script>
 
+    let gameData = new GameData();
+
+    function myFunction(elt, win, note_id, note_sens) {
+      gameData.updateBackgroundColor(elt, win);
+      gameData.updateListed(elt, win, note_id, note_sens);
+      gameData.updateResult(elt, win);
+    }
+
+    function showResponse(elt_id, elt_text, elt_response) {
+      gameData.showResponse(elt_id, elt_text, elt_response);
+    }
+
+    function saveAndQuit() {
+      gameData.sendData();
+    }
+
+    // ending ajax to send the data to the server
+  </script>
   {% endblock content %}
 </div>

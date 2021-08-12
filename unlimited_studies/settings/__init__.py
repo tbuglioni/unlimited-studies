@@ -26,7 +26,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-
+INTERNAL_IPS = [
+    # ...
+    '127.0.0.1',
+    # ...
+]
 # Application definition
 
 INSTALLED_APPS = [
@@ -38,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'account',
     'studies',
+    'debug_toolbar',
 ]
 
 MIDDLEWARE = [
@@ -48,6 +53,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'unlimited_studies.urls'
@@ -135,5 +141,5 @@ LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "studies/"
 
 # SESSION_COOKIE_SECURE = True # Set to True to use https
-# CSRF_COOKIE_SECURE = True 
+# CSRF_COOKIE_SECURE = True
 # SESSION_COOKIE_SAMESITE = None # Set to None to allow all sites to use the cookie.

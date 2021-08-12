@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+import json
 from django.http import JsonResponse
 import datetime
 from django.shortcuts import render, get_object_or_404, redirect
@@ -7,24 +8,25 @@ from studies.logic.userAction import UserAction
 from studies.logic.analyse import Analyse
 from studies.logic.FeedDb import FeedDb
 from django.db.models import Q
-user_action = UserAction()
+
 TIME_NOW = datetime.date.today()
 
 
 @login_required
 def personal_home_view(request, book=None):
     """ personal page with books and feedback"""
+    user_action = UserAction()
 
     context = {}
     context["books"] = user_action.get_books(request)
     current_analyse = Analyse(request)
-                
+
     context["todoo"] = current_analyse.get_nbr_notes_todoo()
     context["all_notes"] = current_analyse.get_nbr_of_notes()
     context["all_notes_avg"] = current_analyse.get_lvl_avg()
     context["books_avg"] = current_analyse.get_list_lvl_avg_each_book()
-    context["Today_recap"]= current_analyse.get_notes_studied_today()
-    context["month_recap"]= current_analyse.get_notes_studied_this_month()
+    context["Today_recap"] = current_analyse.get_notes_studied_today()
+    context["month_recap"] = current_analyse.get_notes_studied_this_month()
 
     if book is not None:
         context["selectedBook"] = user_action.get_book_404(request, book)
@@ -40,6 +42,7 @@ def personal_home_view(request, book=None):
 @login_required
 def book_view(request, book, chapter=None):
     """ book with 0/1 selected chapter"""
+    user_action = UserAction()
     context = {}
     context["book"] = user_action.get_book_404(request, book)
     context["chapters"] = Chapter.objects.filter(book=book)
@@ -60,6 +63,7 @@ def book_view(request, book, chapter=None):
 @login_required
 def note_add_or_update(request, chapter=None, note=None):
     """ 1 note to add / change """
+    user_action = UserAction()
     context = {}
     context["chapter"] = chapter
     book = Chapter.objects.get(pk=chapter).book.id
@@ -78,6 +82,7 @@ def note_add_or_update(request, chapter=None, note=None):
 
 @login_required
 def delete_book(request, book):
+    user_action = UserAction()
     """ delete 1 book"""
     selected_book = get_object_or_404(Book, pk=book, users=request.user)
     selected_book.delete()
@@ -87,6 +92,7 @@ def delete_book(request, book):
 
 @login_required
 def delete_chapter(request, chapter):
+    user_action = UserAction()
     """ delete 1 chapter"""
     selected_chapter = user_action.get_chapter_404(request, chapter)
 
@@ -97,6 +103,7 @@ def delete_chapter(request, chapter):
 
 @login_required
 def delete_note(request, note):
+    user_action = UserAction()
     """ delete 1 note"""
     selected_note = user_action.get_note_404(request, note)
     book = selected_note.chapter.book.id
@@ -126,11 +133,17 @@ def add_data_in_db(request):
 @login_required
 def start_game_view(request):
     """ start auto game in a specific page """
+    if request.POST:
+        dict_ = json.loads(request.POST.get('exit_list'))
+        print(dict_)
+        return redirect('studies:personal_home')
+
+    user_action = UserAction()
     if not request.user.is_authenticated:
         return redirect("login")
     context = {}
     context["game_list_auto"] = user_action.get_notes_todo(
-        request, nbr_speed=20, nbr_long=20)
+        request, nbr_speed=300, nbr_long=300)
 
     return render(request, "studies/auto_game.html", context)
 
@@ -138,6 +151,7 @@ def start_game_view(request):
 @login_required
 def note_true_recto(request):
     """ valid 1 note recto and change lvl/next studie """
+    user_action = UserAction()
     note_id = request.POST.get("Product_id")
     user_action.change_lvl(request, note_id, sens="recto", win=True)
     return JsonResponse({"status": "ok"})
@@ -146,6 +160,7 @@ def note_true_recto(request):
 @login_required
 def note_true_verso(request):
     """ valid 1 note verso and change lvl/next studie """
+    user_action = UserAction()
     note_id = request.POST.get("Product_id")
     user_action.change_lvl(request, note_id, sens="verso", win=True)
     return JsonResponse({"status": "ok"})
@@ -154,6 +169,7 @@ def note_true_verso(request):
 @login_required
 def note_wrong_recto(request):
     """ unvalid 1 note recto and change lvl/next studie """
+    user_action = UserAction()
     note_id = request.POST.get("Product_id")
     user_action.change_lvl(request, note_id, sens="recto", win=False)
     return JsonResponse({"status": "ok"})
@@ -162,6 +178,7 @@ def note_wrong_recto(request):
 @login_required
 def note_wrong_verso(request):
     """ unvalid 1 note verso and change lvl/next studie """
+    user_action = UserAction()
     note_id = request.POST.get("Product_id")
     user_action.change_lvl(request, note_id, sens="verso", win=False)
     return JsonResponse({"status": "ok"})

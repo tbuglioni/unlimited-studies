@@ -3,32 +3,35 @@
   {% block content %} 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.3.0/echarts.min.js"></script>
-  
+
+  <!-- NAVBAR -->
   {% include "snippets/navebar.html" with user=user %}
+
+  <!-- BODY -->
   <div class="container-fluid mt-5 pt-5 ">
     <h1 class="text-center new_font_daniel-lg" >Home</h1>
     <p class="text-center">{{user.username}}</p>
     <br />
     <p>all books :</p>
     <div class="row">
-      <!-- small data -->
-      <section class="col-3 border m-1">total note {{all_notes}}</section>
-      <section class="col-3 border m-1">todoo note recto / verso {{todoo}}</section>
-      <section class="col-3 border m-1">lvl average note {{all_notes_avg}}</section>
-      <section class="col-3 border m-1">daily strike</section>
-      <section class="col-3 border m-1">Today recap {{Today_recap}}</section>
-      <section class="col-3 border m-1">Month recap {{month_recap}}</section>
+      <!-- small data recap -->
+      <section name="total note" class="col-3 border m-1">total note {{all_notes}}</section>
+      <section name="todoo note" class="col-3 border m-1">todoo note recto / verso {{todoo}}</section>
+      <section name="lvl average note" class="col-3 border m-1">lvl average note {{all_notes_avg}}</section>
+      <section name="daily strike" class="col-3 border m-1">daily strike</section>
+      <section name="Today recap" class="col-3 border m-1">Today recap {{Today_recap}}</section>
+      <section name="Month recap" class="col-3 border m-1">Month recap {{month_recap}}</section>
 
-      <!-- big graph -->
-      <section class="col-xl-6 border" style="height:25em">
-        {% include "studies/snippets/smooth_graph_snippet.html" %}
+      <!-- big graph recap -->
+      <section name="pie chart" class="col-xl-6 border" style="height:25em">
+        {% include "studies/snippets/pie_graph_snippet.html" %}
       </section>
-      <section class="col-xl-6 border" style="height:25em">
+      <section name="spider graph" class="col-xl-6 border" style="height:25em">
         {% include "studies/snippets/spider_graph_snippet.html" with books_avg=books_avg books=books %}
       </section>
       
     </div>
-    
+    <!-- book table -->
     <a href="{% url 'studies:feed_db'%}">feed db</a>
     <section name="book table" class="col-md-6 border">
       <table class="table-dark table-striped table">

@@ -131,38 +131,57 @@ class UserAction:
                 )
             ).order_by("notes__chapter__book", "notes__chapter")[:number_of_notes]
 
-    def __split_notes(self):
+    def __split_notes(self, speed=True):
         """ splits selected notes into dict """
-
         for elt in self.notes_todo:
-            if elt.next_studied_date_recto <= self.TIME_NOW and elt.notes.studie_recto is True:
-                self.game_list_auto.append({
-                    "id": elt.id,
-                    "sens": "recto",
-                    "text": elt.notes.text_recto,
-                    "response": elt.notes.text_verso,
-                    "class_button_true": "ajax-true-recto",
-                    "class_button_wrong": "ajax-wrong-recto",
 
-                })
-            elif elt.next_studied_date_verso <= self.TIME_NOW and elt.notes.studie_verso is True:
-                self.game_list_auto.append({
-                    "id": elt.id,
-                    "sens": "verso",
-                    "text": elt.notes.text_verso,
-                    "response": elt.notes.text_recto,
-                    "class_button_true": "ajax-true-verso",
-                    "class_button_wrong": "ajax-wrong-verso",
+            if speed:
+                if (elt.next_studied_date_recto <= self.TIME_NOW
+                        and elt.notes.studie_recto is True
+                        and elt.lvl_recto < 6):
+                    self.game_list_auto.append({
+                        "id": elt.id,
+                        "sens": "recto",
+                        "text": elt.notes.text_recto,
+                        "response": elt.notes.text_verso,
+                    })
 
+                elif (elt.next_studied_date_verso <= self.TIME_NOW
+                      and elt.notes.studie_verso is True
+                      and elt.lvl_verso < 6):
+                    self.game_list_auto.append({
+                        "id": elt.id,
+                        "sens": "verso",
+                        "text": elt.notes.text_verso,
+                        "response": elt.notes.text_recto,
+                    })
+            else:
+                if (elt.next_studied_date_recto <= self.TIME_NOW
+                        and elt.notes.studie_recto is True
+                        and elt.lvl_recto > 5):
+                    self.game_list_auto.append({
+                        "id": elt.id,
+                        "sens": "recto",
+                        "text": elt.notes.text_recto,
+                        "response": elt.notes.text_verso,
+                    })
 
-                })
+                elif (elt.next_studied_date_verso <= self.TIME_NOW
+                      and elt.notes.studie_verso is True
+                      and elt.lvl_verso > 5):
+                    self.game_list_auto.append({
+                        "id": elt.id,
+                        "sens": "verso",
+                        "text": elt.notes.text_verso,
+                        "response": elt.notes.text_recto,
+                    })
 
     def get_notes_todo(self, request, nbr_speed=10, nbr_long=10):
         """ get notes auto mode, split them and return all """
         self.__notes_todo(request, speed=True, number_of_notes=nbr_speed)
-        self.__split_notes()
+        self.__split_notes(speed=True)
         self.__notes_todo(request, speed=False, number_of_notes=nbr_long)
-        self.__split_notes()
+        self.__split_notes(speed=False)
         random.shuffle(self.game_list_auto)
         return self.game_list_auto
 

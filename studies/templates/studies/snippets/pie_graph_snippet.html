@@ -1,0 +1,143 @@
+<div
+  id="myChartSmooth"
+  style="min-height: 100px; width: 100%; height: 100%"
+></div>
+<script type="text/javascript">
+  // start effect
+  var chartDomSmooth = document.getElementById("myChartSmooth");
+  var myChartSmooth = echarts.init(chartDomSmooth, "dark");
+
+  // manage font size change (responsive)
+  function autoFontSize() {
+    let width = document.getElementById("myChartSmooth").offsetWidth;
+    let height = document.getElementById("myChartSmooth").offsetHeight;
+    if (width >= height) {
+      let newFontSize = Math.round(height / 40);
+      return newFontSize;
+    } else {
+      let newFontSize = Math.round(width / 40);
+      return newFontSize;
+    }
+    console.log(
+      `Current width : ${width}, Updating Fontsize to ${newFontSize}`
+    );
+    return newFontSize;
+  }
+
+  var option;
+
+  setTimeout(function () {
+    option = {
+      color: [
+        "#4992ff",
+        "#7cffb2",
+        "#fddd60",
+        "#ff6e76",
+        "#58d9f9",
+        "#05c091",
+        "#ff8a45",
+        "#8d48e3",
+        "#dd79ff",
+      ],
+      backgroundColor: "#1d2228",
+      legend: {},
+      tooltip: {
+        trigger: "axis",
+        showContent: false,
+      },
+      dataset: {
+        source: [
+          ["product", "2012", "2013", "2014", "2015", "2016", "2017"],
+          ["Milk Tea", 56.5, 82.1, 88.7, 70.1, 53.4, 85.1],
+          ["Matcha Latte", 51.1, 51.4, 55.1, 53.3, 73.8, 68.7],
+        ],
+      },
+      xAxis: { type: "category" },
+      yAxis: { gridIndex: 0 },
+      grid: { top: "55%" },
+      series: [
+        {
+          type: "line",
+          smooth: true,
+          seriesLayoutBy: "row",
+          emphasis: { focus: "series" },
+        },
+        {
+          type: "line",
+          smooth: true,
+          seriesLayoutBy: "row",
+          emphasis: { focus: "series" },
+        },
+        {
+          type: "line",
+          smooth: true,
+          seriesLayoutBy: "row",
+          emphasis: { focus: "series" },
+        },
+        {
+          type: "line",
+          smooth: true,
+          seriesLayoutBy: "row",
+          emphasis: { focus: "series" },
+        },
+        {
+          type: "pie",
+          id: "pie",
+          radius: "30%",
+          center: ["50%", "25%"],
+          emphasis: { focus: "data" },
+          label: {
+            formatter: "{b}: {@2012} ({d}%)",
+          },
+          encode: {
+            itemName: "product",
+            value: "2012",
+            tooltip: "2012",
+          },
+        },
+      ],
+    };
+
+    myChartSmooth.on("updateAxisPointer", function (event) {
+      var xAxisInfo = event.axesInfo[0];
+      if (xAxisInfo) {
+        var dimension = xAxisInfo.value + 1;
+        myChartSmooth.setOption({
+          series: {
+            id: "pie",
+            label: {
+              formatter: "{b}: {@[" + dimension + "]} ({d}%)",
+            },
+            encode: {
+              value: dimension,
+              tooltip: dimension,
+            },
+          },
+        });
+      }
+    });
+
+    myChartSmooth.setOption(option);
+  });
+
+  option && myChartSmooth.setOption(option);
+
+  // active responsive update for chart and fontSize
+  $(window).on("resize", function () {
+    if (myChartSmooth != null && myChartSmooth != undefined) {
+      myChartSmooth.resize({
+        width: "auto",
+        height: "auto",
+      });
+      myChartSmooth.setOption({
+        series: {
+          label: {
+            textStyle: {
+              fontSize: autoFontSize(),
+            },
+          },
+        },
+      });
+    }
+  });
+</script>
