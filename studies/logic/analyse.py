@@ -8,11 +8,12 @@ class Analyse:
         self.request = request
         self.TIME_NOW = datetime.date.today()
         self.notes = StudiesNotesProgression.objects.filter(
-            user=request.user)
+            user=request.user).select_related('notes')
         self.note_recto_true = self.notes.filter(
             notes__studie_recto=True)
         self.note_verso_true = self.notes.filter(
             notes__studie_verso=True)
+        
 
     def get_nbr_of_notes(self):
         return self.notes.count()
@@ -20,9 +21,9 @@ class Analyse:
     def get_lvl_avg(self):
         try:
             lvl_avg = round(
-                self.note_recto_true.aggregate(Avg('lvl_recto'))[
+                (self.note_recto_true.aggregate(Avg('lvl_recto'))[
                     "lvl_recto__avg"]
-                + self.note_verso_true.aggregate(Avg('lvl_verso'))["lvl_verso__avg"], 2)
+                * self.note_verso_true.aggregate(Avg('lvl_verso'))["lvl_verso__avg"], 2)/2)
         except TypeError:
             lvl_avg = 0
         return lvl_avg

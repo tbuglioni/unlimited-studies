@@ -1,0 +1,15 @@
+{% if notes.has_other_pages %}
+  <ul class="pagination">
+    {% if notes.has_previous %}
+      <li><a href="?page=1">&laquo First,</a></li>
+      <li><a href="?page={{ notes.previous_page_number }}">Previous,</a></li>
+    {% endif %}
+
+    Page {{ notes.number }} / {{ notes.paginator.num_pages }},
+    {% if notes.has_next %}
+      <li><a href="?page={{ notes.next_page_number }}">Next</a></li>
+      <li><a href="?page={{ notes.paginator.num_pages }}">Last &raquo</a></li>
+    {% endif %}
+  </ul>
+{% endif %}
+    

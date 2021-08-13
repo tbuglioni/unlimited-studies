@@ -36,8 +36,13 @@
 
     {% endfor %}
     <hr />
-    {% include 'studies/snippets/add_chapter_snippet.html' with book_id=book.id%} {% if notes %}
+    {% include 'studies/snippets/add_chapter_snippet.html' with book_id=book.id%} 
+    
+    {% if notes %}
     <hr />
+
+
+    <!-- list of notes -->
     {% for note in notes %}
     <div>
       <li>
@@ -47,6 +52,18 @@
         <a href="{% url 'studies:delete_note' note=note.id %}">Delete</a>
       </li>
     </div>
-    {% endfor %} {% include 'studies/snippets/add_note_snippet.html' with chapter_id=chapter.id %} {% endif %} {% endblock content %}
+    {% endfor %} 
+    {% endif %} 
+
+    <!-- add new note -->
+    {% if chapter %}
+    {% include 'studies/snippets/add_note_snippet.html' with chapter_id=chapter.id %}
+    {% endif %}
+
+    <!-- pagination -->
+    {% include 'studies/snippets/paginator_snippet.html' with notes=notes %}
+
+
+    {% endblock content %}
   </section>
 </div>

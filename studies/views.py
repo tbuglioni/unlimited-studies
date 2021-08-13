@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 import json
 from django.http import JsonResponse
 import datetime
@@ -6,10 +7,13 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import *
 from studies.logic.userAction import UserAction
 from studies.logic.analyse import Analyse
+from studies.logic.game import Game
+
 from studies.logic.FeedDb import FeedDb
 from django.db.models import Q
 
 TIME_NOW = datetime.date.today()
+new_game = Game()
 
 
 @login_required
@@ -50,7 +54,15 @@ def book_view(request, book, chapter=None):
     if chapter is not None:
         context["chapter"] = user_action.get_chapter_404(
             request, chapter=chapter)
-        context["notes"] = user_action.get_notes(request, chapter)
+        paginator = Paginator(
+            user_action.get_notes(request, chapter), 100)
+        page = request.GET.get('page', 1)
+        try:
+            context["notes"] = paginator.page(page)
+        except Paginator.PageNotAnInteger:
+            context["notes"] = paginator.page(1)
+        except Paginator.EmptyPage:
+            context["notes"] = paginator.page(paginator.num_pages)
     else:
         context["chapter"] = None
 
@@ -60,7 +72,7 @@ def book_view(request, book, chapter=None):
     return render(request, "studies/book.html", context)
 
 
-@login_required
+@ login_required
 def note_add_or_update(request, chapter=None, note=None):
     """ 1 note to add / change """
     user_action = UserAction()
@@ -80,7 +92,7 @@ def note_add_or_update(request, chapter=None, note=None):
     return redirect('studies:book_page', chapter=chapter, book=book)
 
 
-@login_required
+@ login_required
 def delete_book(request, book):
     user_action = UserAction()
     """ delete 1 book"""
@@ -90,7 +102,7 @@ def delete_book(request, book):
     return redirect('studies:personal_home')
 
 
-@login_required
+@ login_required
 def delete_chapter(request, chapter):
     user_action = UserAction()
     """ delete 1 chapter"""
@@ -101,7 +113,7 @@ def delete_chapter(request, chapter):
     return redirect('studies:book_page', book=book)
 
 
-@login_required
+@ login_required
 def delete_note(request, note):
     user_action = UserAction()
     """ delete 1 note"""
@@ -112,7 +124,7 @@ def delete_note(request, note):
     return redirect('studies:book_page', book=book, chapter=chapter)
 
 
-@login_required
+@ login_required
 def add_data_in_db(request):
     """ feed db with data """
     if not request.user.is_authenticated:
@@ -130,25 +142,28 @@ def add_data_in_db(request):
     return redirect('studies:personal_home')
 
 
-@login_required
+@ login_required
 def start_game_view(request):
     """ start auto game in a specific page """
     if request.POST:
-        dict_ = json.loads(request.POST.get('exit_list'))
-        print(dict_)
-        return redirect('studies:personal_home')
+        data_list = json.loads(request.POST.get('exit_list'))
+        print(data_list)
+        for elt in data_list:
+            print(elt['id'], elt['sens'], elt['win'])
+            new_game.change_lvl(request, elt['id'], elt['sens'], elt['win'])
+        
+        new_game.cleaned_data()
+        return JsonResponse({"status": "ok"})
 
-    user_action = UserAction()
-    if not request.user.is_authenticated:
-        return redirect("login")
     context = {}
-    context["game_list_auto"] = user_action.get_notes_todo(
-        request, nbr_speed=300, nbr_long=300)
+    new_game.cleaned_data()
+    context["game_list_auto"] = new_game.get_notes_todo(
+        request, nbr_speed=2, nbr_long=2)
 
     return render(request, "studies/auto_game.html", context)
 
 
-@login_required
+@ login_required
 def note_true_recto(request):
     """ valid 1 note recto and change lvl/next studie """
     user_action = UserAction()
@@ -157,7 +172,7 @@ def note_true_recto(request):
     return JsonResponse({"status": "ok"})
 
 
-@login_required
+@ login_required
 def note_true_verso(request):
     """ valid 1 note verso and change lvl/next studie """
     user_action = UserAction()
@@ -166,7 +181,7 @@ def note_true_verso(request):
     return JsonResponse({"status": "ok"})
 
 
-@login_required
+@ login_required
 def note_wrong_recto(request):
     """ unvalid 1 note recto and change lvl/next studie """
     user_action = UserAction()
@@ -175,7 +190,7 @@ def note_wrong_recto(request):
     return JsonResponse({"status": "ok"})
 
 
-@login_required
+@ login_required
 def note_wrong_verso(request):
     """ unvalid 1 note verso and change lvl/next studie """
     user_action = UserAction()

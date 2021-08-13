@@ -138,6 +138,12 @@ class StudiesNotesProgression(models.Model):
     # others
     flaged = models.BooleanField(default=False, null=False)
 
+    class Meta:
+        ordering = ["user", "notes"]
+        indexes = [
+            models.Index(fields=["user", "notes"]),
+        ]
+
 
 class GlobalDailyAnalysis(models.Model):
     # 10 jours

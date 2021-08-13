@@ -107,7 +107,7 @@
           !this.win_id_list.includes(elt)
         ) {
           this.fail_id_list.push(elt);
-          this.data_db.push({ id: "hello", sens: note_sens, win: win });
+          this.data_db.push({ id: note_id, sens: note_sens, win: win });
         }
       }
 
@@ -143,7 +143,8 @@
           body: form,
           headers: { "X-CSRFToken": csrfTokenValue },
         });
-        fetch(request);
+        fetch(request).then(function() {window.location.replace("{% url 'studies:personal_home' %}");})
+        
       }
     }
 
