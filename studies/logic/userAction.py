@@ -9,11 +9,6 @@ from studies.forms import StudiesNotesForm, BookForm, ChapterForm
 
 
 class UserAction:
-    def __init__(self):
-        self.name = 1
-        self.game_list_auto = []
-        self.notes_todo = []
-        self.TIME_NOW = datetime.date.today()
 
     def get_books(self, request):
         """ get all books from 1 user """

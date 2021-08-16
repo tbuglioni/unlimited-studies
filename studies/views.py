@@ -14,23 +14,29 @@ from django.db.models import Q
 
 TIME_NOW = datetime.date.today()
 new_game = Game()
+current_analyse = Analyse()
+user_action = UserAction()
 
 
 @login_required
 def personal_home_view(request, book=None):
     """ personal page with books and feedback"""
-    user_action = UserAction()
+    
 
     context = {}
     context["books"] = user_action.get_books(request)
-    current_analyse = Analyse(request)
-
+    
+    current_analyse.get_request(request)
+    current_analyse.update_data()
     context["todoo"] = current_analyse.get_nbr_notes_todoo()
     context["all_notes"] = current_analyse.get_nbr_of_notes()
-    context["all_notes_avg"] = current_analyse.get_lvl_avg()
+    context["all_notes_avg"] = current_analyse.get_global_lvl_avg()
     context["books_avg"] = current_analyse.get_list_lvl_avg_each_book()
     context["Today_recap"] = current_analyse.get_notes_studied_today()
     context["month_recap"] = current_analyse.get_notes_studied_this_month()
+    context["recap_data"] = current_analyse.get_recap_daily_notes()
+    
+    
 
     if book is not None:
         context["selectedBook"] = user_action.get_book_404(request, book)
@@ -146,54 +152,26 @@ def add_data_in_db(request):
 def start_game_view(request):
     """ start auto game in a specific page """
     if request.POST:
+        win_counter = 0
+        fail_counter = 0
         data_list = json.loads(request.POST.get('exit_list'))
         print(data_list)
         for elt in data_list:
             print(elt['id'], elt['sens'], elt['win'])
             new_game.change_lvl(request, elt['id'], elt['sens'], elt['win'])
-        
+            if elt['win'] == True:
+                win_counter += 1
+            elif elt['win'] == False:
+                fail_counter += 1
+                
+        current_analyse.get_request(request)
+        current_analyse.update_analysis(win_counter, fail_counter)
         new_game.cleaned_data()
         return JsonResponse({"status": "ok"})
 
     context = {}
     new_game.cleaned_data()
     context["game_list_auto"] = new_game.get_notes_todo(
-        request, nbr_speed=2, nbr_long=2)
+        request, nbr_speed=20, nbr_long=20)
 
     return render(request, "studies/auto_game.html", context)
-
-
-@ login_required
-def note_true_recto(request):
-    """ valid 1 note recto and change lvl/next studie """
-    user_action = UserAction()
-    note_id = request.POST.get("Product_id")
-    user_action.change_lvl(request, note_id, sens="recto", win=True)
-    return JsonResponse({"status": "ok"})
-
-
-@ login_required
-def note_true_verso(request):
-    """ valid 1 note verso and change lvl/next studie """
-    user_action = UserAction()
-    note_id = request.POST.get("Product_id")
-    user_action.change_lvl(request, note_id, sens="verso", win=True)
-    return JsonResponse({"status": "ok"})
-
-
-@ login_required
-def note_wrong_recto(request):
-    """ unvalid 1 note recto and change lvl/next studie """
-    user_action = UserAction()
-    note_id = request.POST.get("Product_id")
-    user_action.change_lvl(request, note_id, sens="recto", win=False)
-    return JsonResponse({"status": "ok"})
-
-
-@ login_required
-def note_wrong_verso(request):
-    """ unvalid 1 note verso and change lvl/next studie """
-    user_action = UserAction()
-    note_id = request.POST.get("Product_id")
-    user_action.change_lvl(request, note_id, sens="verso", win=False)
-    return JsonResponse({"status": "ok"})

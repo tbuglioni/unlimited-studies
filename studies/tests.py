@@ -158,103 +158,103 @@ class StudiesDatabase(TestCase):
         note_b = StudiesNotes.objects.filter(users=self.user_b).count()
         self.assertEqual(note_b, 0)
 
-    def test_upgrade_note_lvl_recto_1_5(self):
-        for i in range(1, 6):
-            with self.subTest(i=i):
-                self.client.login(email="john@invalid.com",
-                                  password="some_123_password")
-                note = StudiesNotes.objects.create(
-                    text_recto="hello", text_verso="world", chapter=self.chapter_1, order_note=1, studie_verso=True)
+    # def test_upgrade_note_lvl_recto_1_5(self):
+    #     for i in range(1, 6):
+    #         with self.subTest(i=i):
+    #             self.client.login(email="john@invalid.com",
+    #                               password="some_123_password")
+    #             note = StudiesNotes.objects.create(
+    #                 text_recto="hello", text_verso="world", chapter=self.chapter_1, order_note=1, studie_verso=True)
 
-                note.users.add(self.user_a, through_defaults={
-                    'lvl_recto': i, "lvl_verso": 1})
+    #             note.users.add(self.user_a, through_defaults={
+    #                 'lvl_recto': i, "lvl_verso": 1})
 
-                data = {"Product_id": note.id}
-                response = self.client.post(
-                    reverse("studies:note_true_recto"), data, follow=True
-                )
-                self.assertEqual(response.status_code, 200)
+    #             data = {"Product_id": note.id}
+    #             response = self.client.post(
+    #                 reverse("studies:note_true_recto"), data, follow=True
+    #             )
+    #             self.assertEqual(response.status_code, 200)
 
-                note = StudiesNotesProgression.objects.get(notes=note.id)
-                self.assertEqual(note.lvl_recto, i + 1)
-                self.assertEqual(note.next_studied_date_recto,
-                                 self.TIME_NOW + timedelta(days=1))
+    #             note = StudiesNotesProgression.objects.get(notes=note.id)
+    #             self.assertEqual(note.lvl_recto, i + 1)
+    #             self.assertEqual(note.next_studied_date_recto,
+    #                              self.TIME_NOW + timedelta(days=1))
 
-    def test_upgrade_note_lvl_verso_1_5(self):
-        for i in range(1, 6):
-            with self.subTest(i=i):
-                # login
-                self.client.login(email="john@invalid.com",
-                                  password="some_123_password")
+    # def test_upgrade_note_lvl_verso_1_5(self):
+    #     for i in range(1, 6):
+    #         with self.subTest(i=i):
+    #             # login
+    #             self.client.login(email="john@invalid.com",
+    #                               password="some_123_password")
 
-                # new note
-                note = StudiesNotes.objects.create(
-                    text_recto="hello", text_verso="world", chapter=self.chapter_1, order_note=1, studie_verso=True)
+    #             # new note
+    #             note = StudiesNotes.objects.create(
+    #                 text_recto="hello", text_verso="world", chapter=self.chapter_1, order_note=1, studie_verso=True)
 
-                note.users.add(self.user_a, through_defaults={
-                    'lvl_recto': 1, "lvl_verso": i})
+    #             note.users.add(self.user_a, through_defaults={
+    #                 'lvl_recto': 1, "lvl_verso": i})
 
-                # send id to perform task
-                data = {"Product_id": note.id}
-                response = self.client.post(
-                    reverse("studies:note_true_verso"), data, follow=True)
+    #             # send id to perform task
+    #             data = {"Product_id": note.id}
+    #             response = self.client.post(
+    #                 reverse("studies:note_true_verso"), data, follow=True)
 
-                # check exit
-                self.assertEqual(response.status_code, 200)
+    #             # check exit
+    #             self.assertEqual(response.status_code, 200)
 
-                note = StudiesNotesProgression.objects.get(notes=note.id)
-                self.assertEqual(note.lvl_verso, i + 1)
-                self.assertEqual(note.next_studied_date_verso,
-                                 self.TIME_NOW + timedelta(days=1))
+    #             note = StudiesNotesProgression.objects.get(notes=note.id)
+    #             self.assertEqual(note.lvl_verso, i + 1)
+    #             self.assertEqual(note.next_studied_date_verso,
+    #                              self.TIME_NOW + timedelta(days=1))
 
-    def test_reset_note_lvl_recto_1_10(self):
-        for i in range(1, 11):
-            with self.subTest(i=i):
-                # login
-                self.client.login(email="john@invalid.com",
-                                  password="some_123_password")
+    # def test_reset_note_lvl_recto_1_10(self):
+    #     for i in range(1, 11):
+    #         with self.subTest(i=i):
+    #             # login
+    #             self.client.login(email="john@invalid.com",
+    #                               password="some_123_password")
 
-                # new note
-                note = StudiesNotes.objects.create(
-                    text_recto="hello", text_verso="world", chapter=self.chapter_1, order_note=1, studie_verso=True)
+    #             # new note
+    #             note = StudiesNotes.objects.create(
+    #                 text_recto="hello", text_verso="world", chapter=self.chapter_1, order_note=1, studie_verso=True)
 
-                note.users.add(self.user_a, through_defaults={
-                    'lvl_recto': i, "lvl_verso": 1})
+    #             note.users.add(self.user_a, through_defaults={
+    #                 'lvl_recto': i, "lvl_verso": 1})
 
-                # send id to perform task
-                data = {"Product_id": note.id}
-                response = self.client.post(
-                    reverse("studies:note_wrong_recto"), data, follow=True)
+    #             # send id to perform task
+    #             data = {"Product_id": note.id}
+    #             response = self.client.post(
+    #                 reverse("studies:note_wrong_recto"), data, follow=True)
 
-                # check exit
-                self.assertEqual(response.status_code, 200)
+    #             # check exit
+    #             self.assertEqual(response.status_code, 200)
 
-                note = StudiesNotesProgression.objects.get(notes=note.id)
-                self.assertEqual(note.lvl_recto, 1)
-                self.assertEqual(note.next_studied_date_recto,
-                                 self.TIME_NOW + timedelta(days=1))
+    #             note = StudiesNotesProgression.objects.get(notes=note.id)
+    #             self.assertEqual(note.lvl_recto, 1)
+    #             self.assertEqual(note.next_studied_date_recto,
+    #                              self.TIME_NOW + timedelta(days=1))
 
-    def test_reset_note_lvl_verso_1_10(self):
-        for i in range(1, 11):
-            with self.subTest(i=i):
-                self.client.login(email="john@invalid.com",
-                                  password="some_123_password")
-                note = StudiesNotes.objects.create(
-                    text_recto="hello", text_verso="world", chapter=self.chapter_1, order_note=1, studie_verso=True)
+    # def test_reset_note_lvl_verso_1_10(self):
+    #     for i in range(1, 11):
+    #         with self.subTest(i=i):
+    #             self.client.login(email="john@invalid.com",
+    #                               password="some_123_password")
+    #             note = StudiesNotes.objects.create(
+    #                 text_recto="hello", text_verso="world", chapter=self.chapter_1, order_note=1, studie_verso=True)
 
-                note.users.add(self.user_a, through_defaults={
-                    'lvl_recto': 1, "lvl_verso": i})
+    #             note.users.add(self.user_a, through_defaults={
+    #                 'lvl_recto': 1, "lvl_verso": i})
 
-                data = {"Product_id": note.id}
-                response = self.client.post(
-                    reverse("studies:note_wrong_verso"), data, follow=True
-                )
-                self.assertEqual(response.status_code, 200)
+    #             data = {"Product_id": note.id}
+    #             response = self.client.post(
+    #                 reverse("studies:note_wrong_verso"), data, follow=True
+    #             )
+    #             self.assertEqual(response.status_code, 200)
 
-                note = StudiesNotesProgression.objects.get(notes=note.id)
-                self.assertEqual(note.lvl_verso, 1)
-                self.assertEqual(note.next_studied_date_verso,
-                                 self.TIME_NOW + timedelta(days=1))
+    #             note = StudiesNotesProgression.objects.get(notes=note.id)
+    #             self.assertEqual(note.lvl_verso, 1)
+    #             self.assertEqual(note.next_studied_date_verso,
+    #                              self.TIME_NOW + timedelta(days=1))
 
     def test_add_new_book(self):
         self.client.login(email="john@invalid.com",

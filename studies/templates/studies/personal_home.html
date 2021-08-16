@@ -2,7 +2,7 @@
 <div>
   {% block content %} 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.3.0/echarts.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.1.2/echarts.min.js"></script>
 
   <!-- NAVBAR -->
   {% include "snippets/navebar.html" with user=user %}
@@ -24,10 +24,10 @@
 
       <!-- big graph recap -->
       <section name="pie chart" class="col-xl-6 border" style="height:25em">
-        {% include "studies/snippets/pie_graph_snippet.html" %}
+        {% include "studies/snippets/pie_graph_snippet.html" with recap_data=recap_data%}
       </section>
       <section name="spider graph" class="col-xl-6 border" style="height:25em">
-        {% include "studies/snippets/spider_graph_snippet.html" with books_avg=books_avg books=books %}
+        {% include "studies/snippets/spider_graph_snippet.html" with data_avg=books_avg data=books %}
       </section>
       
     </div>

@@ -26,8 +26,4 @@ urlpatterns = [
     path("feed_db", views.add_data_in_db, name="feed_db"),
 
     path("game_auto", views.start_game_view, name="game_auto"),
-    path("note_true_recto", views.note_true_recto, name="note_true_recto"),
-    path("note_true_verso", views.note_true_verso, name="note_true_verso"),
-    path("note_wrong_recto", views.note_wrong_recto, name="note_wrong_recto"),
-    path("note_wrong_verso", views.note_wrong_verso, name="note_wrong_verso"),
 ]

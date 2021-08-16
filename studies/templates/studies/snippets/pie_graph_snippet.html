@@ -29,15 +29,11 @@
   setTimeout(function () {
     option = {
       color: [
-        "#4992ff",
         "#7cffb2",
+        "#4992ff",
         "#fddd60",
-        "#ff6e76",
-        "#58d9f9",
-        "#05c091",
-        "#ff8a45",
-        "#8d48e3",
-        "#dd79ff",
+        "#7cffb2",
+        
       ],
       backgroundColor: "#1d2228",
       legend: {},
@@ -47,9 +43,9 @@
       },
       dataset: {
         source: [
-          ["product", "2012", "2013", "2014", "2015", "2016", "2017"],
-          ["Milk Tea", 56.5, 82.1, 88.7, 70.1, 53.4, 85.1],
-          ["Matcha Latte", 51.1, 51.4, 55.1, 53.3, 73.8, 68.7],
+          {{recap_data.list_date |safe}},
+          {{recap_data.list_win |safe}},
+          {{recap_data.list_fail |safe}},
         ],
       },
       xAxis: { type: "category" },
@@ -86,13 +82,11 @@
           radius: "30%",
           center: ["50%", "25%"],
           emphasis: { focus: "data" },
-          label: {
-            formatter: "{b}: {@2012} ({d}%)",
-          },
+
           encode: {
-            itemName: "product",
-            value: "2012",
-            tooltip: "2012",
+            itemName: "Date",
+            value: "{{recap_data.list_date|last}}",
+            tooltip: "{{recap_data.list_date|last}}",
           },
         },
       ],

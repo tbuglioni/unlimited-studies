@@ -1,29 +1,57 @@
 from studies.models import *
 from django.db.models import Avg
+from django.db.models import Count, F, Value
 import datetime
 
 
 class Analyse:
-    def __init__(self, request):
+    def __init__(self):
+        self.time_now = None
+        
+    def get_request(self, request):
         self.request = request
-        self.TIME_NOW = datetime.date.today()
+        
+    def update_data(self):
+        #data
+        self.time_now = datetime.date.today()
         self.notes = StudiesNotesProgression.objects.filter(
-            user=request.user).select_related('notes')
+            user=self.request.user).select_related('notes')
+        
+        #db_cache        
         self.note_recto_true = self.notes.filter(
             notes__studie_recto=True)
         self.note_verso_true = self.notes.filter(
             notes__studie_verso=True)
         
-
+    
     def get_nbr_of_notes(self):
         return self.notes.count()
+    
+    def get_recap_daily_notes(self):
+        recap_dict = {"list_date": ["Date"], "list_win":["Win"], "list_fail":["Fail"]}
+        data = GlobalDailyAnalysis.objects.filter(user=self.request.user)[:10]
+        if data :
+            for elt in data:
+                recap_dict["list_date"].append(f"{elt.date.strftime('%d/%m/%y')}")
+                recap_dict["list_win"].append(elt.number_of_win)
+                recap_dict["list_fail"].append(elt.number_of_lose)
+                
+            
+            return recap_dict
+        
+        else :
+            self.time_now = datetime.date.today()
+            return self.time_now, 0, 0
+        
 
-    def get_lvl_avg(self):
+    def get_global_lvl_avg(self):
         try:
             lvl_avg = round(
-                (self.note_recto_true.aggregate(Avg('lvl_recto'))[
-                    "lvl_recto__avg"]
-                * self.note_verso_true.aggregate(Avg('lvl_verso'))["lvl_verso__avg"], 2)/2)
+                    (self.note_recto_true.aggregate(
+                        Avg('lvl_recto'))["lvl_recto__avg"]
+                    + 
+                    self.note_verso_true.aggregate(Avg('lvl_verso'))["lvl_verso__avg"])/2
+                    , 2)
         except TypeError:
             lvl_avg = 0
         return lvl_avg
@@ -34,10 +62,11 @@ class Analyse:
         for book in books:
             try:
                 lvl_avg = round(
-                    self.note_recto_true.filter(notes__chapter__book__id=book.id).aggregate(
+                    (self.note_recto_true.filter(notes__chapter__book__id=book.id).aggregate(
                         Avg('lvl_recto'))["lvl_recto__avg"]
-
-                    + self.note_verso_true.filter(notes__chapter__book__id=book.id).aggregate(Avg('lvl_verso'))["lvl_verso__avg"], 2)
+                    + 
+                    self.note_verso_true.filter(notes__chapter__book__id=book.id).aggregate(Avg('lvl_verso'))["lvl_verso__avg"])/2
+                    , 2)
             except TypeError:
                 lvl_avg = 0
             list_avg.append(lvl_avg)
@@ -46,17 +75,43 @@ class Analyse:
 
     def get_nbr_notes_todoo(self):
         todoo_recto = self.note_recto_true.filter(
-            next_studied_date_recto__lte=self.TIME_NOW)
+            next_studied_date_recto__lte=self.time_now)
         todoo_verso = self.note_verso_true.filter(
-            next_studied_date_verso__lte=self.TIME_NOW)
+            next_studied_date_verso__lte=self.time_now)
         return todoo_recto.count() + todoo_verso.count()
 
     def get_notes_studied_today(self):
         obj, created = GlobalDailyAnalysis.objects.get_or_create(
-            user=self.request.user, date=self.TIME_NOW)
+            user=self.request.user, date=self.time_now)
         return obj.number_of_studies
+    
+    def __update_notes_studied_today(self, note_true, note_false):
+        obj, created = GlobalDailyAnalysis.objects.get_or_create(
+            user=self.request.user, date=self.time_now)
+        
+        obj.number_of_studies = F('number_of_studies') + (note_true + note_false)
+        obj.number_of_win = F('number_of_win') + note_true
+        obj.number_of_lose = F('number_of_lose') + note_false
+        obj.save()
+        
 
     def get_notes_studied_this_month(self):
         obj, created = GlobalMonthlyAnalysis.objects.get_or_create(
-            user=self.request.user, date=self.TIME_NOW)
+            user=self.request.user, date=self.time_now)
         return obj.number_of_studies
+
+    def __update_notes_studied_this_month(self, note_true, note_false):
+        obj, created = GlobalMonthlyAnalysis.objects.get_or_create(
+            user=self.request.user, date=self.time_now)
+        
+        obj.number_of_studies = F('number_of_studies') + (note_true + note_false)
+        obj.number_of_win = F('number_of_win') + note_true
+        obj.number_of_lose = F('number_of_lose') + note_false
+        obj.save()
+        
+    
+    def update_analysis(self, note_true, note_false):
+        self.__update_notes_studied_today(note_true, note_false)
+        self.__update_notes_studied_this_month(note_true, note_false)
+        
+        
