@@ -54,8 +54,12 @@ def book_view(request, book, chapter=None):
     """ book with 0/1 selected chapter"""
     user_action = UserAction()
     context = {}
+    current_analyse.get_request(request)
+    current_analyse.update_data()
     context["book"] = user_action.get_book_404(request, book)
     context["chapters"] = Chapter.objects.filter(book=book)
+    context["chapters_notes_avg"] = current_analyse.get_list_lvl_avg_each_chapter_one_book(book)
+    
 
     if chapter is not None:
         context["chapter"] = user_action.get_chapter_404(

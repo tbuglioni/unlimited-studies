@@ -6,7 +6,7 @@
 
     // start effect
     var chartDomSpider = document.getElementById("myChartSpider");
-    var myChartSpider = echarts.init(chartDomSpider, 'dark');
+    var myChartSpider = echarts.init(chartDomSpider);
 
     // manage font size change (responsive)
     function autoFontSize() {
@@ -45,23 +45,8 @@ var lineStyle = {
 
 optionSpider = {
     backgroundColor: '#1d2228',
-    title: {
-        text: 'AQI - 雷达图',
-        left: 'center',
-        textStyle: {
-            color: '#eee'
-        }
-    },
-    legend: {
-        bottom: 5,
-        data: ['北京', '上海', '广州'],
-        itemGap: 20,
-        textStyle: {
-            color: '#fff',
-            fontSize: 14
-        },
-        selectedMode: 'single'
-    },
+    
+    
     // visualMap: {
     //     show: true,
     //     min: 0,

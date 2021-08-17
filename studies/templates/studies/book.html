@@ -1,69 +1,128 @@
 {% extends 'base.html' %}{% load static %}
+  {% block content %} 
 
-<div>
-  {% block content %} {% include "snippets/navebar.html" with user=user %}
-  <section
-    class="container-fluid mt-5"
-    style="
-      background-image: url('static/img/fisherman.jpg');
-      background-size: cover;
-      background-repeat: no-repeat;
-      width: 100vw;
-      height: 100vh;
-    "
-  >
-    <p>Hello personal home</p>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.1.2/echarts.min.js"></script>
 
+  <!-- NAVBAR -->
+  {% include "snippets/navebar.html" with user=user %}
+
+  <!-- BODY -->
+  <div class="container-fluid mt-5 pt-5">
+
+    <!-- Chapter description -->
+    <h1 class="text-center new_font_daniel-lg">Book</h1>
+    <p class="text-center">{{book.name}}</p>
     <div>
-      <p>{{book.name}}</p>
-      <p>{{book.description}}</p>
-      <p>{{book.source_info}}</p>
+      <p><span class="new_font_daniel-m">Description: </span>{{book.description}}</p>
+      <hr>
+      <p><span class="new_font_daniel-m">Sources: </span>{{book.source_info}}</p>
     </div>
 
-    {% for chapter in chapters %}
-    <div>
-      <li>
-        <a href="{% url 'studies:book_page' book=book.id chapter=chapter.id %}"
-          >{{chapter.name}}</a
-        >
-        |
-        {% include 'studies/snippets/add_chapter_snippet.html' with chapter_selected=chapter book_id=book.id%}
-        <a href="{% url 'studies:delete_chapter' chapter=chapter.id %}"
-          >Delete</a
-        >
-      </li>
+    <!-- Chapter delimiter table -->
+    <div class="row bg-light text-dark pt-1 d-flex justify-content-sm-center">
+      <span class="col-sm-5 text-center">°º¤ø,¸¸,ø¤º°`°º¤ø,¸,ø¤°º¤ø,¸¸,ø¤º°`°º¤ø,¸</span>
+      <span class="col-sm-2 text-center new_font_daniel-m">Chapter</span>
+       <span class="col-sm-5 text-center">°º¤ø,¸¸,ø¤º°`°º¤ø,¸,ø¤°º¤ø,¸¸,ø¤º°`°º¤ø,¸</span>
     </div>
 
-    {% endfor %}
-    <hr />
-    {% include 'studies/snippets/add_chapter_snippet.html' with book_id=book.id%} 
+    <!-- Table -->
+    <div class="row">
+      <section name="book table" class="col-md-6">
+        <table class="table-dark table">
+          <thead>
+            <tr>
+              <th scope="col"style="width: 10%">Order</th>
+              <th scope="col"style="width: 10%">Chapter</th>
+              <th scope="col"style="width: 20%">Update</th>
+              <th scope="col"style="width: 30%">Delete</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for chapter in chapters %}
+            <tr>
+              <th scope="row">1</th>
+              <td><a class="link-light" href="{% url 'studies:book_page' book=book.id chapter=chapter.id %}"
+                >{{chapter.name}}</a></td>
+              <td>{% include 'studies/snippets/add_chapter_snippet.html' with chapter_selected=chapter book_id=book.id%}</td>
+              <td><a class="btn btn-outline-light" href="{% url 'studies:delete_chapter' chapter=chapter.id %}"
+                ><img
+                src="{% static 'studies/img/trash-2-outline.svg' %}"
+                alt="un triangle aux trois côtés égaux"
+                height="25px"
+                width="25px"
+            /></a
+              ></td>
+            </tr>
+            {% endfor %}
+            <tr>
+              
+              <td colspan="4" >{% include 'studies/snippets/add_chapter_snippet.html' with book_id=book.id%} </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      
+      <section name="spider graph" class="col-xl-6 rounded" style="height: 25em">
+        {% include "studies/snippets/spider_graph_snippet.html" with data_avg=chapters_notes_avg data=chapters %}
+      </section>
+  </div>
+    
     
     {% if notes %}
-    <hr />
-
-
-    <!-- list of notes -->
-    {% for note in notes %}
-    <div>
-      <li>
-        {{note.text_recto}} {{note.text_verso}}
-        {% include 'studies/snippets/add_note_snippet.html' with note_selected=note chapter_id=chapter.id %}
-
-        <a href="{% url 'studies:delete_note' note=note.id %}">Delete</a>
-      </li>
+    <div class="row bg-light text-dark pt-1 d-flex justify-content-sm-center">
+      <span class="col-sm-5 text-center">°º¤ø,¸¸,ø¤º°`°º¤ø,¸,ø¤°º¤ø,¸¸,ø¤º°`°º¤ø,¸</span>
+      <span class="col-sm-2 text-center new_font_daniel-m">Notes</span>
+       <span class="col-sm-5 text-center">°º¤ø,¸¸,ø¤º°`°º¤ø,¸,ø¤°º¤ø,¸¸,ø¤º°`°º¤ø,¸</span>
     </div>
-    {% endfor %} 
-    {% endif %} 
-
-    <!-- add new note -->
-    {% if chapter %}
-    {% include 'studies/snippets/add_note_snippet.html' with chapter_id=chapter.id %}
-    {% endif %}
+    <section name="book table" class="col">
+      <table class="table-dark table">
+        <thead>
+          <tr>
+            <th scope="col"style="width: 10%">Order</th>
+            <th scope="col"style="width: 10%">Recto</th>
+            <th scope="col"style="width: 10%">Verso</th>
+            <th scope="col"style="width: 20%">Update</th>
+            <th scope="col"style="width: 30%">Delete</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for note in notes %}
+          <tr>
+            <th scope="row">1</th>
+            <td>{{note.text_recto}}</td>
+            <td>{{note.text_verso}}</td>
+            <td>{% include 'studies/snippets/add_note_snippet.html' with note_selected=note chapter_id=chapter.id %}</td>
+            <td><a class="btn btn-outline-light" href="{% url 'studies:delete_note' note=note.id %}"
+              ><img
+              src="{% static 'studies/img/trash-2-outline.svg' %}"
+              alt="un triangle aux trois côtés égaux"
+              height="25px"
+              width="25px"
+          /></a
+            ></td>
+          </tr>
+          {% endfor %}
+          {% if chapter %}
+          <tr>
+            <td colspan="5" >{% include 'studies/snippets/add_note_snippet.html' with chapter_id=chapter.id %}</td>
+          </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </section>
 
     <!-- pagination -->
     {% include 'studies/snippets/paginator_snippet.html' with notes=notes %}
 
+    {% endif %}
+    {% if chapter and not notes %}
+    {% include 'studies/snippets/add_note_snippet.html' with chapter_id=chapter.id %}
+    {% endif %}
+    
 
-    {% endblock content %}
-  </section>
-</div>
+
+  </div>
+  {% endblock content %}
+

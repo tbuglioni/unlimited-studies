@@ -1,5 +1,5 @@
 <!-- Button to Open the Modal -->
-{% if not chapter_selected %}
+{% load static %}{% if not chapter_selected %}
 <button
   type="button"
   class="btn btn-primary"
@@ -32,9 +32,9 @@
       <div class="modal-body">
         <form action="{% url 'studies:book_page' book=book_id%}" method="POST">
           {% csrf_token %}
-          <tr>
-            <th><label class="form-label" for="id_name">Name :</label></th>
-            <td>
+          <div>
+            <p><label class="form-label" for="id_name">Name :</label></p>
+            <>
               <input
                 type="text"
                 name="name"
@@ -45,8 +45,8 @@
                 class="form-control"
                 autofocus
               />
-            </td>
-          </tr>
+            </>
+          </div>
           <button type="submit" class="btn btn-primary">save</button>
           <button type="button" class="btn btn-danger" data-dismiss="modal">
             Close
@@ -74,13 +74,15 @@
 {% else %}
 <button
   type="button"
-  class="btn btn-primary"
+  class="btn btn-outline-light"
   data-bs-toggle="modal"
   data-bs-target="#chapterModal{{chapter_selected.id}}"
   id="{{chapter_selected.id}}"
->
-  modify
-</button>
+><img
+src="{% static 'studies/img/edit-outline.svg' %}"
+alt="un triangle aux trois côtés égaux"
+height="25px"
+width="25px" /></button>
 
 <!-- Modal -->
 <div
@@ -107,9 +109,9 @@
           method="POST"
         >
           {% csrf_token %}
-          <tr>
-            <th><label class="form-label" for="id_name">Name :</label></th>
-            <td>
+          <div>
+            <p><label class="form-label" for="id_name">Name :</label></p>
+            <>
               <input
                 type="text"
                 name="name"
@@ -122,8 +124,8 @@
                 autofocus
                 onfocus="this.value = this.value;"
               />
-            </td>
-          </tr>
+            </>
+          </div>
           <button type="submit" class="btn btn-primary">save</button>
           <button type="button" class="btn btn-danger" data-dismiss="modal">
             Close

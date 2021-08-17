@@ -1,7 +1,7 @@
 from django.urls import reverse
 from django.utils.http import urlencode
 from django.contrib import admin
-from .models import Book, Chapter, StudiesNotes, StudiesNotesProgression, UserBookMany
+from .models import Book, Chapter, StudiesNotes, StudiesNotesProgression, UserBookMany, GlobalDailyAnalysis,GlobalMonthlyAnalysis
 from django.utils.html import format_html
 
 
@@ -106,3 +106,11 @@ class StudiesNotesProgressionAdmin(admin.ModelAdmin):
         "lvl_recto",
         "lvl_verso",
     )
+
+@ admin.register(GlobalDailyAnalysis)
+class GlobalDailyAnalysisAdmin(admin.ModelAdmin):
+    list_display = ("user", "date", "number_of_studies", "number_of_win", "number_of_lose", "all_studied_1_time")
+    
+@ admin.register(GlobalMonthlyAnalysis)
+class GlobalMonthlyAnalysissAdmin(admin.ModelAdmin):
+    list_display = ("user", "date", "number_of_studies", "number_of_win", "number_of_lose", "all_studied_1_time")

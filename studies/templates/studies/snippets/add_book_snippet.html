@@ -1,8 +1,8 @@
 <!-- Button to Open the Modal -->
-{% if not book_selected %}
+{% if not book_selected %}{% load static %}
 <button
   type="button"
-  class="btn btn-primary"
+  class="btn btn-light"
   data-bs-toggle="modal"
   data-bs-target="#bookAddModal"
   id="bookAddButton"
@@ -92,12 +92,16 @@
 {% else %}
 <button
   type="button"
-  class="btn btn-primary"
+  class="btn btn-outline-light"
   data-bs-toggle="modal"
   data-bs-target="#bookAddModal{{book_selected.id}}"
   id="{{book_selected.id}}"
 >
-Modify Book
+<img
+  src="{% static 'studies/img/edit-outline.svg' %}"
+  alt="un triangle aux trois côtés égaux"
+  height="25px"
+  width="25px" />
 </button>
 
 <!-- Modal -->
@@ -149,8 +153,7 @@ Modify Book
                 rows="10"
                 maxlength="1000"
                 id="id_description"
-                value="{{book_selected.description}}"
-              ></textarea>
+              >{{book_selected.description}}</textarea>
             </div>
           </p>
           <div>
@@ -162,8 +165,7 @@ Modify Book
                 rows="10"
                 maxlength="1000"
                 id="id_source_info"
-                value="{{book_selected.source_info}}"
-              ></textarea>
+              >{{book_selected.source_info}}</textarea>
             </div>
           </p>
           <button type="submit" class="btn btn-primary">save</button>

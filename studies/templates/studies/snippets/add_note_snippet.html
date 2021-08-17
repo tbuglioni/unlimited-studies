@@ -1,5 +1,5 @@
 <!-- Button to Open the Modal -->
-{% if not note_selected %}
+{% load static %}{% if not note_selected %}
 <button
   type="button"
   class="btn btn-primary"
@@ -35,9 +35,9 @@
           method="POST"
         >
           {% csrf_token %}
-          <tr>
-            <th><label for="id_text_recto">Text recto :</label></th>
-            <td>
+          <div>
+            <p><label for="id_text_recto{{chapter_id}}">Text recto :</label></p>
+            <p>
               <textarea
                 name="text_recto"
                 cols="40"
@@ -45,12 +45,13 @@
                 maxlength="1000"
                 required
                 id="id_text_recto{{chapter_id}}"
+                
               ></textarea>
-            </td>
-          </tr>
-          <tr>
-            <th><label for="id_text_verso">Text verso :</label></th>
-            <td>
+            </p>
+          </div>
+          <div>
+            <p><label for="id_text_verso">Text verso :</label></p>
+            <p>
               <textarea
                 name="text_verso"
                 cols="40"
@@ -59,25 +60,25 @@
                 required
                 id="id_text_verso"
               ></textarea>
-            </td>
-          </tr>
-          <tr>
-            <th><label for="id_studie_recto">Studie recto :</label></th>
-            <td>
+            </p>
+          </div>
+          <div>
+            <p><label for="id_studie_recto">Studie recto :</label></p>
+            <p>
               <input
                 type="checkbox"
                 name="studie_recto"
                 id="id_studie_recto"
                 checked
               />
-            </td>
-          </tr>
-          <tr>
-            <th><label for="id_studie_verso">Studie verso :</label></th>
-            <td>
+            </p>
+          </div>
+          <div>
+            <p><label for="id_studie_verso">Studie verso :</label></p>
+            <p>
               <input type="checkbox" name="studie_verso" id="id_studie_verso" />
-            </td>
-          </tr>
+            </p>
+          </div>
           <button type="submit" class="btn btn-primary">save</button>
           <button type="button" class="btn btn-danger" data-dismiss="modal">
             Close
@@ -94,7 +95,7 @@
   </div>
 </div>
 <script type="text/javascript">
-  var myModal = document.getElementById("noteModal{{chapter_id}}");
+  var myModal = document.getElementById("noteModalAdd{{chapter_id}}");
   var myInput = document.getElementById("id_text_recto{{chapter_id}}");
 
   myModal.addEventListener("shown.bs.modal", function () {
@@ -105,13 +106,15 @@
 {% else %}
 <button
   type="button"
-  class="btn btn-primary"
+  class="btn btn-outline-light"
   data-bs-toggle="modal"
   data-bs-target="#noteModal{{note_selected.id}}"
   id="buttonModalNote{{note_selected.id}}"
->
-  modify
-</button>
+><img
+src="{% static 'studies/img/edit-outline.svg' %}"
+alt="un triangle aux trois côtés égaux"
+height="25px"
+width="25px" /></button>
 
 <!-- Modal -->
 <div
@@ -138,9 +141,9 @@
           method="POST"
         >
           {% csrf_token %}
-          <tr>
-            <th><label for="id_text_recto">Text recto :</label></th>
-            <td>
+          <div>
+            <p><label for="id_text_recto">Text recto :</label></p>
+            <p>
               <textarea
                 name="text_recto"
                 cols="40"
@@ -149,13 +152,15 @@
                 required
                 id="id_text_recto{{note_selected.id}}"
                 autofocus
+                value="{{note_selected.text_recto}}"
                 onfocus="this.value = this.value;"
+                
               >{{note_selected.text_recto}}</textarea>
-            </td>
-          </tr>
-          <tr>
-            <th><label for="id_text_verso">Text verso :</label></th>
-            <td>
+            </p>
+          </div>
+          <div>
+            <p><label for="id_text_verso">Text verso :</label></p>
+            <p>
               <textarea
                 name="text_verso"
                 cols="40"
@@ -164,11 +169,11 @@
                 required
                 id="id_text_verso"
               >{{note_selected.text_verso}}</textarea>
-            </td>
-          </tr>
-          <tr>
-            <th><label for="id_studie_recto">Studie recto :</label></th>
-            <td>
+            </p>
+          </div>
+          <div>
+            <p><label for="id_studie_recto">Studie recto :</label></p>
+            <p>
             {% if note_selected.studie_recto %}
             <input type="checkbox" name="studie_recto" id="id_studie_recto" checked />
               {% else %}
@@ -176,18 +181,18 @@
             
             {% endif %}
               
-            </td>
-          </tr>
-          <tr>
-            <th><label for="id_studie_verso">Studie verso :</label></th>
-            <td>
+            </p>
+          </div>
+          <div>
+            <p><label for="id_studie_verso">Studie verso :</label></p>
+            <p>
             {% if note_selected.studie_verso %}
             <input type="checkbox" name="studie_verso" id="id_studie_verso" checked />
             {% else %}
             <input type="checkbox" name="studie_verso" id="id_studie_verso"/>
             {% endif %}
-            </td>
-          </tr>
+            </p>
+          </div>
           <button type="submit" class="btn btn-primary">save</button>
           <button type="button" class="btn btn-danger" data-dismiss="modal">
             Close
@@ -203,5 +208,14 @@
     </div>
   </div>
 </div>
+
+<script type="text/javascript">
+  var noteModal{{note_selected.id}} = document.getElementById('noteModal{{note_selected.id}}')
+  var myInput{{note_selected.id}} = document.getElementById('id_text_recto{{note_selected.id}}')
+
+  noteModal{{note_selected.id}}.addEventListener('shown.bs.modal', function () {
+    myInput{{note_selected.id}}.focus()
+  })
+</script>
 
 {% endif %}

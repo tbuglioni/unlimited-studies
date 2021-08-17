@@ -61,12 +61,28 @@ class Analyse:
         books = Book.objects.filter(users=self.request.user)
         for book in books:
             try:
-                lvl_avg = round(
-                    (self.note_recto_true.filter(notes__chapter__book__id=book.id).aggregate(
+                lvl_avg = (self.note_recto_true.filter(notes__chapter__book__id=book.id).aggregate(
                         Avg('lvl_recto'))["lvl_recto__avg"]
                     + 
-                    self.note_verso_true.filter(notes__chapter__book__id=book.id).aggregate(Avg('lvl_verso'))["lvl_verso__avg"])/2
-                    , 2)
+                    self.note_verso_true.filter(notes__chapter__book_id=book.id).aggregate(Avg('lvl_verso'))["lvl_verso__avg"])/2
+                    
+                lvl_avg = round(lvl_avg, 2)
+            except TypeError:
+                lvl_avg = 0
+            list_avg.append(lvl_avg)
+
+        return list_avg
+    
+    def get_list_lvl_avg_each_chapter_one_book(self, book_id):
+        list_avg = []
+        chapters = Chapter.objects.filter(book__users=self.request.user, book_id=book_id).select_related('book')
+        for chapter in chapters:
+            try:
+                lvl_avg = (self.note_recto_true.filter(notes__chapter__id=chapter.id).aggregate(
+                        Avg('lvl_recto'))["lvl_recto__avg"]
+                    + 
+                    self.note_verso_true.filter(notes__chapter__id=chapter.id).aggregate(Avg('lvl_verso'))["lvl_verso__avg"])/2
+                lvl_avg = round(lvl_avg, 2)
             except TypeError:
                 lvl_avg = 0
             list_avg.append(lvl_avg)
@@ -96,13 +112,15 @@ class Analyse:
         
 
     def get_notes_studied_this_month(self):
+        date_now = self.time_now
         obj, created = GlobalMonthlyAnalysis.objects.get_or_create(
-            user=self.request.user, date=self.time_now)
+            user=self.request.user, date__month=date_now.month)
         return obj.number_of_studies
 
     def __update_notes_studied_this_month(self, note_true, note_false):
+        date_now = self.time_now
         obj, created = GlobalMonthlyAnalysis.objects.get_or_create(
-            user=self.request.user, date=self.time_now)
+            user=self.request.user, date__month=date_now.month)
         
         obj.number_of_studies = F('number_of_studies') + (note_true + note_false)
         obj.number_of_win = F('number_of_win') + note_true

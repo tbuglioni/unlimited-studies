@@ -11,6 +11,10 @@
 font-family: "daniel hand";
 font-size: 1rem;
 }
+.new_font_daniel-m {
+font-family: "daniel hand";
+font-size: 1.5rem;
+}
 
 .new_font_daniel-lg {
 font-family: "daniel hand";
@@ -19,10 +23,10 @@ font-size: 3rem;
 
 
 .half-black {
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(29, 34, 40, 0.9);
 }
 
-.img_custom1 {
+.img_custom1, img_custom2 {
   
   background-size: cover;
   background-repeat: no-repeat;
@@ -37,6 +41,21 @@ font-size: 3rem;
 @media screen and (min-width: 768px) {      
   .img_custom1{      
     background-image: url('../img/fisherman.jpg');
+       } 
+  }
+
+
+
+
+@media screen and (max-width: 767px){   
+  .img_custom2{      
+    background-image: url('../img/fractal.jpg');
+      } 
+  }
+  
+@media screen and (min-width: 768px) {      
+  .img_custom2{      
+    background-image: url('../img/book.jpg');
        } 
   }
 

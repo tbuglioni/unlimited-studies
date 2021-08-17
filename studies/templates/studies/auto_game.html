@@ -29,16 +29,16 @@
             Response
           </button>
           <!-- validation buttons -->
-          <div data-glide-el="controls">
+          <div id="button{{elt.id}}{{elt.sens}}" data-glide-el="controls">
             <button
               data-glide-dir=">"
-              onclick="myFunction('slide{{elt.id}}{{elt.sens}}', true,'{{elt.id}}', '{{elt.sens}}' )"
+              onclick="myFunction('slide{{elt.id}}{{elt.sens}}', true,'{{elt.id}}', '{{elt.sens}}' ,'button{{elt.id}}{{elt.sens}}')"
             >
               Valid
             </button>
             <button
               data-glide-dir=">"
-              onclick="myFunction('slide{{elt.id}}{{elt.sens}}', false,'{{elt.id}}', '{{elt.sens}}' )"
+              onclick="myFunction('slide{{elt.id}}{{elt.sens}}', false,'{{elt.id}}', '{{elt.sens}}','button{{elt.id}}{{elt.sens}}')"
             >
               Fail
             </button>
@@ -84,13 +84,19 @@
         this.data_db = [];
       }
 
-      updateBackgroundColor(elt, win) {
+      updateBackgroundColor(elt, win, button_id) {
         var x = document.getElementById(elt);
         if (win) {
-          x.classList.add("bg-primary");
+          x.classList.add("bg-primary")
         } else {
-          x.classList.add("bg-danger");
+          x.classList.add("bg-danger")
         }
+        
+      }
+
+      deleteButton(button_id) {
+        var y = document.getElementById(button_id)
+        y.classList.add("d-none")
       }
 
       updateListed(elt, win, note_id, note_sens) {
@@ -150,8 +156,9 @@
 
     let gameData = new GameData();
 
-    function myFunction(elt, win, note_id, note_sens) {
+    function myFunction(elt, win, note_id, note_sens, button_id) {
       gameData.updateBackgroundColor(elt, win);
+      gameData.deleteButton(button_id);
       gameData.updateListed(elt, win, note_id, note_sens);
       gameData.updateResult(elt, win);
     }

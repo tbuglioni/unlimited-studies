@@ -1,70 +1,103 @@
-{% extends 'base.html' %}{% load static %}
-<div>
-  {% block content %} 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.1.2/echarts.min.js"></script>
+{% extends 'base.html' %}{% load static %} {% block content %}
 
-  <!-- NAVBAR -->
-  {% include "snippets/navebar.html" with user=user %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.1.2/echarts.min.js"></script>
 
-  <!-- BODY -->
-  <div class="container-fluid mt-5 pt-5 ">
-    <h1 class="text-center new_font_daniel-lg" >Home</h1>
-    <p class="text-center">{{user.username}}</p>
-    <br />
-    <p>all books :</p>
-    <div class="row">
-      <!-- small data recap -->
-      <section name="total note" class="col-3 border m-1">total note {{all_notes}}</section>
-      <section name="todoo note" class="col-3 border m-1">todoo note recto / verso {{todoo}}</section>
-      <section name="lvl average note" class="col-3 border m-1">lvl average note {{all_notes_avg}}</section>
-      <section name="daily strike" class="col-3 border m-1">daily strike</section>
-      <section name="Today recap" class="col-3 border m-1">Today recap {{Today_recap}}</section>
-      <section name="Month recap" class="col-3 border m-1">Month recap {{month_recap}}</section>
+<!-- NAVBAR -->
+{% include "snippets/navebar.html" with user=user %}
 
-      <!-- big graph recap -->
-      <section name="pie chart" class="col-xl-6 border" style="height:25em">
-        {% include "studies/snippets/pie_graph_snippet.html" with recap_data=recap_data%}
-      </section>
-      <section name="spider graph" class="col-xl-6 border" style="height:25em">
-        {% include "studies/snippets/spider_graph_snippet.html" with data_avg=books_avg data=books %}
-      </section>
-      
-    </div>
-    <!-- book table -->
-    <a href="{% url 'studies:feed_db'%}">feed db</a>
-    <section name="book table" class="col-md-6 border">
-      <table class="table-dark table-striped table">
-        <thead>
-          <tr>
-            <th scope="col">Ordre</th>
-            <th scope="col">Livre</th>
-            <th scope="col">supprimer</th>
-            <th scope="col">modifier</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for book in books %}
-          <tr>
-            <th scope="row">1</th>
-            <td>
-              <a href="{% url 'studies:book_page' book=book.id%}"
-                >{{book.name}}</a
-              >
-            </td>
-            <td>
-              <a href="{% url 'studies:delete_book' book=book.id%}">delete</a>
-            </td>
-            <td>
-              {% include 'studies/snippets/add_book_snippet.html' with book_selected=book%}
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-      {% include 'studies/snippets/add_book_snippet.html'%}
+<!-- BODY -->
+<div class="container-fluid mt-5 pt-5">
+  <h1 class="text-center new_font_daniel-lg">Home</h1>
+  <p class="text-center">{{user.username}}</p>
+  <br />
+  <div class="row  p-1 bg-light text-dark">
+    <!-- small data recap -->
+    <section name="total note" class="col-lg-2 col-md-4 col-sm-6 text-center ">
+      <span class="new_font_daniel-m">Total:</span>
+      <span class="">{{all_notes}}</span>
+    </section>
+    <section name="todoo note" class="col-lg-2 col-md-4 col-sm-6 text-center">
+      <span class="new_font_daniel-m">Todoo:</span>
+      <span>{{todoo}}</span>
+    </section>
+    <section name="lvl average note" class="col-lg-2 col-md-4 col-sm-6 text-center">
+      <span class="new_font_daniel-m">Lvl average:</span>
+      <span>{{all_notes_avg}}</span>
+    </section>
+    <section name="daily strike" class="col-lg-2 col-md-4 col-sm-6 text-center">
+      <span class="new_font_daniel-m">Daily strike:</span>
+      <span></span>
+    </section>
+    <section name="Today recap" class="col-lg-2 col-md-4 col-sm-6 text-center">
+      <span class="new_font_daniel-m">Today recap:</span>
+      <span>{{Today_recap}}</span>
+    </section>
+    <section name="Month recap" class="col-lg-2 col-md-4 col-sm-6 text-center">
+      <span class="new_font_daniel-m">Month recap:</span>
+      <span>{{month_recap}}</span>
     </section>
   </div>
-
-  {% endblock content %}
+  <div class="row">
+    <!-- big graph recap -->
+    <section name="pie chart" class="col-xl-6" style="height: 25em">
+      {% include "studies/snippets/pie_graph_snippet.html" with recap_data=recap_data%}
+    </section>
+    <section name="spider graph" class="col-xl-6 rounded" style="height: 25em">
+      {% include "studies/snippets/spider_graph_snippet.html" with data_avg=books_avg data=books %}
+    </section>
+  </div>
+  <!-- book table -->
+  <a href="{% url 'studies:feed_db'%}">feed db</a>
+  <div class="row bg-light text-dark pt-1 d-flex justify-content-sm-center">
+    <span class="col-sm-5 text-center">°º¤ø,¸¸,ø¤º°`°º¤ø,¸,ø¤°º¤ø,¸¸,ø¤º°`°º¤ø,¸</span>
+    <span  class="col-sm-2 text-center new_font_daniel-m">Books</span>
+    <span class="col-sm-5 text-center">°º¤ø,¸¸,ø¤º°`°º¤ø,¸,ø¤°º¤ø,¸¸,ø¤º°`°º¤ø,¸</span>
+  
+  </div>
+  <section name="book table" class="col-md-12">
+    <table class="table-dark table">
+      <thead>
+        <tr>
+          <th scope="col"style="width: 10%">Order</th>
+          <th scope="col"style="width: 20%">Book</th>
+          <th scope="col"style="width: 30%">Description</th>
+          <th scope="col" style="width: 10%">Delete</th>
+          <th scope="col" style="width: 10%">Update</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for book in books %}
+        <tr>
+          <th scope="row">1</th>
+          <td>
+            <a
+              class="link-light"
+              href="{% url 'studies:book_page' book=book.id%}"
+              >{{book.name}}</a
+            >
+          </td>
+          <td>{{book.description}}</td>
+          <td>
+            <a
+              href="{% url 'studies:delete_book' book=book.id%}"
+              class="btn btn-outline-light"
+              ><img
+                src="{% static 'studies/img/trash-2-outline.svg' %}"
+                alt="un triangle aux trois côtés égaux"
+                height="25px"
+                width="25px"
+            /></a>
+          </td>
+          <td>
+            {% include 'studies/snippets/add_book_snippet.html' with book_selected=book%}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% include 'studies/snippets/add_book_snippet.html'%}
+  </section>
 </div>
+
+{% endblock content %}
