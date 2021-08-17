@@ -2,13 +2,16 @@
 {% if not book_selected %}{% load static %}
 <button
   type="button"
-  class="btn btn-light"
+  class="btn btn-primary"
   data-bs-toggle="modal"
   data-bs-target="#bookAddModal"
   id="bookAddButton"
->
-  add
-</button>
+><img
+src="{% static 'studies/img/plus-circle-outline.svg' %}"
+alt="un triangle aux trois côtés égaux"
+height="25px"
+width="25px"
+/></button>
 
 <!-- Modal -->
 <div
@@ -19,8 +22,8 @@
   aria-hidden="true"
 >
   <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header bg-dark">
+    <div class="modal-content bg-dark">
+      <div class="modal-header">
         <h5 class="modal-title" id="bookAddModalLabel">Add Book</h5>
         <button
           type="button"
@@ -29,13 +32,14 @@
           aria-label="Close"
         ></button>
       </div>
-      <div class="modal-body ">
+      <div class="modal-body bg-dark">
         <form action="{% url 'studies:personal_home'%}" method="POST">
           {% csrf_token %}
           <div>
-            <p><label for="id_name">Name :</label></p>
+            <p><label class="form-label" for="id_name">Name :</label></p>
             <p>
               <input
+                class="form-control"
                 type="text"
                 name="name"
                 maxlength="255"
@@ -45,9 +49,10 @@
             </div>
           </p>
           <div>
-            <p><label for="id_description">Description :</label></p>
+            <p><label class="form-label" for="id_description">Description :</label></p>
             <p>
               <textarea
+                class="form-control"
                 name="description"
                 cols="40"
                 rows="10"
@@ -57,9 +62,10 @@
             </div>
           </p>
           <div>
-            <p><label for="id_source_info">Source info :</label></p>
+            <p><label class="form-label" for="id_source_info">Source info :</label></p>
             <p>
               <textarea
+                class="form-control"
                 name="source_info"
                 cols="40"
                 rows="10"
@@ -69,13 +75,12 @@
             </div>
           </p>
           <button type="submit" class="btn btn-primary">save</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            Close
+          </button>
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-          Close
-        </button>
-        <button type="button" class="btn btn-primary">Save changes</button>
       </div>
     </div>
   </div>
@@ -130,10 +135,11 @@
         >
           {% csrf_token %}
           <div>
-            <p><label for="id_name">Name :</label></p>
+            <p><label class="form-label" for="id_name">Name :</label></p>
             <p>
               <input
                 type="text"
+                class="form-control"
                 name="name"
                 maxlength="255"
                 required
@@ -145,10 +151,11 @@
             </div>
           </p>
           <div>
-            <p><label for="id_description">Description :</label></p>
+            <p><label class="form-label" for="id_description">Description :</label></p>
             <p>
               <textarea
                 name="description"
+                class="form-control"
                 cols="40"
                 rows="10"
                 maxlength="1000"
@@ -157,10 +164,11 @@
             </div>
           </p>
           <div>
-            <p><label for="id_source_info">Source info :</label></p>
+            <p><label class="form-label" for="id_source_info">Source info :</label></p>
             <p>
               <textarea
                 name="source_info"
+                class="form-control"
                 cols="40"
                 rows="10"
                 maxlength="1000"
@@ -169,13 +177,10 @@
             </div>
           </p>
           <button type="submit" class="btn btn-primary">save</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-          Close
-        </button>
-        <button type="button" class="btn btn-primary">Save changes</button>
       </div>
     </div>
   </div>

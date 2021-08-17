@@ -6,9 +6,12 @@
   data-bs-toggle="modal"
   data-bs-target="#noteModalAdd{{chapter_id}}"
   id="buttonModalNoteAdd{{chapter_id}}"
->
-  add notes
-</button>
+><img
+src="{% static 'studies/img/plus-circle-outline.svg' %}"
+alt="un triangle aux trois côtés égaux"
+height="25px"
+width="25px"
+/></button>
 
 <!-- Modal -->
 <div
@@ -19,7 +22,7 @@
   aria-hidden="true"
 >
   <div class="modal-dialog">
-    <div class="modal-content">
+    <div class="modal-content bg-dark">
       <div class="modal-header">
         <h5 class="modal-title" id="noteModalLabel">Add Chapter</h5>
         <button
@@ -39,6 +42,7 @@
             <p><label for="id_text_recto{{chapter_id}}">Text recto :</label></p>
             <p>
               <textarea
+                class="form-control"
                 name="text_recto"
                 cols="40"
                 rows="10"
@@ -53,6 +57,7 @@
             <p><label for="id_text_verso">Text verso :</label></p>
             <p>
               <textarea
+                class="form-control"
                 name="text_verso"
                 cols="40"
                 rows="10"
@@ -66,6 +71,7 @@
             <p><label for="id_studie_recto">Studie recto :</label></p>
             <p>
               <input
+                class="form-check-input"
                 type="checkbox"
                 name="studie_recto"
                 id="id_studie_recto"
@@ -76,20 +82,17 @@
           <div>
             <p><label for="id_studie_verso">Studie verso :</label></p>
             <p>
-              <input type="checkbox" name="studie_verso" id="id_studie_verso" />
+              <input class="form-check-input" type="checkbox" name="studie_verso" id="id_studie_verso" />
             </p>
           </div>
           <button type="submit" class="btn btn-primary">save</button>
-          <button type="button" class="btn btn-danger" data-dismiss="modal">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
             Close
           </button>
+
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-          Close
-        </button>
-        <button type="button" class="btn btn-primary">Save changes</button>
       </div>
     </div>
   </div>
@@ -125,7 +128,7 @@ width="25px" /></button>
   aria-hidden="true"
 >
   <div class="modal-dialog">
-    <div class="modal-content">
+    <div class="modal-content bg-dark">
       <div class="modal-header">
         <h5 class="modal-title" id="noteModalLabel">modify Chapter</h5>
         <button
@@ -142,9 +145,10 @@ width="25px" /></button>
         >
           {% csrf_token %}
           <div>
-            <p><label for="id_text_recto">Text recto :</label></p>
+            <p><label class="form-label" for="id_text_recto">Text recto :</label></p>
             <p>
               <textarea
+                class="form-control"
                 name="text_recto"
                 cols="40"
                 rows="10"
@@ -152,16 +156,17 @@ width="25px" /></button>
                 required
                 id="id_text_recto{{note_selected.id}}"
                 autofocus
-                value="{{note_selected.text_recto}}"
+                value=""
                 onfocus="this.value = this.value;"
                 
               >{{note_selected.text_recto}}</textarea>
             </p>
           </div>
           <div>
-            <p><label for="id_text_verso">Text verso :</label></p>
+            <p><label class="form-label" for="id_text_verso">Text verso :</label></p>
             <p>
               <textarea
+                class="form-control"
                 name="text_verso"
                 cols="40"
                 rows="10"
@@ -172,7 +177,7 @@ width="25px" /></button>
             </p>
           </div>
           <div>
-            <p><label for="id_studie_recto">Studie recto :</label></p>
+            <p><label class="form-label" for="id_studie_recto">Studie recto :</label></p>
             <p>
             {% if note_selected.studie_recto %}
             <input type="checkbox" name="studie_recto" id="id_studie_recto" checked />
@@ -184,38 +189,40 @@ width="25px" /></button>
             </p>
           </div>
           <div>
-            <p><label for="id_studie_verso">Studie verso :</label></p>
+            <p><label class="form-label" for="id_studie_verso">Studie verso :</label></p>
             <p>
             {% if note_selected.studie_verso %}
-            <input type="checkbox" name="studie_verso" id="id_studie_verso" checked />
+            <input class="form-check-input" type="checkbox" name="studie_verso" id="id_studie_verso" checked />
             {% else %}
-            <input type="checkbox" name="studie_verso" id="id_studie_verso"/>
+            <input class="form-check-input" type="checkbox" name="studie_verso" id="id_studie_verso"/>
             {% endif %}
             </p>
           </div>
           <button type="submit" class="btn btn-primary">save</button>
-          <button type="button" class="btn btn-danger" data-dismiss="modal">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
             Close
           </button>
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-          Close
-        </button>
-        <button type="button" class="btn btn-primary">Save changes</button>
+        
       </div>
     </div>
   </div>
 </div>
 
-<script type="text/javascript">
-  var noteModal{{note_selected.id}} = document.getElementById('noteModal{{note_selected.id}}')
-  var myInput{{note_selected.id}} = document.getElementById('id_text_recto{{note_selected.id}}')
 
-  noteModal{{note_selected.id}}.addEventListener('shown.bs.modal', function () {
-    myInput{{note_selected.id}}.focus()
-  })
+<!-- script to solve : autofocus + boostrap modal + textarea  -->
+<script type="text/javascript">
+$(document).ready(function(){
+  $("#noteModal{{note_selected.id}}").on('shown.bs.modal', function(){
+      $(this).find('#id_text_recto{{note_selected.id}}').focus().val('').val("{{note_selected.text_recto}}");
+  });
+});
+
 </script>
+
+
+
 
 {% endif %}

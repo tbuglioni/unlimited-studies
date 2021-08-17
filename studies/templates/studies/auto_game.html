@@ -17,10 +17,15 @@
     <div class="glide__track" data-glide-el="track">
       <!-- slides -->
       <ul class="glide__slides" style="height: 50vh">
-        <li class="glide__slide border">Start</li>
+        <!-- slide intro -->
+        <li class="glide__slide border rounded">Start</li>
         {% for elt in game_list_auto %}
-        <li id="slide{{elt.id}}{{elt.sens}}" class="glide__slide border">
-          <!-- slide data -->
+
+        <!-- slide data -->
+        <li
+          id="slide{{elt.id}}{{elt.sens}}"
+          class="glide__slide border rounded"
+        >
           <p id="{{elt.id}}{{elt.sens}}">{{elt.text}}</p>
           <!-- response buttons -->
           <button
@@ -32,25 +37,29 @@
           <div id="button{{elt.id}}{{elt.sens}}" data-glide-el="controls">
             <button
               data-glide-dir=">"
-              onclick="myFunction('slide{{elt.id}}{{elt.sens}}', true,'{{elt.id}}', '{{elt.sens}}' ,'button{{elt.id}}{{elt.sens}}')"
+              onclick="manageResult('slide{{elt.id}}{{elt.sens}}', true,'{{elt.id}}', '{{elt.sens}}' ,'button{{elt.id}}{{elt.sens}}')"
             >
               Valid
             </button>
             <button
               data-glide-dir=">"
-              onclick="myFunction('slide{{elt.id}}{{elt.sens}}', false,'{{elt.id}}', '{{elt.sens}}','button{{elt.id}}{{elt.sens}}')"
+              onclick="manageResult('slide{{elt.id}}{{elt.sens}}', false,'{{elt.id}}', '{{elt.sens}}','button{{elt.id}}{{elt.sens}}')"
             >
               Fail
             </button>
           </div>
         </li>
         {% endfor %}
-        <li id="ending slide" class="glide__slide border">
+
+        <!-- slide end -->
+        <li id="ending slide" class="glide__slide border border rounded">
           <p>End</p>
           <button onclick="saveAndQuit()">save and quit</button>
         </li>
       </ul>
     </div>
+
+    <!-- arrow button -->
     <div class="glide__arrows" data-glide-el="controls">
       <button class="glide__arrow glide__arrow--left" data-glide-dir="<">
         prev
@@ -59,6 +68,7 @@
         next
       </button>
     </div>
+
     <div data-glide-el="controls">
       <button data-glide-dir="<<">Start</button>
       <button data-glide-dir=">>">End</button>
@@ -87,16 +97,15 @@
       updateBackgroundColor(elt, win, button_id) {
         var x = document.getElementById(elt);
         if (win) {
-          x.classList.add("bg-primary")
+          x.classList.add("bg-primary");
         } else {
-          x.classList.add("bg-danger")
+          x.classList.add("bg-danger");
         }
-        
       }
 
       deleteButton(button_id) {
-        var y = document.getElementById(button_id)
-        y.classList.add("d-none")
+        var y = document.getElementById(button_id);
+        y.classList.add("d-none");
       }
 
       updateListed(elt, win, note_id, note_sens) {
@@ -149,14 +158,15 @@
           body: form,
           headers: { "X-CSRFToken": csrfTokenValue },
         });
-        fetch(request).then(function() {window.location.replace("{% url 'studies:personal_home' %}");})
-        
+        fetch(request).then(function () {
+          window.location.replace("{% url 'studies:personal_home' %}");
+        });
       }
     }
 
     let gameData = new GameData();
 
-    function myFunction(elt, win, note_id, note_sens, button_id) {
+    function manageResult(elt, win, note_id, note_sens, button_id) {
       gameData.updateBackgroundColor(elt, win);
       gameData.deleteButton(button_id);
       gameData.updateListed(elt, win, note_id, note_sens);
