@@ -12,49 +12,99 @@
 />
 <!-- BODY (glide library)-->
 <div class="container">
-  <h1>Studies session</h1>
+  <div class="mt-2 pt-3 row justify-content-between">
+    <span class="col-3 new_font_daniel-m"
+      >Result: <span id="result"></span
+    ></span>
+
+    <span class="col-3 d-grid gap-2">
+      <button class="btn btn-outline-light new_font_daniel-m" onclick="quit()">
+        Quit
+      </button>
+    </span>
+  </div>
+
   <div class="glide">
     <div class="glide__track" data-glide-el="track">
       <!-- slides -->
-      <ul class="glide__slides" style="height: 50vh">
+      <ul class="glide__slides" style="height: 90vh">
         <!-- slide intro -->
-        <li class="glide__slide border rounded">Start</li>
+        <li
+          class="
+            glide__slide
+            border
+            new_font_daniel-lg
+            d-flex
+            justify-content-center
+            align-items-center
+          "
+        >
+          Start
+        </li>
         {% for elt in game_list_auto %}
 
         <!-- slide data -->
-        <li
-          id="slide{{elt.id}}{{elt.sens}}"
-          class="glide__slide border rounded"
-        >
-          <p id="{{elt.id}}{{elt.sens}}">{{elt.text}}</p>
-          <!-- response buttons -->
+        <li id="slide{{elt.id}}{{elt.sens}}" class="glide__slide border">
           <button
+            type="button"
+            style="height: 70%; width: 100%; background-color: transparent"
+            class="btn btn-dark"
             onclick="showResponse('{{elt.id}}{{elt.sens}}', '{{elt.text}}', '{{elt.response}}')"
           >
-            Response
+            <div>
+              <p id="{{elt.id}}{{elt.sens}}">{{elt.text}}</p>
+            </div>
           </button>
+          <!-- response buttons -->
+
           <!-- validation buttons -->
-          <div id="button{{elt.id}}{{elt.sens}}" data-glide-el="controls">
-            <button
-              data-glide-dir=">"
-              onclick="manageResult('slide{{elt.id}}{{elt.sens}}', true,'{{elt.id}}', '{{elt.sens}}' ,'button{{elt.id}}{{elt.sens}}')"
-            >
-              Valid
-            </button>
-            <button
-              data-glide-dir=">"
-              onclick="manageResult('slide{{elt.id}}{{elt.sens}}', false,'{{elt.id}}', '{{elt.sens}}','button{{elt.id}}{{elt.sens}}')"
-            >
-              Fail
-            </button>
+          <div
+            class="row border"
+            style="height: 30%; width: 100"
+            id="button{{elt.id}}{{elt.sens}}"
+          >
+            <div class="col-6" data-glide-el="controls">
+              <button
+                class="btn btn-dark col-12"
+                style="height: 100%"
+                data-glide-dir=">"
+                onclick="manageResult('slide{{elt.id}}{{elt.sens}}', false,'{{elt.id}}', '{{elt.sens}}','button{{elt.id}}{{elt.sens}}')"
+              >
+                Fail
+              </button>
+            </div>
+            <div class="col-6" data-glide-el="controls">
+              <button
+                class="btn btn-dark col-12"
+                style="height: 100%"
+                data-glide-dir=">"
+                onclick="manageResult('slide{{elt.id}}{{elt.sens}}', true,'{{elt.id}}', '{{elt.sens}}' ,'button{{elt.id}}{{elt.sens}}')"
+              >
+                Valid
+              </button>
+            </div>
           </div>
         </li>
         {% endfor %}
 
         <!-- slide end -->
-        <li id="ending slide" class="glide__slide border border rounded">
-          <p>End</p>
-          <button onclick="saveAndQuit()">save and quit</button>
+        <li
+          id="ending slide"
+          class="glide__slide border row align-items-center d-flex"
+        >
+          <p class="new_font_daniel-lg col-12 text-center">The end</p>
+          <p
+            class="new_font_daniel-m col-12 text-center"
+            id="ending slide counter"
+          >
+            ----
+          </p>
+          <button
+            class="btn btn-outline-light new_font_daniel-m"
+            onclick="quit()"
+          >
+            Save & quit
+          </button>
         </li>
       </ul>
     </div>
@@ -68,120 +118,116 @@
         next
       </button>
     </div>
-
-    <div data-glide-el="controls">
-      <button data-glide-dir="<<">Start</button>
-      <button data-glide-dir=">>">End</button>
-    </div>
   </div>
-  <div>
-    Result:
-    <p id="result"></p>
-    <p id="exit"></p>
-    <button onclick="saveAndQuit()">save and quit</button>
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/@glidejs/glide"></script>
-
-  <script type="text/javascript">
-    // Glide setup
-    new Glide(".glide").mount();
-
-    class GameData {
-      constructor() {
-        this.win_id_list = [];
-        this.fail_id_list = [];
-        this.data_db = [];
-      }
-
-      updateBackgroundColor(elt, win, button_id) {
-        var x = document.getElementById(elt);
-        if (win) {
-          x.classList.add("bg-primary");
-        } else {
-          x.classList.add("bg-danger");
-        }
-      }
-
-      deleteButton(button_id) {
-        var y = document.getElementById(button_id);
-        y.classList.add("d-none");
-      }
-
-      updateListed(elt, win, note_id, note_sens) {
-        if (
-          win &&
-          !this.win_id_list.includes(elt) &&
-          !this.fail_id_list.includes(elt)
-        ) {
-          this.win_id_list.push(elt);
-          this.data_db.push({ id: note_id, sens: note_sens, win: win });
-        } else if (
-          !win &&
-          !this.fail_id_list.includes(elt) &&
-          !this.win_id_list.includes(elt)
-        ) {
-          this.fail_id_list.push(elt);
-          this.data_db.push({ id: note_id, sens: note_sens, win: win });
-        }
-      }
-
-      updateResult(elt, result) {
-        var result = document.getElementById("result");
-        result.innerHTML = this.win_id_list.length + this.fail_id_list.length;
-        var ending_slide = document.getElementById("ending slide");
-        ending_slide.innerHTML =
-          this.win_id_list.length +
-          "/" +
-          (this.win_id_list.length + this.fail_id_list.length);
-      }
-
-      showResponse(elt, text, response) {
-        var x = document.getElementById(elt);
-        if (x.innerHTML === text) {
-          x.innerHTML = response;
-        } else {
-          x.innerHTML = text;
-        }
-      }
-
-      sendData() {
-        alert("sending");
-        let form = new FormData();
-        form.append("exit_list", JSON.stringify(this.data_db));
-
-        let csrfTokenValue = document.querySelector(
-          "[name=csrfmiddlewaretoken]"
-        ).value;
-        let request = new Request("{% url 'studies:game_auto' %}", {
-          method: "POST",
-          body: form,
-          headers: { "X-CSRFToken": csrfTokenValue },
-        });
-        fetch(request).then(function () {
-          window.location.replace("{% url 'studies:personal_home' %}");
-        });
-      }
-    }
-
-    let gameData = new GameData();
-
-    function manageResult(elt, win, note_id, note_sens, button_id) {
-      gameData.updateBackgroundColor(elt, win);
-      gameData.deleteButton(button_id);
-      gameData.updateListed(elt, win, note_id, note_sens);
-      gameData.updateResult(elt, win);
-    }
-
-    function showResponse(elt_id, elt_text, elt_response) {
-      gameData.showResponse(elt_id, elt_text, elt_response);
-    }
-
-    function saveAndQuit() {
-      gameData.sendData();
-    }
-
-    // ending ajax to send the data to the server
-  </script>
-  {% endblock content %}
 </div>
+<script src="https://cdn.jsdelivr.net/npm/@glidejs/glide"></script>
+
+<script type="text/javascript">
+  // Glide setup
+  new Glide(".glide").mount();
+
+  class GameData {
+    constructor() {
+      this.win_id_list = [];
+      this.fail_id_list = [];
+      this.data_db = [];
+    }
+
+    updateBackgroundColor(elt, win, button_id) {
+      var x = document.getElementById(elt);
+      if (win) {
+        x.classList.add("bg-primary");
+      } else {
+        x.classList.add("bg-danger");
+      }
+    }
+
+    deleteButton(button_id) {
+      var y = document.getElementById(button_id);
+      y.classList.add("d-none");
+    }
+
+    updateListed(elt, win, note_id, note_sens) {
+      if (
+        win &&
+        !this.win_id_list.includes(elt) &&
+        !this.fail_id_list.includes(elt)
+      ) {
+        this.win_id_list.push(elt);
+        this.data_db.push({ id: note_id, sens: note_sens, win: win });
+      } else if (
+        !win &&
+        !this.fail_id_list.includes(elt) &&
+        !this.win_id_list.includes(elt)
+      ) {
+        this.fail_id_list.push(elt);
+        this.data_db.push({ id: note_id, sens: note_sens, win: win });
+      }
+    }
+
+    updateResult(elt, result) {
+      var result = document.getElementById("result");
+      result.innerHTML = this.win_id_list.length + this.fail_id_list.length;
+      var ending_slide = document.getElementById("ending slide counter");
+      ending_slide.innerHTML =
+        this.win_id_list.length +
+        "/" +
+        (this.win_id_list.length + this.fail_id_list.length);
+    }
+
+    showResponse(elt, text, response) {
+      var x = document.getElementById(elt);
+      if (x.innerHTML === text) {
+        x.innerHTML = response;
+      } else {
+        x.innerHTML = text;
+      }
+    }
+
+    sendData(note_id, note_sens, win) {
+      let form = new FormData();
+      form.append("note_id", note_id);
+      form.append("note_sens", note_sens);
+      form.append("win", win);
+      form.append(
+        "exit_list",
+        JSON.stringify([{ id: note_id, sens: note_sens, win: win }])
+      );
+
+      let csrfTokenValue = document.querySelector(
+        "[name=csrfmiddlewaretoken]"
+      ).value;
+      let request = new Request("{% url 'studies:game_auto' %}", {
+        method: "POST",
+        body: form,
+        headers: { "X-CSRFToken": csrfTokenValue },
+      });
+      fetch(request);
+    }
+
+    quitPage() {
+      window.location.replace("{% url 'studies:personal_home' %}");
+    }
+  }
+
+  let gameData = new GameData();
+
+  function manageResult(elt, win, note_id, note_sens, button_id) {
+    gameData.updateBackgroundColor(elt, win);
+    gameData.deleteButton(button_id);
+    gameData.updateListed(elt, win, note_id, note_sens);
+    gameData.updateResult(elt, win);
+    gameData.sendData(note_id, note_sens, win);
+  }
+
+  function showResponse(elt_id, elt_text, elt_response) {
+    gameData.showResponse(elt_id, elt_text, elt_response);
+  }
+
+  function quit() {
+    gameData.quitPage();
+  }
+
+  // ending ajax to send the data to the server
+</script>
+{% endblock content %}

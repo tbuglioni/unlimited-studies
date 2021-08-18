@@ -21,11 +21,10 @@ user_action = UserAction()
 @login_required
 def personal_home_view(request, book=None):
     """ personal page with books and feedback"""
-    
 
     context = {}
     context["books"] = user_action.get_books(request)
-    
+
     current_analyse.get_request(request)
     current_analyse.update_data()
     context["todoo"] = current_analyse.get_nbr_notes_todoo()
@@ -35,8 +34,6 @@ def personal_home_view(request, book=None):
     context["Today_recap"] = current_analyse.get_notes_studied_today()
     context["month_recap"] = current_analyse.get_notes_studied_this_month()
     context["recap_data"] = current_analyse.get_recap_daily_notes()
-    
-    
 
     if book is not None:
         context["selectedBook"] = user_action.get_book_404(request, book)
@@ -58,8 +55,8 @@ def book_view(request, book, chapter=None):
     current_analyse.update_data()
     context["book"] = user_action.get_book_404(request, book)
     context["chapters"] = Chapter.objects.filter(book=book)
-    context["chapters_notes_avg"] = current_analyse.get_list_lvl_avg_each_chapter_one_book(book)
-    
+    context["chapters_notes_avg"] = current_analyse.get_list_lvl_avg_each_chapter_one_book(
+        book)
 
     if chapter is not None:
         context["chapter"] = user_action.get_chapter_404(
@@ -158,16 +155,20 @@ def start_game_view(request):
     if request.POST:
         win_counter = 0
         fail_counter = 0
-        data_list = json.loads(request.POST.get('exit_list'))
-        print(data_list)
-        for elt in data_list:
-            print(elt['id'], elt['sens'], elt['win'])
-            new_game.change_lvl(request, elt['id'], elt['sens'], elt['win'])
-            if elt['win'] == True:
-                win_counter += 1
-            elif elt['win'] == False:
-                fail_counter += 1
-                
+        note_id = request.POST.get('note_id')
+        note_sens = request.POST.get('note_sens')
+        win = request.POST.get('win')
+        if win == "true":
+            win = True
+        else:
+            win = False
+        new_game.change_lvl(request, note_id, note_sens, win)
+        print(note_id, note_sens, win)
+        if win == True:
+            win_counter += 1
+        elif win == False:
+            fail_counter += 1
+
         current_analyse.get_request(request)
         current_analyse.update_analysis(win_counter, fail_counter)
         new_game.cleaned_data()
