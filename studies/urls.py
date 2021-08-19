@@ -25,5 +25,6 @@ urlpatterns = [
 
     path("feed_db", views.add_data_in_db, name="feed_db"),
 
+    path("game_auto/<int:speed>/<int:long>", views.start_game_view, name="game_auto"),
     path("game_auto", views.start_game_view, name="game_auto"),
 ]

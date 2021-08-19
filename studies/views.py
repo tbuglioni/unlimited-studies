@@ -150,7 +150,7 @@ def add_data_in_db(request):
 
 
 @ login_required
-def start_game_view(request):
+def start_game_view(request, speed=10, long=10):
     """ start auto game in a specific page """
     if request.POST:
         win_counter = 0
@@ -177,6 +177,6 @@ def start_game_view(request):
     context = {}
     new_game.cleaned_data()
     context["game_list_auto"] = new_game.get_notes_todo(
-        request, nbr_speed=20, nbr_long=20)
+        request, nbr_speed=speed, nbr_long=long)
 
     return render(request, "studies/auto_game.html", context)

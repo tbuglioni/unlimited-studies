@@ -11,7 +11,7 @@
   <h1 class="text-center new_font_daniel-lg">Home</h1>
   <p class="text-center">{{user.username}}</p>
   <br />
-  <div class="row  p-1 bg-light text-dark">
+  <div class="row  p-1 bg-light text-dark justify-content-between">
     <!-- small data recap -->
     <section name="total note" class="col-lg-2 col-md-4 col-sm-6 text-center ">
       <span class="new_font_daniel-m">Total:</span>
@@ -24,10 +24,6 @@
     <section name="lvl average note" class="col-lg-2 col-md-4 col-sm-6 text-center">
       <span class="new_font_daniel-m">Lvl average:</span>
       <span>{{all_notes_avg}}</span>
-    </section>
-    <section name="daily strike" class="col-lg-2 col-md-4 col-sm-6 text-center">
-      <span class="new_font_daniel-m">Daily strike:</span>
-      <span></span>
     </section>
     <section name="Today recap" class="col-lg-2 col-md-4 col-sm-6 text-center">
       <span class="new_font_daniel-m">Today recap:</span>
@@ -69,7 +65,7 @@
       <tbody>
         {% for book in books %}
         <tr>
-          <th scope="row">1</th>
+          <th scope="row">{{book.order_book}}</th>
           <td>
             <a
               class="link-light"

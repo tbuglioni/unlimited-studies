@@ -28,8 +28,7 @@ class UserAction:
                 form_book.save()
             else:
                 newBook = form_book.save(commit=False)
-                newBook.order_book = len(
-                    Book.objects.filter(users=request.user)) + 1
+                newBook.order_book = Book.objects.filter(users=request.user).count() + 1
                 newBook.save()
                 newBook.users.add(request.user, through_defaults={})
                 newBook.save()
@@ -59,8 +58,7 @@ class UserAction:
                 chapter = form_chapter.save(commit=False)
                 chapter.book = self.get_book_404(request, book)
                 chapter.name = form_chapter.cleaned_data["name"]
-                chapter.order_chapter = len(
-                    self.get_chapters(request, book)) + 1
+                chapter.order_chapter = self.get_chapters(request, book).count() + 1
                 chapter.save()
 
                 return redirect('studies:book_page', book=book)
@@ -89,8 +87,7 @@ class UserAction:
             else:
                 obj = form.save(commit=False)
 
-                obj.order_note = len(
-                    self.get_notes(request, chapter)) + 1
+                obj.order_note = self.get_notes(request, chapter).count() + 1
                 obj.chapter = self.get_chapter_404(request, chapter)
                 obj.save()
                 obj.users.add(request.user, through_defaults={})

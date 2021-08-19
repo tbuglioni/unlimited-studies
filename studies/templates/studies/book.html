@@ -41,7 +41,7 @@
           <tbody>
             {% for chapter in chapters %}
             <tr>
-              <th scope="row">1</th>
+              <th scope="row">{{chapter.order_chapter}}</th>
               <td><a class="link-light" href="{% url 'studies:book_page' book=book.id chapter=chapter.id %}"
                 >{{chapter.name}}</a></td>
               <td>{% include 'studies/snippets/add_chapter_snippet.html' with chapter_selected=chapter book_id=book.id%}</td>
@@ -90,7 +90,7 @@
         <tbody>
           {% for note in notes %}
           <tr>
-            <th scope="row">1</th>
+            <th scope="row">{{note.order_note}}</th>
             <td>{{note.text_recto}}</td>
             <td>{{note.text_verso}}</td>
             <td>{% include 'studies/snippets/add_note_snippet.html' with note_selected=note chapter_id=chapter.id %}</td>

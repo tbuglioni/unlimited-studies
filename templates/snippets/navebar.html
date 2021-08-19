@@ -12,25 +12,35 @@
         </li>
         <li class="nav-item">
           <a class="nav-link" href="{% url 'studies:personal_home' %}"
-            >Perso-Home</a
+            >Data</a
           >
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'studies:game_auto' %}">Game Auto</a>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Learn
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <li><a class="dropdown-item" href="{% url 'studies:game_auto' speed=40 long=10%}">Niv 1 (40/10)</a></li>
+            <li><a class="dropdown-item" href="{% url 'studies:game_auto' speed=100 long=50%}">Niv 2 (100/50)</a></li>
+            <li><a class="dropdown-item" href="{% url 'studies:game_auto' speed=200 long=100%}">Niv 3 (200/100)</a></li>
+            <li><a class="dropdown-item" href="{% url 'studies:game_auto' speed=250 long=250%}">Niv 4 (250/250)</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li class="dropdown-item">Rappel : lvl 1-5 / lvl 6-10</li>
+          </ul>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="{% url 'admin:index' %}">Admin</a>
         </li>
         {% if user.is_authenticated == False %}
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'login' %}">login</a>
+          <a class="nav-link" href="{% url 'login' %}">Login</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="{% url 'register' %}">Register</a>
         </li>
         {% else %}
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'logout' %}">logout</a>
+          <a class="nav-link" href="{% url 'logout' %}">Logout</a>
         </li>
         {% endif %}
       </ul>
