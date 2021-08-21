@@ -12,11 +12,6 @@ class Game:
         self.game_list_auto = []
         self.notes_todo = []
         self.TIME_NOW = datetime.date.today()
-        
-    def cleaned_data(self):
-        self.game_list_auto = []
-        self.notes_todo = []
-        
 
     def __notes_todo(self, request, speed=True, number_of_notes=10):
         """ find notes to run auto game """

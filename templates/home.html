@@ -1,13 +1,8 @@
 {% extends 'base.html' %}
 
 <div>
-  {% block content %}
-
-  {% include "snippets/navebar.html" with user=user %}
-  <div
-    class="container-fluid vh-100 img_custom1"
-  >
-    
+  {% block content %} {% include "snippets/navebar.html" with user=user %}
+  <div class="container-fluid vh-100 img_custom1">
     <div class="d-flex h-100 align-items-center justify-content-center">
       {% include "snippets/home_animated_title.html" %}
     </div>

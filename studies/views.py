@@ -1,8 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-import json
 from django.http import JsonResponse
-import datetime
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import *
 from studies.logic.userAction import UserAction
@@ -10,23 +8,17 @@ from studies.logic.analyse import Analyse
 from studies.logic.game import Game
 
 from studies.logic.FeedDb import FeedDb
-from django.db.models import Q
-
-TIME_NOW = datetime.date.today()
-new_game = Game()
-current_analyse = Analyse()
-user_action = UserAction()
 
 
 @login_required
 def personal_home_view(request, book=None):
     """ personal page with books and feedback"""
-
+    user_action = UserAction()
     context = {}
     context["books"] = user_action.get_books(request)
-
-    current_analyse.get_request(request)
+    current_analyse = Analyse(request)
     current_analyse.update_data()
+
     context["todoo"] = current_analyse.get_nbr_notes_todoo()
     context["all_notes"] = current_analyse.get_nbr_of_notes()
     context["all_notes_avg"] = current_analyse.get_global_lvl_avg()
@@ -50,8 +42,8 @@ def personal_home_view(request, book=None):
 def book_view(request, book, chapter=None):
     """ book with 0/1 selected chapter"""
     user_action = UserAction()
+    current_analyse = Analyse(request)
     context = {}
-    current_analyse.get_request(request)
     current_analyse.update_data()
     context["book"] = user_action.get_book_404(request, book)
     context["chapters"] = Chapter.objects.filter(book=book)
@@ -150,6 +142,8 @@ def add_data_in_db_view(request):
 @ login_required
 def start_game_view(request, speed=10, long=10):
     """ start auto game in a specific page """
+    current_analyse = Analyse(request)
+    new_game = Game()
     if request.POST:
         win_counter = 0
         fail_counter = 0
@@ -165,14 +159,10 @@ def start_game_view(request, speed=10, long=10):
             win_counter += 1
         elif win == False:
             fail_counter += 1
-
-        current_analyse.get_request(request)
         current_analyse.update_analysis(win_counter, fail_counter)
-        new_game.cleaned_data()
         return JsonResponse({"status": "ok"}, status=200)
 
     context = {}
-    new_game.cleaned_data()
     context["game_list_auto"] = new_game.get_notes_todo(
         request, nbr_speed=speed, nbr_long=long)
 
