@@ -12,19 +12,21 @@ urlpatterns = [
          views.book_view, name="book_page"),
 
     # note:
-    path("chapter/<int:chapter>", views.note_add_or_update, name="specific_note"),
+    path("chapter/<int:chapter>",
+         views.note_add_or_update_view, name="specific_note"),
     path("chapter/<int:chapter>/<int:note>",
-         views.note_add_or_update, name="specific_note"),
+         views.note_add_or_update_view, name="specific_note"),
 
     # delete
-    path("delete/book/<int:book>", views.delete_book, name="delete_book"),
+    path("delete/book/<int:book>", views.delete_book_view, name="delete_book"),
     path("delete/chapter/<int:chapter>",
-         views.delete_chapter, name="delete_chapter"),
-    path("delete/note/<int:note>", views.delete_note, name="delete_note"),
+         views.delete_chapter_view, name="delete_chapter"),
+    path("delete/note/<int:note>", views.delete_note_view, name="delete_note"),
 
 
-    path("feed_db", views.add_data_in_db, name="feed_db"),
+    path("feed_db", views.add_data_in_db_view, name="feed_db"),
 
-    path("game_auto/<int:speed>/<int:long>", views.start_game_view, name="game_auto"),
+    path("game_auto/<int:speed>/<int:long>",
+         views.start_game_view, name="game_auto"),
     path("game_auto", views.start_game_view, name="game_auto"),
 ]

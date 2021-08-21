@@ -80,7 +80,7 @@ def book_view(request, book, chapter=None):
 
 
 @ login_required
-def note_add_or_update(request, chapter=None, note=None):
+def note_add_or_update_view(request, chapter=None, note=None):
     """ 1 note to add / change """
     user_action = UserAction()
     context = {}
@@ -100,7 +100,7 @@ def note_add_or_update(request, chapter=None, note=None):
 
 
 @ login_required
-def delete_book(request, book):
+def delete_book_view(request, book):
     user_action = UserAction()
     """ delete 1 book"""
     selected_book = get_object_or_404(Book, pk=book, users=request.user)
@@ -110,7 +110,7 @@ def delete_book(request, book):
 
 
 @ login_required
-def delete_chapter(request, chapter):
+def delete_chapter_view(request, chapter):
     user_action = UserAction()
     """ delete 1 chapter"""
     selected_chapter = user_action.get_chapter_404(request, chapter)
@@ -121,7 +121,7 @@ def delete_chapter(request, chapter):
 
 
 @ login_required
-def delete_note(request, note):
+def delete_note_view(request, note):
     user_action = UserAction()
     """ delete 1 note"""
     selected_note = user_action.get_note_404(request, note)
@@ -132,10 +132,8 @@ def delete_note(request, note):
 
 
 @ login_required
-def add_data_in_db(request):
+def add_data_in_db_view(request):
     """ feed db with data """
-    if not request.user.is_authenticated:
-        return redirect("login")
 
     feed_db = FeedDb(request)
     feed_db.add_book("anglais")
@@ -163,7 +161,6 @@ def start_game_view(request, speed=10, long=10):
         else:
             win = False
         new_game.change_lvl(request, note_id, note_sens, win)
-        print(note_id, note_sens, win)
         if win == True:
             win_counter += 1
         elif win == False:
@@ -172,7 +169,7 @@ def start_game_view(request, speed=10, long=10):
         current_analyse.get_request(request)
         current_analyse.update_analysis(win_counter, fail_counter)
         new_game.cleaned_data()
-        return JsonResponse({"status": "ok"})
+        return JsonResponse({"status": "ok"}, status=200)
 
     context = {}
     new_game.cleaned_data()
