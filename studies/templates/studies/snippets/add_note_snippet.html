@@ -97,14 +97,17 @@ width="25px"
     </div>
   </div>
 </div>
-<script type="text/javascript">
-  var myModal = document.getElementById("noteModalAdd{{chapter_id}}");
-  var myInput = document.getElementById("id_text_recto{{chapter_id}}");
 
-  myModal.addEventListener("shown.bs.modal", function () {
-    myInput.focus();
+<script type="text/javascript">
+  $(document).ready(function(){
+    $("#noteModalAdd{{chapter_id}}").on('shown.bs.modal', function(){
+        $(this).find('#id_text_recto{{chapter_id}}').focus();
+    });
   });
-</script>
+  
+  </script>
+
+
 
 {% else %}
 <button

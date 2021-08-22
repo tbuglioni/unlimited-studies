@@ -4,7 +4,7 @@
   type="button"
   class="btn btn-primary"
   data-bs-toggle="modal"
-  data-bs-target="#chapterAddModal{{book_id}}"
+  data-bs-target="#chapterAddModal"
   id="{{book_id}}"
 ><img
 src="{% static 'studies/img/plus-circle-outline.svg' %}"
@@ -16,7 +16,7 @@ width="25px"
 <!-- Modal -->
 <div
   class="modal fade"
-  id="chapterAddModal{{book_id}}"
+  id="chapterAddModal"
   tabindex="-1"
   aria-labelledby="chapterAddModalLabel"
   aria-hidden="true"
@@ -43,7 +43,7 @@ width="25px"
                 name="name"
                 maxlength="255"
                 required
-                id="id_input{{book_id}}"
+                id="inputAddChapter"
                 tag="bg-primary"
                 class="form-control"
                 autofocus
@@ -62,8 +62,8 @@ width="25px"
   </div>
 </div>
 <script type="text/javascript">
-  var myModal = document.getElementById("chapterAddModal{{book_id}}");
-  var myInput = document.getElementById("id_input{{book_id}}");
+  var myModal = document.getElementById("chapterAddModal");
+  var myInput = document.getElementById("inputAddChapter");
 
   myModal.addEventListener("shown.bs.modal", function () {
     myInput.focus();
