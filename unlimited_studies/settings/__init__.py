@@ -155,8 +155,10 @@ LOGIN_REDIRECT_URL = "studies/"
 # CSRF_COOKIE_SECURE = True
 # SESSION_COOKIE_SAMESITE = None # Set to None to allow all sites to use the cookie.
 
+
 def show_toolbar(request):
-        return True
+    return True
+
 
 DEBUG_TOOLBAR_CONFIG = {
     'SHOW_TOOLBAR_CALLBACK': show_toolbar,

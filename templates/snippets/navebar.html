@@ -1,31 +1,70 @@
 <section class="container">
   <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-transparent p-2">
-  
     <a class="navbar-brand new_font_daniel" href="#">∞</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
       <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse new_font_daniel" id="navbarSupportedContent">
+    <div
+      class="collapse navbar-collapse new_font_daniel"
+      id="navbarSupportedContent"
+    >
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
           <a class="nav-link" href="{% url 'home' %}">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'studies:personal_home' %}"
-            >Data</a
-          >
+          <a class="nav-link" href="{% url 'studies:personal_home' %}">Data</a>
         </li>
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <a
+            class="nav-link dropdown-toggle"
+            href="#"
+            id="navbarDropdown"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
             Learn
           </a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" href="{% url 'studies:game_auto' speed=40 long=10%}">Niv 1 (40/10)</a></li>
-            <li><a class="dropdown-item" href="{% url 'studies:game_auto' speed=100 long=50%}">Niv 2 (100/50)</a></li>
-            <li><a class="dropdown-item" href="{% url 'studies:game_auto' speed=200 long=100%}">Niv 3 (200/100)</a></li>
-            <li><a class="dropdown-item" href="{% url 'studies:game_auto' speed=250 long=250%}">Niv 4 (250/250)</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li class="dropdown-item">Rappel : lvl 1-5 / lvl 6-10</li>
+            <li>
+              <a
+                class="dropdown-item"
+                href="{% url 'studies:game_auto' speed=40 long=10%}"
+                >Level 1 (40/10)</a
+              >
+            </li>
+            <li>
+              <a
+                class="dropdown-item"
+                href="{% url 'studies:game_auto' speed=100 long=50%}"
+                >Level 2 (100/50)</a
+              >
+            </li>
+            <li>
+              <a
+                class="dropdown-item"
+                href="{% url 'studies:game_auto' speed=200 long=100%}"
+                >Level 3 (200/100)</a
+              >
+            </li>
+            <li>
+              <a
+                class="dropdown-item"
+                href="{% url 'studies:game_auto' speed=250 long=250%}"
+                >Level 4 (250/250)</a
+              >
+            </li>
+            <li><hr class="dropdown-divider" /></li>
+            <li class="dropdown-item">Rappel : 1-5/6-10</li>
           </ul>
         </li>
         <li class="nav-item">
@@ -40,38 +79,38 @@
         </li>
         {% else %}
         <li class="nav-item">
+          <a class="nav-link" href="{% url 'home' %}#help-section">Notice</a>
+        </li>
+        <li class="nav-item">
           <a class="nav-link" href="{% url 'logout' %}">Logout</a>
         </li>
         {% endif %}
       </ul>
-      
     </div>
   </nav>
 </section>
 <script type="text/javascript">
-if ($(window).scrollTop() > 10 || window.innerWidth < 1000) {
-      $('.navbar').removeClass('navbar-dark bg-transparent').addClass("bg-white navbar-light bg-light");
-    }
-    else {
-      $('.navbar').removeClass("navbar-light bg-light").addClass('navbar-dark bg-transparent');
-        
-    }
-function listener (e) {
+  if ($(window).scrollTop() > 10 || window.innerWidth < 1000) {
+    $(".navbar")
+      .removeClass("navbar-dark bg-transparent")
+      .addClass("bg-white navbar-light bg-light");
+  } else {
+    $(".navbar")
+      .removeClass("navbar-light bg-light")
+      .addClass("navbar-dark bg-transparent");
+  }
+  function listener(e) {
     e.preventDefault();
     if ($(window).scrollTop() > 10 || window.innerWidth < 1000) {
-      $('.navbar').removeClass('navbar-dark bg-transparent').addClass("bg-white navbar-light bg-light");
+      $(".navbar")
+        .removeClass("navbar-dark bg-transparent")
+        .addClass("bg-white navbar-light bg-light");
+    } else {
+      $(".navbar")
+        .removeClass("navbar-light bg-light")
+        .addClass("navbar-dark bg-transparent");
     }
-    else {
-      $('.navbar').removeClass("navbar-light bg-light").addClass('navbar-dark bg-transparent');
-        
-    }
-}
-$(window).scroll(listener);
-$(window).resize(listener);
-
-
+  }
+  $(window).scroll(listener);
+  $(window).resize(listener);
 </script>
-
-
-
-

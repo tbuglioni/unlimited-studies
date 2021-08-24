@@ -113,8 +113,11 @@ class Game:
     def __conditional_update(self, note, sens):
         """ update note in a conditional lvl """
         if sens == "recto":
-            if note.lvl_recto <= 5:
+            if note.lvl_recto <= 4:
                 self.__update_lvl(note, sens, 1)  # 1 day
+
+            elif note.lvl_recto == 5:
+                self.__update_lvl(note, sens, 3)  # 3 day
 
             elif note.lvl_recto == 6:
                 self.__update_lvl(note, sens, 7)  # 1 week
@@ -132,8 +135,10 @@ class Game:
                 self.__update_lvl(note, sens, 364)  # 1 year
 
         elif sens == "verso":
-            if note.lvl_verso <= 5:
+            if note.lvl_verso <= 4:
                 self.__update_lvl(note, sens, 1)  # 1 day
+            elif note.lvl_verso == 5:
+                self.__update_lvl(note, sens, 3)  # 3 day
             elif note.lvl_verso == 6:
                 self.__update_lvl(note, sens, 7)  # 1 week
             elif note.lvl_verso == 7:
