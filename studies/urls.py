@@ -19,6 +19,7 @@ urlpatterns = [
 
     # delete
     path("delete/book/<int:book>", views.delete_book_view, name="delete_book"),
+    path("unsubscribe/book/<int:book>", views.unsubscribe_book_view, name="unsubscribe_book"),
     path("delete/chapter/<int:chapter>",
          views.delete_chapter_view, name="delete_chapter"),
     path("delete/note/<int:note>", views.delete_note_view, name="delete_note"),

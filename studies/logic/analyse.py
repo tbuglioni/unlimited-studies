@@ -58,7 +58,7 @@ class Analyse:
     def get_list_lvl_avg_each_book(self):
         """ return a list of each book(level average)"""
         list_avg = []
-        books = Book.objects.filter(users=self.request.user)
+        books = Book.objects.filter(users=self.request.user).order_by('userbookmany__order_book')
         for book in books:
             try:
                 lvl_avg = (self.note_recto_true.filter(notes__chapter__book__id=book.id).aggregate(

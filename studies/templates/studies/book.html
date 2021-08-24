@@ -10,7 +10,11 @@
 <div class="container-fluid mt-5 pt-5">
   <!-- Chapter description -->
   <h1 class="text-center new_font_daniel-lg">Book</h1>
+  {% if user_fonction == "owner" %}
   <p class="text-center">{{book.name}}</p>
+  {% else %}
+  <p class="text-center">{{book.name}} ({{user_fonction}})</p>
+  {% endif %}
   <div>
     <p>
       <span class="new_font_daniel-m">Description: </span>{{book.description}}

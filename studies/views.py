@@ -16,6 +16,7 @@ def personal_home_view(request, book=None):
     user_action = UserAction()
     context = {}
     context["books"] = user_action.get_books(request)
+    context["books_info"] = user_action.get_UserBookMany(request)
     current_analyse = Analyse(request)
     current_analyse.update_data()
 
@@ -34,6 +35,7 @@ def personal_home_view(request, book=None):
 
     if request.POST:
         user_action.create_or_update_book(request, context)
+        return redirect('studies:personal_home')
 
     return render(request, "studies/personal_home.html", context)
 
@@ -45,6 +47,8 @@ def book_view(request, book, chapter=None):
     current_analyse = Analyse(request)
     context = {}
     current_analyse.update_data()
+    context["user_fonction"] = UserBookMany.objects.get(
+        user=request.user, book=book).user_fonction
     context["book"] = user_action.get_book_404(request, book)
     context["chapters"] = Chapter.objects.filter(book=book)
     context["chapters_notes_avg"] = current_analyse.get_list_lvl_avg_each_chapter_one_book(
@@ -67,6 +71,7 @@ def book_view(request, book, chapter=None):
 
     if request.POST:
         user_action.create_or_update_chapter(request, context, book, chapter)
+        return redirect('studies:book_page', book=book)
 
     return render(request, "studies/book.html", context)
 
@@ -97,6 +102,30 @@ def delete_book_view(request, book):
     """ delete 1 book"""
     selected_book = get_object_or_404(Book, pk=book, users=request.user)
     selected_book.delete()
+    books = UserBookMany.objects.filter(user=request.user)
+    loop = 1
+    for elt in books:
+        print(elt)
+        elt.order_book = loop
+        loop += 1
+        elt.save()
+    return redirect('studies:personal_home')
+
+
+@ login_required
+def unsubscribe_book_view(request, book):
+    user_action = UserAction()
+    """ delete 1 book"""
+    selected_book = get_object_or_404(
+        UserBookMany, book=book, user=request.user)
+    selected_book.delete()
+    books = UserBookMany.objects.filter(user=request.user)
+    loop = 1
+    for elt in books:
+        print(elt)
+        elt.order_book = loop
+        loop += 1
+        elt.save()
 
     return redirect('studies:personal_home')
 
@@ -109,6 +138,13 @@ def delete_chapter_view(request, chapter):
 
     book = selected_chapter.book.id
     selected_chapter.delete()
+    chapters = Chapter.objects.filter(
+        book=book, book__users=request.user)
+    loop = 1
+    for elt in chapters:
+        elt.order_chapter = loop
+        loop += 1
+        elt.save()
     return redirect('studies:book_page', book=book)
 
 

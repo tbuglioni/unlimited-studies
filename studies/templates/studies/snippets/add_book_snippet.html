@@ -99,8 +99,8 @@ width="25px"
   type="button"
   class="btn btn-outline-light"
   data-bs-toggle="modal"
-  data-bs-target="#bookAddModal{{book_selected.id}}"
-  id="{{book_selected.id}}"
+  data-bs-target="#bookUpdateModal{{book_selected.id}}"
+  id="updateBook{{book_selected.book.id}}"
 >
 <img
   src="{% static 'studies/img/edit-outline.svg' %}"
@@ -112,15 +112,15 @@ width="25px"
 <!-- Modal -->
 <div
   class="modal fade"
-  id="bookAddModal{{book_selected.id}}"
+  id="bookUpdateModal{{book_selected.id}}"
   tabindex="-1"
-  aria-labelledby="bookAddModalLabel"
+  aria-labelledby="bookUpdateModalLabel"
   aria-hidden="true"
 >
   <div class="modal-dialog">
     <div class="modal-content bg-dark">
       <div class="modal-header">
-        <h5 class="modal-title" id="bookAddModalLabel">Modify book</h5>
+        <h5 class="modal-title" id="bookUpdateModalLabel">Modify book</h5>
         <button
           type="button"
           class="btn-close"
@@ -130,7 +130,7 @@ width="25px"
       </div>
       <div class="modal-body">
         <form
-          action="{% url 'studies:personal_home' book=book.id%}"
+          action="{% url 'studies:personal_home' book=book.book.id%}"
           method="POST"
         >
           {% csrf_token %}
@@ -143,8 +143,8 @@ width="25px"
                 name="name"
                 maxlength="255"
                 required
-                id="id_name{{book_selected.name}}"
-                value="{{book_selected.name}}"
+                id="id_name{{book_selected.id}}"
+                value="{{book_selected.book.name}}"
                 autofocus
                 onfocus="this.value = this.value;"
               />
@@ -160,7 +160,7 @@ width="25px"
                 rows="10"
                 maxlength="1000"
                 id="id_description"
-              >{{book_selected.description}}</textarea>
+              >{{book_selected.book.description}}</textarea>
             </div>
           </p>
           <div>
@@ -173,9 +173,33 @@ width="25px"
                 rows="10"
                 maxlength="1000"
                 id="id_source_info"
-              >{{book_selected.source_info}}</textarea>
-            </div>
-          </p>
+              >{{book_selected.book.source_info}}</textarea>
+            </p>
+          </div>
+          <div>
+            <p><label class="form-label"  for="id_order_book">Order book :</label></p>
+            <p>
+              <input
+                type="number"
+                class="form-control"
+                name="order_book"
+                min="1"
+                max="30"
+                required
+                id="id_order_book"
+                value="{{book_selected.order_book}}"
+              />
+            </p>
+          </div>
+          <div>
+              <input
+                type="hidden"
+                name="book_id"
+                id="id_book_id"
+                value="{{book_selected.book.id}}"
+              />
+            </p>
+          </div>
           <button type="submit" class="btn btn-primary">save</button>
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         </form>
@@ -186,8 +210,8 @@ width="25px"
   </div>
 </div>
 <script type="text/javascript">
-  var myModal{{book_selected.id}} = document.getElementById('bookAddModal{{book_selected.id}}')
-  var myInput{{book_selected.id}} = document.getElementById('id_name{{book_selected.name}}')
+  var myModal{{book_selected.id}} = document.getElementById('bookUpdateModal{{book_selected.id}}')
+  var myInput{{book_selected.id}} = document.getElementById('id_name{{book_selected.id}}')
 
   myModal{{book_selected.id}}.addEventListener('shown.bs.modal', function () {
     myInput{{book_selected.id}}.focus()

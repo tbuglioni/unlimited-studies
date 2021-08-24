@@ -63,23 +63,25 @@
         </tr>
       </thead>
       <tbody>
-        {% for book in books %}
+        {% for book in books_info %}
         <tr>
           <th scope="row">{{book.order_book}}</th>
           <td>
             <a
               class="link-light"
-              href="{% url 'studies:book_page' book=book.id%}"
-              >{{book.name}}</a
+              href="{% url 'studies:book_page' book=book.book.id%}"
+              >{{book.book.name}}</a
             >
           </td>
-          <td>{{book.description}}</td>
+          <td>{{book.book.description}}</td>
+          
+          {% if book.user_fonction == "owner" %}
           <td>
             {% include 'studies/snippets/add_book_snippet.html' with book_selected=book%}
           </td>
           <td>
             <a
-              href="{% url 'studies:delete_book' book=book.id%}"
+              href="{% url 'studies:delete_book' book=book.book.id%}"
               class="btn btn-outline-light"
               ><img
                 src="{% static 'studies/img/trash-2-outline.svg' %}"
@@ -88,6 +90,21 @@
                 width="25px"
             /></a>
           </td>
+          {% else %}
+          <td></td>
+          <td>
+            <a
+              href="{% url 'studies:unsubscribe_book' book=book.book.id%}"
+              class="btn btn-outline-light"
+              ><img
+                src="{% static 'studies/img/trash-2-outline.svg' %}"
+                alt="un triangle aux trois côtés égaux"
+                height="25px"
+                width="25px"
+            /></a>
+          </td>
+          {% endif %}
+          
         </tr>
         {% endfor %}
       </tbody>

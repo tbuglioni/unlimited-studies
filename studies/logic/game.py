@@ -27,7 +27,7 @@ class Game:
                     & Q(notes__studie_verso=True)
                     & Q(next_studied_date_verso__lte=self.TIME_NOW, user=request.user)
                 )
-            ).select_related('notes').order_by("notes__chapter__book", "notes__chapter")[:number_of_notes]
+            ).select_related('notes').order_by("notes__chapter__book__userbookmany__order_book", "notes__chapter")[:number_of_notes]
 
         else:
             self.notes_todo = StudiesNotesProgression.objects.filter(
@@ -41,7 +41,7 @@ class Game:
                     & Q(notes__studie_recto=True)
                     & Q(next_studied_date_verso__lte=self.TIME_NOW, user=request.user)
                 )
-            ).select_related('notes').order_by("notes__chapter__book", "notes__chapter")[:number_of_notes]
+            ).select_related('notes').order_by("notes__chapter__book__userbookmany__order_book", "notes__chapter")[:number_of_notes]
 
     def __split_notes(self, speed=True):
         """ splits selected notes into dict """

@@ -12,8 +12,14 @@ class UserAction:
 
     def get_books(self, request):
         """ get all books from 1 user """
-        books = Book.objects.filter(users=request.user)
+        books = Book.objects.filter(users=request.user).order_by(
+            'userbookmany__order_book')
         return books
+
+    def get_UserBookMany(self, request):
+        """ get all books from 1 user """
+        data = UserBookMany.objects.filter(user=request.user)
+        return data
 
     def get_book_404(self, request, book):
         """ get 1 book from 1 user """
@@ -22,17 +28,55 @@ class UserAction:
 
     def create_or_update_book(self, request, context):
         """ create a new book or update an existing one """
-        form_book = BookForm(request.POST, instance=context["selectedBook"])
+        form_book = BookForm(request.POST)
+
         if form_book.is_valid():
             if context["selectedBook"] is not None:
-                form_book.save()
+                name = form_book.cleaned_data['name']
+                description = form_book.cleaned_data['description']
+                source_info = form_book.cleaned_data['source_info']
+                order_book = int(form_book.cleaned_data['order_book'])
+                book_id = form_book.cleaned_data['book_id']
+                Book.objects.filter(id=book_id, users=request.user).update(
+                    name=name, description=description, source_info=source_info)
+
+                books_before = UserBookMany.objects.filter().order_by(
+                    'order_book').exclude(book=book_id, user=request.user)[:(order_book-1)]
+                books_after = UserBookMany.objects.filter().order_by(
+                    'order_book').exclude(book=book_id, user=request.user)[(order_book-1):]
+                loop = 1
+
+                for elt in books_before:
+                    elt.order_book = loop
+                    loop += 1
+                    elt.save()
+
+                UserBookMany.objects.filter(
+                    book=book_id, user=request.user).update(order_book=loop)
+                loop += 1
+
+                for elt in books_after:
+                    elt.order_book = loop
+                    loop += 1
+                    elt.save()
+
             else:
-                newBook = form_book.save(commit=False)
-                newBook.order_book = Book.objects.filter(users=request.user).count() + 1
-                newBook.save()
-                newBook.users.add(request.user, through_defaults={})
-                newBook.save()
-            return redirect('studies:personal_home')
+                name = form_book.cleaned_data['name']
+                print(name)
+                description = form_book.cleaned_data['description']
+                source_info = form_book.cleaned_data['source_info']
+                new_book = Book.objects.create(
+                    name=name, description=description, source_info=source_info)
+
+                book_counter = UserBookMany.objects.filter(
+                    user=request.user).count() + 1
+                new_book.users.add(request.user, through_defaults={
+                                   "order_book": book_counter})
+                new_book.save()
+
+        else:
+            print('error')
+        return redirect('home')
 
     def get_chapters(self, request, book):
         """ get all chapters from 1 user in 1 book"""
@@ -47,21 +91,44 @@ class UserAction:
 
     def create_or_update_chapter(self, request, context, book, chapter):
         """ create a new chapter or update an existing one """
-        form_chapter = ChapterForm(request.POST, instance=context["chapter"])
+        form_chapter = ChapterForm(request.POST)
         context["form_chapter"] = form_chapter
 
         if form_chapter.is_valid():
             if context["chapter"] is not None:
-                form_chapter.save()
-                return redirect('studies:book_page', book=book, chapter=chapter)
-            else:
-                chapter = form_chapter.save(commit=False)
-                chapter.book = self.get_book_404(request, book)
-                chapter.name = form_chapter.cleaned_data["name"]
-                chapter.order_chapter = self.get_chapters(request, book).count() + 1
-                chapter.save()
+                name = form_chapter.cleaned_data['name']
+                order_chapter = form_chapter.cleaned_data['order_chapter']
+                chapter_id = form_chapter.cleaned_data['chapter_id']
+                Chapter.objects.filter(id=chapter_id, book__users=request.user).update(
+                    name=name, order_chapter=order_chapter)
 
-                return redirect('studies:book_page', book=book)
+                chapters_before = Chapter.objects.filter(
+                    book=book, book__users=request.user).order_by('order_chapter').exclude(id=chapter_id)[:(order_chapter-1)]
+                chapters_after = Chapter.objects.filter(
+                    book=book, book__users=request.user).order_by('order_chapter').exclude(id=chapter_id)[(order_chapter-1):]
+                loop = 1
+
+                for elt in chapters_before:
+                    elt.order_chapter = loop
+                    loop += 1
+                    elt.save()
+
+                Chapter.objects.filter(
+                    id=chapter_id, book=book).update(order_chapter=loop)
+                loop += 1
+
+                for elt in chapters_after:
+                    elt.order_chapter = loop
+                    loop += 1
+                    elt.save()
+
+            else:
+                name = form_chapter.cleaned_data['name']
+                chapter_counter = Chapter.objects.filter(
+                    book=book, book__users=request.user).count() + 1
+
+                Chapter.objects.create(
+                    name=name, order_chapter=chapter_counter, book=context["book"])
 
     def get_notes(self, request, chapter):
         """ get all notes from 1 user in 1 chapter """

@@ -15,7 +15,7 @@ class NoteAdminForm(admin.TabularInline):
 
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
-    list_display = ("id", "name", "order_book", "view_chapter_link")
+    list_display = ("id", "name", "view_chapter_link")
     search_fields = ("name", "id", "users__email")
     inlines = [ChapterAdminForm]
 
@@ -33,7 +33,7 @@ class BookAdmin(admin.ModelAdmin):
 
 @admin.register(UserBookMany)
 class UserBookManyAdmin(admin.ModelAdmin):
-    list_display = ("id", "user", "book", "user_fonction", "__str__")
+    list_display = ("id", "user", "order_book","book", "user_fonction", "__str__")
     search_fields = ("book", "id", "user")
 
 

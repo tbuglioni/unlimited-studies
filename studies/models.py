@@ -6,7 +6,6 @@ from django.utils import timezone
 
 class Book(models.Model):
     name = models.CharField(max_length=255, null=False)
-    order_book = models.PositiveSmallIntegerField(default=1)
     users = models.ManyToManyField(
         settings.AUTH_USER_MODEL, through="UserBookMany", related_name="books"
     )
@@ -15,12 +14,7 @@ class Book(models.Model):
 
     def __str__(self):
         return f"{self.id}-{self.name}"
-
-    class Meta:
-        ordering = ["order_book"]
-        indexes = [
-            models.Index(fields=["order_book"]),
-        ]
+        
 
 
 class UserBookMany(models.Model):
@@ -33,6 +27,7 @@ class UserBookMany(models.Model):
                              on_delete=models.CASCADE, null=False, blank=False)
     book = models.ForeignKey(
         Book, on_delete=models.CASCADE, null=False, blank=False)
+    order_book = models.PositiveSmallIntegerField(default=1)
     user_fonction = models.CharField(
         max_length=255, null=False, default="owner", choices=FONCTION
     )
@@ -42,12 +37,13 @@ class UserBookMany(models.Model):
         return f"{self.user} - {self.book} - {self.user_fonction}"
 
     class Meta:
+        ordering = ["user", "order_book"]
         unique_together = [
             ["user", "book"],
         ]
         indexes = [
             models.Index(
-                fields=["user", "book"],
+                fields=["user", "order_book"],
             ),
         ]
 

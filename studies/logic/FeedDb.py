@@ -15,10 +15,9 @@ class FeedDb:
         """ add new book """
         self.book, created = Book.objects.get_or_create(
             name=name,
-            order_book=self.book_order_loop,
             description="hello world", source_info='wikipedia is bad :)')
 
-        self.book.users.add(self.request.user, through_defaults={})
+        self.book.users.add(self.request.user, through_defaults={"order_book":self.book_order_loop})
         self.book_order_loop += 1
 
     def add_chapter_in_book(self, name):

@@ -117,11 +117,35 @@ width="25px" /></button>
                 maxlength="255"
                 required
                 id="id_input{{chapter_selected.id}}"
-                tag="bg-primary"
                 class="form-control"
                 value="{{chapter_selected.name}}"
                 autofocus
                 onfocus="this.value = this.value;"
+              />
+            </>
+          </div>
+          <div>
+            <p><label class="form-label" for="id_order_chapter">Order chapter :</label>></p>
+              <input
+                class="form-control"
+                type="number"
+                name="order_chapter"
+                min="1" 
+                max="100"
+                id="id_order_chapter{{chapter_selected.id}}"
+                class="form-control"
+                value="{{chapter_selected.order_chapter}}"
+              />
+            </>
+          </div>
+          <div>
+            <p></p>
+              <input
+
+                type="hidden"
+                name="chapter_id"
+                id="id_chapter_id{{chapter_selected.id}}"
+                value="{{chapter_selected.id}}"
               />
             </>
           </div>
