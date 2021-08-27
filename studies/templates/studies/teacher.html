@@ -1,0 +1,84 @@
+{% extends 'base.html' %}{% load static %} {% block content %}
+<!-- NAVBAR -->
+{% include "snippets/navebar.html" with user=user %}
+
+<!-- BODY -->
+<div class="container-fluid mt-5 pt-5">
+    <h1 class="text-center new_font_daniel-lg">Teacher section</h1>
+
+    <!-- form add email-->
+    <form action="{% url 'studies:add_new_student' book=book%}" method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="add_new_student" class="control-label">Username</label>
+            <input class="form-control" type="text" name="new_student" id="add_new_student">
+        </div>
+    </form>
+    {% if error %}
+    <p class="alert alert-warning">Username not found</p>
+    {% endif %}
+    <!-- list in acceptation (username, cancel)-->
+    
+    <p>IN VALIDATION</p>
+    <table class="table-dark table">
+        <thead>
+          <tr>
+            <th scope="col"style="width: 10%">Name</th>
+          </tr>
+        </thead>
+        <tbody>
+    {% for elt in user_in_acceptation %}
+    <tr>
+        <th>{{elt.user.username}}</th>
+        <td>
+            <a
+              href="{% url 'studies:unsubscribe_student' student=elt.user_id book=book %}"
+              class="btn btn-outline-light"
+              ><img
+                src="{% static 'studies/img/trash-2-outline.svg' %}"
+                alt="un triangle aux trois côtés égaux"
+                height="25px"
+                width="25px"
+            /></a>
+          </td>
+    </tr>
+    
+    {% endfor %}
+</tbody>
+
+
+
+</table>
+    <!-- list with progression -->
+    <p>Accepted :</p>
+    <table class="table-dark table">
+        <thead>
+          <tr>
+            <th scope="col"style="width: 10%">Name</th>
+          </tr>
+        </thead>
+        <tbody>
+    {% for elt in user_accepted %}
+    <tr>
+        <th>{{elt.user.username}}</th>
+        <td>
+            <a
+              href="{% url 'studies:unsubscribe_student' student=elt.user_id book=book %}"
+              class="btn btn-outline-light"
+              ><img
+                src="{% static 'studies/img/trash-2-outline.svg' %}"
+                alt="un triangle aux trois côtés égaux"
+                height="25px"
+                width="25px"
+            /></a>
+          </td>
+    </tr>
+    
+    {% endfor %}
+</tbody>
+</table>
+
+
+
+</div>
+{% endblock content %}

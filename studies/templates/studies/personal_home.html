@@ -10,6 +10,9 @@
 <div class="container-fluid mt-5 pt-5">
   <h1 class="text-center new_font_daniel-lg">Home</h1>
   <p class="text-center">{{user.username}}</p>
+  {% if new_book_from_teacher == True%}
+  <a class="btn btn-primary" href="{% url 'studies:student_page' %}">New book from Teacher to check</a>
+  {% endif %}
   <br />
   <div class="row  p-1 bg-light text-dark justify-content-between">
     <!-- small data recap -->
@@ -91,7 +94,9 @@
             /></a>
           </td>
           {% else %}
-          <td></td>
+          <td>
+            {% include 'studies/snippets/add_book_snippet.html' with book_selected=book student=True %}
+          </td>
           <td>
             <a
               href="{% url 'studies:unsubscribe_book' book=book.book.id%}"

@@ -23,8 +23,8 @@ class ViewPage(TestCase):
 
         # Create 1 book,chapter,note
         self.book_1 = Book.objects.create(
-            name="English", order_book=1, description="book to learn english", source_info="Author 1",)
-        self.book_1.users.add(self.user_a, through_defaults={})
+            name="English", description="book to learn english", source_info="Author 1",)
+        self.book_1.users.add(self.user_a, through_defaults={"order_book":1})
 
         self.chapter_1 = Chapter.objects.create(
             name="vocabulary 1", order_chapter=1, book=self.book_1)
@@ -188,8 +188,8 @@ class ViewDatabase(TestCase):
         self.user_b = user_b
 
         self.book_1 = Book.objects.create(
-            name="English", order_book=1, description="book to learn english", source_info="Author 1",)
-        self.book_1.users.add(self.user_a, through_defaults={})
+            name="English", description="book to learn english", source_info="Author 1",)
+        self.book_1.users.add(self.user_a, through_defaults={"order_book":1})
 
         self.chapter_1 = Chapter.objects.create(
             name="vocabulary 1", order_chapter=1, book=self.book_1)
@@ -201,8 +201,8 @@ class ViewDatabase(TestCase):
             'lvl_recto': 2, "lvl_verso": 2})
 
         self.book_2 = Book.objects.create(
-            name="English", order_book=1, description="book to learn english", source_info="Author 1",)
-        self.book_2.users.add(self.user_a, through_defaults={})
+            name="English", description="book to learn english", source_info="Author 1",)
+        self.book_2.users.add(self.user_a, through_defaults={"order_book":1})
 
         self.chapter_2 = Chapter.objects.create(
             name="vocabulary 2", order_chapter=1, book=self.book_2)
@@ -218,7 +218,7 @@ class ViewDatabase(TestCase):
         self.client.login(email="john@invalid.com",
                           password="some_123_password")
         data = {"name": "hello world", "description": "some description",
-                "source_info": "some source"}
+                "source_info": "some source", "order_book": 1, "book_id": self.book_1.id}
         response = self.client.post(
             reverse("studies:personal_home"), data, follow=True
         )
@@ -226,19 +226,19 @@ class ViewDatabase(TestCase):
         book_a = Book.objects.filter(users=self.user_a).count()
         self.assertEqual(book_a, 3)
 
-    def test_update_book(self):
-        """ personal_home_view : login(yes), data(book_id), POST"""
+    # def test_update_book(self):
+    #     """ personal_home_view : login(yes), data(book_id), POST"""
 
-        self.client.login(email="john@invalid.com",
-                          password="some_123_password")
-        data = {"name": "hello world", "description": "some description",
-                "source_info": "some source"}
-        response = self.client.post(
-            reverse("studies:personal_home", kwargs={'book': self.book_1.id}), data, follow=True
-        )
-        self.assertEqual(response.status_code, 200)
-        book_a = Book.objects.filter(users=self.user_a).count()
-        self.assertEqual(book_a, 2)
+    #     self.client.login(email="john@invalid.com",
+    #                       password="some_123_password")
+    #     data = {"name": "hello world", "description": "some description",
+    #             "source_info": "some source"}
+    #     response = self.client.post(
+    #         reverse("studies:personal_home", kwargs={'book': self.book_1.id}), data, follow=True
+    #     )
+    #     self.assertEqual(response.status_code, 200)
+    #     book_a = Book.objects.filter(users=self.user_a).count()
+    #     self.assertEqual(book_a, 2)
 
     def test_add_new_chapter(self):
         """ book_view : login(yes), data(book_id), POST"""
@@ -252,17 +252,17 @@ class ViewDatabase(TestCase):
         chapter_a = Chapter.objects.filter(book__users=self.user_a).count()
         self.assertEqual(chapter_a, 3)
 
-    def test_update_chapter(self):
-        """ book_view : login(yes), data(book_id,chapter_id), POST"""
-        self.client.login(email="john@invalid.com",
-                          password="some_123_password")
-        data = {"name": "hello world"}
-        response = self.client.post(
-            reverse("studies:book_page", kwargs={'book': self.book_1.id, 'chapter': self.chapter_1.id}), data, follow=True
-        )
-        self.assertEqual(response.status_code, 200)
-        chapter_a = Chapter.objects.filter(book__users=self.user_a).count()
-        self.assertEqual(chapter_a, 2)
+    # def test_update_chapter(self):
+    #     """ book_view : login(yes), data(book_id,chapter_id), POST"""
+    #     self.client.login(email="john@invalid.com",
+    #                       password="some_123_password")
+    #     data = {"name": "hello world"}
+    #     response = self.client.post(
+    #         reverse("studies:book_page", kwargs={'book': self.book_1.id, 'chapter': self.chapter_1.id}), data, follow=True
+    #     )
+    #     self.assertEqual(response.status_code, 200)
+    #     chapter_a = Chapter.objects.filter(book__users=self.user_a).count()
+    #     self.assertEqual(chapter_a, 2)
 
     def test_add_new_note(self):
         """ note_add_or_update_view : login(yes), data(chapter_id), POST"""
@@ -355,3 +355,39 @@ class ViewDatabase(TestCase):
         self.assertEqual(note_a.lvl_recto, 1)
         self.assertEqual(note_a.next_studied_date_recto,
                          self.TIME_NOW + timedelta(days=1))
+        
+    def test_subscribe_book_view(self):
+        self.client.login(email="lee@invalid.com",
+                          password="some_123_password")
+        book_before = Book.objects.filter(users=self.user_b).count()
+        self.assertEqual(book_before, 0)
+        chapter_before = Chapter.objects.filter(book__users=self.user_b).count()
+        self.assertEqual(chapter_before, 0)
+        note_progression_before = StudiesNotesProgression.objects.filter(user=self.user_b).count()
+        self.assertEqual(note_progression_before, 0)
+        
+        data = {"new_student": "lee"}
+        self.response = self.client.post(
+            reverse("studies:add_new_student", kwargs={'book': 1}), data, follow=True
+        )
+        self.response = self.client.get(
+            reverse("studies:subscribe_book", kwargs={'book': 1}))
+        book_after = Book.objects.filter(users=self.user_b).count()
+        self.assertEqual(book_after, 1)
+        chapter_after = Chapter.objects.filter(book__users=self.user_b).count()
+        self.assertEqual(chapter_after, 1)
+        note_progression_after = StudiesNotesProgression.objects.filter(user=self.user_b).count()
+        self.assertEqual(note_progression_after, 1)
+        
+        self.response = self.client.get(
+            reverse("studies:unsubscribe_book", kwargs={'book': 1}))
+        book_end = Book.objects.filter(users=self.user_b).count()
+        self.assertEqual(book_end, 0)
+        chapter_end = Chapter.objects.filter(book__users=self.user_b).count()
+        self.assertEqual(chapter_end, 0)
+        note_progression_end = StudiesNotesProgression.objects.filter(user=self.user_b).count()
+        self.assertEqual(note_progression_end, 0)
+        
+        
+        
+        

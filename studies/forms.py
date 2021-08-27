@@ -18,7 +18,7 @@ class ChapterForm(forms.Form):
 
 
 class BookForm(forms.Form):
-    name = forms.CharField(max_length=100)
+    name = forms.CharField(max_length=100, required=False)
     description = forms.CharField(
         widget=forms.Textarea, max_length=1000, required=False)
     source_info = forms.CharField(

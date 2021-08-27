@@ -33,8 +33,8 @@ class StudiesDatabase(TestCase):
         self.user_b = user_b
 
         self.book_1 = Book.objects.create(
-            name="English", order_book=1, description="book to learn english", source_info="Author 1",)
-        self.book_1.users.add(self.user_a, through_defaults={})
+            name="English", description="book to learn english", source_info="Author 1",)
+        self.book_1.users.add(self.user_a, through_defaults={"order_book":1})
 
         self.chapter_1 = Chapter.objects.create(
             name="vocabulary 1", order_chapter=1, book=self.book_1)
@@ -46,8 +46,8 @@ class StudiesDatabase(TestCase):
             'lvl_recto': 1, "lvl_verso": 1})
 
         self.book_2 = Book.objects.create(
-            name="English", order_book=1, description="book to learn english", source_info="Author 1",)
-        self.book_2.users.add(self.user_a, through_defaults={})
+            name="English", description="book to learn english", source_info="Author 1",)
+        self.book_2.users.add(self.user_a, through_defaults={"order_book":1})
 
         self.chapter_2 = Chapter.objects.create(
             name="vocabulary 2", order_chapter=1, book=self.book_2)

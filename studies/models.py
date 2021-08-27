@@ -5,7 +5,7 @@ from django.utils import timezone
 
 
 class Book(models.Model):
-    name = models.CharField(max_length=255, null=False)
+    name = models.CharField(max_length=255, null=True, blank=True)
     users = models.ManyToManyField(
         settings.AUTH_USER_MODEL, through="UserBookMany", related_name="books"
     )
@@ -14,7 +14,6 @@ class Book(models.Model):
 
     def __str__(self):
         return f"{self.id}-{self.name}"
-        
 
 
 class UserBookMany(models.Model):
@@ -31,6 +30,7 @@ class UserBookMany(models.Model):
     user_fonction = models.CharField(
         max_length=255, null=False, default="owner", choices=FONCTION
     )
+    to_accept = models.BooleanField(default=False)
     # level to make a progressive access to chapter
 
     def __str__(self):

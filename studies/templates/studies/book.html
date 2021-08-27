@@ -12,6 +12,11 @@
   <h1 class="text-center new_font_daniel-lg">Book</h1>
   {% if user_fonction == "owner" %}
   <p class="text-center">{{book.name}}</p>
+  <a
+                class="link-light"
+                href="{% url 'studies:teacher_page' book=book.id %}"
+                >Teacher Mode</a
+              >
   {% else %}
   <p class="text-center">{{book.name}} ({{user_fonction}})</p>
   {% endif %}
@@ -50,6 +55,7 @@
           {% for chapter in chapters %}
           <tr>
             <th scope="row">{{chapter.order_chapter}}</th>
+            
             <td>
               <a
                 class="link-light"
@@ -57,6 +63,7 @@
                 >{{chapter.name}}</a
               >
             </td>
+            {% if user_fonction == "owner"%}
             <td>
               {% include 'studies/snippets/add_chapter_snippet.html' with chapter_selected=chapter book_id=book.id%}
             </td>
@@ -71,13 +78,19 @@
                   width="25px"
               /></a>
             </td>
+            {% else %}
+            <td>---</td>
+            <td>---</td>
+            {% endif %}
           </tr>
           {% endfor %}
+          {% if user_fonction == "owner"%}
           <tr>
             <td colspan="4">
               {% include 'studies/snippets/add_chapter_snippet.html' with book_id=book.id%}
             </td>
           </tr>
+          {% endif %}
         </tbody>
       </table>
     </section>
@@ -114,6 +127,7 @@
           <th scope="row">{{note.order_note}}</th>
           <td>{{note.text_recto}}</td>
           <td>{{note.text_verso}}</td>
+          {% if user_fonction == "owner"%}
           <td>
             {% include 'studies/snippets/add_note_snippet.html' with note_selected=note chapter_id=chapter.id %}
           </td>
@@ -128,8 +142,12 @@
                 width="25px"
             /></a>
           </td>
+          {% else %}
+          <td>---</td>
+          <td>---</td>
+          {% endif %}
         </tr>
-        {% endfor %} {% if chapter %}
+        {% endfor %} {% if chapter and user_fonction == "owner"%}
         <tr>
           <td colspan="5">
             {% include 'studies/snippets/add_note_snippet.html' with chapter_id=chapter.id %}
@@ -143,8 +161,8 @@
   <!-- pagination -->
   {% include 'studies/snippets/paginator_snippet.html' with notes=notes %} 
   {% endif %} 
-  
-  {% if chapter and not notes %} {% include 'studies/snippets/add_note_snippet.html' with chapter_id=chapter.id %} 
+
+  {% if chapter and not notes and user_fonction == "owner"%} {% include 'studies/snippets/add_note_snippet.html' with chapter_id=chapter.id %} 
   {% endif %}
 </div>
 {% endblock content %}

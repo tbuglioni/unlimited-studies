@@ -95,6 +95,8 @@ width="25px"
 </script>
 
 {% else %}
+
+{% if not student %}
 <button
   type="button"
   class="btn btn-outline-light"
@@ -102,6 +104,15 @@ width="25px"
   data-bs-target="#bookUpdateModal{{book_selected.id}}"
   id="updateBook{{book_selected.book.id}}"
 >
+{% else %}
+<button
+  type="button"
+  class="btn btn-outline-warning"
+  data-bs-toggle="modal"
+  data-bs-target="#bookUpdateModal{{book_selected.id}}"
+  id="updateBook{{book_selected.book.id}}"
+>
+{% endif %}
 <img
   src="{% static 'studies/img/edit-outline.svg' %}"
   alt="un triangle aux trois côtés égaux"
@@ -134,6 +145,7 @@ width="25px"
           method="POST"
         >
           {% csrf_token %}
+          {% if not student %}
           <div>
             <p><label class="form-label" for="id_name">Name :</label></p>
             <p>
@@ -176,6 +188,7 @@ width="25px"
               >{{book_selected.book.source_info}}</textarea>
             </p>
           </div>
+          {% endif %}
           <div>
             <p><label class="form-label"  for="id_order_book">Order book :</label></p>
             <p>

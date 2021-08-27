@@ -22,7 +22,7 @@ class Analyse:
 
     def get_nbr_of_notes(self):
         """ return the numbers of notes"""
-        return self.notes.count()
+        return StudiesNotesProgression.objects.filter(user=self.request.user).count()
 
     def get_recap_daily_notes(self):
         """ return a list with 10 lasts days and the number of win/fail"""
@@ -93,6 +93,7 @@ class Analyse:
 
     def get_nbr_notes_todoo(self):
         """ return number of notes to studies"""
+        
         todoo_recto = self.note_recto_true.filter(
             next_studied_date_recto__lte=self.time_now)
         todoo_verso = self.note_verso_true.filter(

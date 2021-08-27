@@ -12,13 +12,13 @@ class UserAction:
 
     def get_books(self, request):
         """ get all books from 1 user """
-        books = Book.objects.filter(users=request.user).order_by(
+        books = Book.objects.filter(users=request.user, userbookmany__to_accept=False).order_by(
             'userbookmany__order_book')
         return books
 
     def get_UserBookMany(self, request):
         """ get all books from 1 user """
-        data = UserBookMany.objects.filter(user=request.user)
+        data = UserBookMany.objects.filter(user=request.user, to_accept=False)
         return data
 
     def get_book_404(self, request, book):
@@ -35,14 +35,16 @@ class UserAction:
                 name = form_book.cleaned_data['name']
                 description = form_book.cleaned_data['description']
                 source_info = form_book.cleaned_data['source_info']
-                order_book = int(form_book.cleaned_data['order_book'])
+                order_book = form_book.cleaned_data['order_book']
                 book_id = form_book.cleaned_data['book_id']
-                Book.objects.filter(id=book_id, users=request.user).update(
+                
+                if name :
+                    Book.objects.filter(id=book_id, users=request.user).update(
                     name=name, description=description, source_info=source_info)
 
-                books_before = UserBookMany.objects.filter().order_by(
+                books_before = UserBookMany.objects.filter(user=request.user,to_accept=False).order_by(
                     'order_book').exclude(book=book_id, user=request.user)[:(order_book-1)]
-                books_after = UserBookMany.objects.filter().order_by(
+                books_after = UserBookMany.objects.filter(user=request.user,to_accept=False).order_by(
                     'order_book').exclude(book=book_id, user=request.user)[(order_book-1):]
                 loop = 1
 
@@ -62,14 +64,13 @@ class UserAction:
 
             else:
                 name = form_book.cleaned_data['name']
-                print(name)
                 description = form_book.cleaned_data['description']
                 source_info = form_book.cleaned_data['source_info']
                 new_book = Book.objects.create(
                     name=name, description=description, source_info=source_info)
 
                 book_counter = UserBookMany.objects.filter(
-                    user=request.user).count() + 1
+                    user=request.user, to_accept=False).count() + 1
                 new_book.users.add(request.user, through_defaults={
                                    "order_book": book_counter})
                 new_book.save()

@@ -1,3 +1,4 @@
+from account.models import Account
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.http import JsonResponse
@@ -11,14 +12,17 @@ from studies.logic.FeedDb import FeedDb
 
 
 @login_required
-def personal_home_view(request, book=None):
+def personal_home_view(request, book:int=None):
     """ personal page with books and feedback"""
     user_action = UserAction()
+    current_analyse = Analyse(request)
+    
     context = {}
     context["books"] = user_action.get_books(request)
     context["books_info"] = user_action.get_UserBookMany(request)
-    current_analyse = Analyse(request)
     current_analyse.update_data()
+    context["new_book_from_teacher"] = UserBookMany.objects.filter(
+        user=request.user, to_accept=True).exists()
 
     context["todoo"] = current_analyse.get_nbr_notes_todoo()
     context["all_notes"] = current_analyse.get_nbr_of_notes()
@@ -41,7 +45,7 @@ def personal_home_view(request, book=None):
 
 
 @login_required
-def book_view(request, book, chapter=None):
+def book_view(request, book:int, chapter:int=None):
     """ book with 0/1 selected chapter"""
     user_action = UserAction()
     current_analyse = Analyse(request)
@@ -77,6 +81,59 @@ def book_view(request, book, chapter=None):
 
 
 @ login_required
+def student_view(request):
+    context = {}
+    context["book_to_check"] = UserBookMany.objects.filter(
+        user=request.user, to_accept=True).select_related('book')
+    
+    return render(request, "studies/student.html", context)
+
+@ login_required
+def teacher_view(request, book:int, error:int=0):
+    context = {}
+    context["book"] = book
+    context["error"] = error
+    context["user_in_acceptation"] = UserBookMany.objects.filter(user_fonction="student", to_accept=True, book=book)
+    context["user_accepted"] = UserBookMany.objects.filter(user_fonction="student", to_accept=False, book=book)
+    
+    return render(request, "studies/teacher.html", context)
+
+@ login_required
+def add_new_student_in_book_view(request, book:int):
+    if request.POST:
+        username_target = request.POST.get('new_student')
+        try:
+            username_target = Account.objects.get(username=username_target)
+            obj, created = UserBookMany.objects.get_or_create(user=username_target, book_id=book, user_fonction="student", to_accept=True)
+        except Account.DoesNotExist:
+            return redirect('studies:teacher_page', book=book, error=1)
+
+            
+        
+    return redirect('studies:teacher_page', book=book)
+
+@ login_required
+def subscribe_book_view(request, book):
+    
+    #count book user_target
+    book_counter = UserBookMany.objects.filter(
+                    user=request.user, to_accept=False).count() + 1
+    UserBookMany.objects.filter(user=request.user, book_id=book, user_fonction="student").update(to_accept=False, order_book=book_counter)
+   
+    
+    notes = StudiesNotes.objects.filter(chapter__book=book)
+    objs = [
+    StudiesNotesProgression(
+        user_id=request.user.id,
+        notes_id=e.id,
+    )
+    for e in notes]  
+    
+    StudiesNotesProgression.objects.bulk_create(objs)
+
+    return redirect('studies:student_page')
+
+@ login_required
 def note_add_or_update_view(request, chapter=None, note=None):
     """ 1 note to add / change """
     user_action = UserAction()
@@ -102,10 +159,9 @@ def delete_book_view(request, book):
     """ delete 1 book"""
     selected_book = get_object_or_404(Book, pk=book, users=request.user)
     selected_book.delete()
-    books = UserBookMany.objects.filter(user=request.user)
+    books = UserBookMany.objects.filter(user=request.user, to_accept=False)
     loop = 1
     for elt in books:
-        print(elt)
         elt.order_book = loop
         loop += 1
         elt.save()
@@ -119,16 +175,36 @@ def unsubscribe_book_view(request, book):
     selected_book = get_object_or_404(
         UserBookMany, book=book, user=request.user)
     selected_book.delete()
-    books = UserBookMany.objects.filter(user=request.user)
+    StudiesNotesProgression.objects.filter(user_id=request.user.id, notes__chapter__book_id=book).delete()
+    books = UserBookMany.objects.filter(user=request.user, to_accept=False)
     loop = 1
     for elt in books:
-        print(elt)
         elt.order_book = loop
         loop += 1
         elt.save()
 
     return redirect('studies:personal_home')
 
+
+@ login_required
+def unsubscribe_student_by_owner_view(request, book:int, student:int):
+    check_owner = UserBookMany.objects.filter(user=request.user, book=book, user_fonction="owner").exists()
+    if check_owner:
+        user_to_delete = UserBookMany.objects.get(user=student, book=book)
+        if user_to_delete.to_accept is True:
+            user_to_delete.delete()
+        else:
+            user_to_delete.delete()
+            books = UserBookMany.objects.filter(user=student, to_accept=False)
+            loop = 1
+            for elt in books:
+                elt.order_book = loop
+                loop += 1
+                elt.save()
+            
+        
+        return redirect('studies:teacher_page', book=book)
+    return redirect('studies:personal_home')
 
 @ login_required
 def delete_chapter_view(request, chapter):
