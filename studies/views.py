@@ -252,7 +252,7 @@ def add_data_in_db_view(request):
 
 
 @ login_required
-def start_game_view(request, speed=10, long=10):
+def start_game_view(request, speed=200, long=10):
     """ start auto game in a specific page """
     current_analyse = Analyse(request)
     new_game = Game()
@@ -277,5 +277,4 @@ def start_game_view(request, speed=10, long=10):
     context = {}
     context["game_list_auto"] = new_game.get_notes_todo(
         request, nbr_speed=speed, nbr_long=long)
-
     return render(request, "studies/auto_game.html", context)

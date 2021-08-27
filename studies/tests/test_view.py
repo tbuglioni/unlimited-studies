@@ -157,6 +157,9 @@ class ViewPage(TestCase):
         self.response = self.client.get(reverse("studies:game_auto"))
         self.assertEqual(self.response.status_code, 200)
         self.assertTemplateUsed(self.response, "studies/auto_game.html")
+        self.assertEqual(
+            self.response.context["game_list_auto"], [{'id': 1, 'sens': 'recto', 'text': 'good morning', 'response': 'bonjour'}]
+        )
 
     def test_start_game_view_302(self):
         """ start_game_view : login(no), data(), GET"""
@@ -327,7 +330,7 @@ class ViewDatabase(TestCase):
         self.client.login(email="john@invalid.com",
                           password="some_123_password")
 
-        data = {"note_id": 1, "note_sens": "verso", "win": "true"}
+        data = {"note_id": self.note_1.id, "note_sens": "verso", "win": "true"}
         response = self.client.post(
             reverse("studies:game_auto"), data, follow=True
         )
@@ -344,7 +347,7 @@ class ViewDatabase(TestCase):
         self.client.login(email="john@invalid.com",
                           password="some_123_password")
 
-        data = {"note_id": 1, "note_sens": "recto", "win": "false"}
+        data = {"note_id": self.note_1.id, "note_sens": "recto", "win": "false"}
         response = self.client.post(
             reverse("studies:game_auto"), data, follow=True
         )
@@ -368,10 +371,10 @@ class ViewDatabase(TestCase):
         
         data = {"new_student": "lee"}
         self.response = self.client.post(
-            reverse("studies:add_new_student", kwargs={'book': 1}), data, follow=True
+            reverse("studies:add_new_student", kwargs={'book': self.book_1.id}), data, follow=True
         )
         self.response = self.client.get(
-            reverse("studies:subscribe_book", kwargs={'book': 1}))
+            reverse("studies:subscribe_book", kwargs={'book': self.book_1.id}))
         book_after = Book.objects.filter(users=self.user_b).count()
         self.assertEqual(book_after, 1)
         chapter_after = Chapter.objects.filter(book__users=self.user_b).count()
@@ -391,3 +394,1086 @@ class ViewDatabase(TestCase):
         
         
         
+class Game_test(TestCase):
+    def setUp(self):
+
+        # Create 1 user
+        user_a = User(username="john", email="john@invalid.com")
+        user_a_pw = "some_123_password"
+        self.user_a_pw = user_a_pw
+        user_a.is_staff = True
+        user_a.is_teacher = True
+        user_a.is_superuser = False
+        user_a.set_password(user_a_pw)
+        user_a.save()
+        self.user_a = user_a
+
+        # Create 1 book,chapter,note
+        self.book_1 = Book.objects.create(
+            name="English", description="book to learn english", source_info="Author 1",)
+        self.book_1.users.add(self.user_a, through_defaults={"order_book":1})
+
+        self.chapter_1 = Chapter.objects.create(
+            name="vocabulary 1", order_chapter=1, book=self.book_1)
+
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        self.note_1 = StudiesNotes.objects.create(
+            text_recto="good morning", text_verso="bonjour", chapter=self.chapter_1, order_note=1, studie_verso=True)
+
+        self.note_1.users.add(self.user_a, through_defaults={
+            'lvl_recto': 1, "lvl_verso": 1})
+        
+    def test_start_game_view_200(self):
+        """ start_game_view : login(yes), data(), GET"""
+        self.client.login(email="john@invalid.com",
+                          password="some_123_password")
+        self.response = self.client.get(reverse("studies:game_auto"))
+        self.assertEqual(self.response.status_code, 200)
+        self.assertTemplateUsed(self.response, "studies/auto_game.html")
+        a = [elt["id"] for elt in self.response.context["game_list_auto"]]
+        print(sorted(a))
+            

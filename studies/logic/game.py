@@ -16,32 +16,32 @@ class Game:
     def __notes_todo(self, request, speed=True, number_of_notes=10):
         """ find notes to run auto game """
         if speed:
-            self.notes_todo = StudiesNotesProgression.objects.filter(
+            self.notes_todo = StudiesNotesProgression.objects.filter(user=request.user).filter(
                 (
                     Q(lvl_recto__lt=6)
                     & Q(notes__studie_recto=True)
-                    & Q(next_studied_date_recto__lte=self.TIME_NOW, user=request.user)
+                    & Q(next_studied_date_recto__lte=self.TIME_NOW, )
                 )
                 | (
                     Q(lvl_verso__lt=6)
                     & Q(notes__studie_verso=True)
-                    & Q(next_studied_date_verso__lte=self.TIME_NOW, user=request.user)
+                    & Q(next_studied_date_verso__lte=self.TIME_NOW)
                 )
-            ).select_related('notes').order_by("notes__chapter__book__userbookmany__order_book", "notes__chapter")[:number_of_notes]
+            ).distinct().select_related('notes').order_by("notes__chapter__book__userbookmany__order_book", "notes__chapter")[:number_of_notes]
 
         else:
-            self.notes_todo = StudiesNotesProgression.objects.filter(
+            self.notes_todo = StudiesNotesProgression.objects.filter(user=request.user).filter(
                 (
                     Q(lvl_recto__gt=5)
                     & Q(notes__studie_verso=True)
-                    & Q(next_studied_date_recto__lte=self.TIME_NOW, user=request.user)
+                    & Q(next_studied_date_recto__lte=self.TIME_NOW)
                 )
                 | (
                     Q(lvl_verso__gt=5)
                     & Q(notes__studie_recto=True)
-                    & Q(next_studied_date_verso__lte=self.TIME_NOW, user=request.user)
+                    & Q(next_studied_date_verso__lte=self.TIME_NOW)
                 )
-            ).select_related('notes').order_by("notes__chapter__book__userbookmany__order_book", "notes__chapter")[:number_of_notes]
+            ).distinct().select_related('notes').order_by("notes__chapter__book__userbookmany__order_book", "notes__chapter")[:number_of_notes]
 
     def __split_notes(self, speed=True):
         """ splits selected notes into dict """
