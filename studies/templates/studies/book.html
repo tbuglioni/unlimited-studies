@@ -9,13 +9,14 @@
 <!-- BODY -->
 <div class="container-fluid mt-5 pt-5">
   <!-- Chapter description -->
-  <h1 class="text-center new_font_daniel-lg">Book</h1>
+  <div class="row justify-content-center">
+    <h1 class="text-center new_font_daniel-lg">Book</h1>
   {% if user_fonction == "owner" %}
   <p class="text-center">{{book.name}}</p>
   <a
-                class="link-light"
+                class="btn btn-outline-light d-flex  justify-content-center col-2"
                 href="{% url 'studies:teacher_page' book=book.id %}"
-                >Teacher Mode</a
+                >Add student</a
               >
   {% else %}
   <p class="text-center">{{book.name}} ({{user_fonction}})</p>
@@ -27,6 +28,10 @@
     <hr />
     <p><span class="new_font_daniel-m">Sources: </span>{{book.source_info}}</p>
   </div>
+
+
+  </div>
+  
 
   <!-- Chapter delimiter table -->
   <div class="row bg-light text-dark pt-1 d-flex justify-content-sm-center">

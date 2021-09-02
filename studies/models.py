@@ -114,28 +114,16 @@ class StudiesNotesProgression(models.Model):
                              on_delete=models.CASCADE)
     notes = models.ForeignKey(StudiesNotes, on_delete=models.CASCADE)
 
-    # lvl
-    lvl_recto = models.PositiveSmallIntegerField(
+    is_recto = models.BooleanField(default=True)
+    level = models.PositiveSmallIntegerField(
         default=1, choices=LVL, null=False)
-    lvl_verso = models.PositiveSmallIntegerField(
-        default=1, choices=LVL, null=False)
-
-    # time
-
-    last_studied_date_recto = models.DateField(null=True, blank=True)
-    last_studied_date_verso = models.DateField(null=True, blank=True)
-
-    next_studied_date_recto = models.DateField(
+    last_studied_date= models.DateField(null=True, blank=True)
+    next_studied_date= models.DateField(
         null=True, blank=True, default=timezone.now
     )
-    next_studied_date_verso = models.DateField(
-        null=True, blank=True, default=timezone.now
-    )
-    # others
-    flaged = models.BooleanField(default=False, null=False)
 
     class Meta:
-        ordering = ["user", "notes"]
+        ordering = ["user", "is_recto","notes"]
         indexes = [
             models.Index(fields=["user", "notes"]),
         ]
@@ -150,7 +138,7 @@ class GlobalDailyAnalysis(models.Model):
     number_of_studies = models.PositiveIntegerField(default=0, null=False)
     number_of_win = models.PositiveIntegerField(default=0, null=False)
     number_of_lose = models.PositiveIntegerField(default=0, null=False)
-    all_studied_1_time = models.PositiveIntegerField(default=0, null=False)
+    
 
     def __str__(self):
         return f"day, {self.user}"
@@ -171,7 +159,7 @@ class GlobalMonthlyAnalysis(models.Model):
     number_of_studies = models.PositiveIntegerField(default=0)
     number_of_win = models.PositiveIntegerField(default=0)
     number_of_lose = models.PositiveIntegerField(default=0)
-    all_studied_1_time = models.PositiveIntegerField(default=0)
+
 
     def __str__(self):
         return f"month, {self.user}"

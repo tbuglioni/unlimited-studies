@@ -3,11 +3,16 @@ from .models import StudiesNotes, Chapter, Book
 from django import forms
 
 
-class StudiesNotesForm(ModelForm):
-    class Meta:
-        model = StudiesNotes
-        fields = ['text_recto', 'text_verso',
-                  'studie_recto', 'studie_verso']
+class StudiesNotesForm(forms.Form):
+    
+    text_recto = forms.CharField(
+        widget=forms.Textarea, max_length=1000, required=False)
+    text_verso = forms.CharField(
+        widget=forms.Textarea, max_length=1000, required=False)
+    studie_recto = forms.BooleanField(required=False)
+    studie_verso = forms.BooleanField(required=False)
+    note_id = forms.IntegerField(widget=forms.HiddenInput, required=False)
+
 
 
 class ChapterForm(forms.Form):

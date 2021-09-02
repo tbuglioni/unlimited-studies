@@ -91,26 +91,21 @@ class StudiesNotesProgressionAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "user",
+        "is_recto",
         "notes",
-        "flaged",
-        "lvl_recto",
-        "lvl_verso",
-        "last_studied_date_recto",
-        "last_studied_date_verso",
-        "next_studied_date_recto",
-        "next_studied_date_verso",
+        "level",
+        "last_studied_date",
+        "next_studied_date",
     )
     search_fields = ("id", "user",)
     list_filter = (
-        "flaged",
-        "lvl_recto",
-        "lvl_verso",
+        "level",
     )
 
 @ admin.register(GlobalDailyAnalysis)
 class GlobalDailyAnalysisAdmin(admin.ModelAdmin):
-    list_display = ("user", "date", "number_of_studies", "number_of_win", "number_of_lose", "all_studied_1_time")
+    list_display = ("user", "date", "number_of_studies", "number_of_win", "number_of_lose")
     
 @ admin.register(GlobalMonthlyAnalysis)
 class GlobalMonthlyAnalysissAdmin(admin.ModelAdmin):
-    list_display = ("user", "date", "number_of_studies", "number_of_win", "number_of_lose", "all_studied_1_time")
+    list_display = ("user", "date", "number_of_studies", "number_of_win", "number_of_lose")

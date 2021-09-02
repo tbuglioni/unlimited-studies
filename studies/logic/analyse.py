@@ -2,6 +2,7 @@ from studies.models import *
 from django.db.models import Avg
 from django.db.models import Count, F, Value
 import datetime
+from django.utils import timezone
 
 
 class Analyse:
@@ -22,7 +23,7 @@ class Analyse:
 
     def get_nbr_of_notes(self):
         """ return the numbers of notes"""
-        return StudiesNotesProgression.objects.filter(user=self.request.user).count()
+        return StudiesNotes.objects.filter(users=self.request.user).distinct().count()
 
     def get_recap_daily_notes(self):
         """ return a list with 10 lasts days and the number of win/fail"""
@@ -46,25 +47,23 @@ class Analyse:
 
     def get_global_lvl_avg(self):
         """ return the lvl average of all the notes"""
+
         try:
-            lvl_avg = (self.note_recto_true.aggregate(
-                Avg('lvl_recto'))["lvl_recto__avg"]
-                +
-                self.note_verso_true.aggregate(Avg('lvl_verso'))["lvl_verso__avg"])/2
+            lvl_avg = round(StudiesNotesProgression.objects.filter(
+                user=self.request.user).aggregate(Avg('level'))["level__avg"], 2)
         except TypeError:
             lvl_avg = 0
-        return round(lvl_avg, 2)
+        return lvl_avg
 
     def get_list_lvl_avg_each_book(self):
         """ return a list of each book(level average)"""
         list_avg = []
-        books = Book.objects.filter(users=self.request.user).order_by('userbookmany__order_book')
+        books = Book.objects.filter(users=self.request.user).order_by(
+            'userbookmany__order_book')
         for book in books:
             try:
-                lvl_avg = (self.note_recto_true.filter(notes__chapter__book__id=book.id).aggregate(
-                    Avg('lvl_recto'))["lvl_recto__avg"]
-                    +
-                    self.note_verso_true.filter(notes__chapter__book_id=book.id).aggregate(Avg('lvl_verso'))["lvl_verso__avg"])/2
+                lvl_avg = StudiesNotesProgression.objects.filter(
+                    user=self.request.user, notes__chapter__book_id=book.id).aggregate(Avg('level'))["level__avg"]
 
                 lvl_avg = round(lvl_avg, 2)
             except TypeError:
@@ -80,11 +79,10 @@ class Analyse:
             book__users=self.request.user, book_id=book_id)
         for chapter in chapters:
             try:
-                lvl_avg = (self.note_recto_true.filter(notes__chapter=chapter.id).aggregate(
-                    Avg('lvl_recto'))["lvl_recto__avg"]
-                    +
-                    self.note_verso_true.filter(notes__chapter=chapter.id).aggregate(Avg('lvl_verso'))["lvl_verso__avg"])/2
+                lvl_avg = StudiesNotesProgression.objects.filter(
+                    user=self.request.user, notes__chapter=chapter.id).aggregate(Avg('level'))["level__avg"]
                 lvl_avg = round(lvl_avg, 2)
+
             except TypeError:
                 lvl_avg = 0
             list_avg.append(lvl_avg)
@@ -93,12 +91,9 @@ class Analyse:
 
     def get_nbr_notes_todoo(self):
         """ return number of notes to studies"""
-        
-        todoo_recto = self.note_recto_true.filter(
-            next_studied_date_recto__lte=self.time_now)
-        todoo_verso = self.note_verso_true.filter(
-            next_studied_date_verso__lte=self.time_now)
-        return todoo_recto.count() + todoo_verso.count()
+        todoo = StudiesNotesProgression.objects.filter(
+            user=self.request.user, next_studied_date__lte=self.time_now).count()
+        return todoo
 
     def get_notes_studied_today(self):
         """ count all notes studied today"""

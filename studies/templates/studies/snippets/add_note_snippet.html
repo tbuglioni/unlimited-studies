@@ -201,6 +201,15 @@ width="25px" /></button>
             {% endif %}
             </p>
           </div>
+          <div>
+            <input
+              type="hidden"
+              name="note_id"
+              id="id_note_id"
+              value="{{note_selected.id}}"
+            />
+          </p>
+        </div>
           <button type="submit" class="btn btn-primary">save</button>
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
             Close

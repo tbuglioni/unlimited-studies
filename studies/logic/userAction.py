@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Q
 from datetime import timedelta
 import datetime
-
+from account.models import Account
 from studies.forms import StudiesNotesForm, BookForm, ChapterForm
 
 
@@ -134,29 +134,94 @@ class UserAction:
     def get_notes(self, request, chapter):
         """ get all notes from 1 user in 1 chapter """
         notes = StudiesNotes.objects.filter(
-            users=request.user, chapter=chapter)
+            chapter__book__users=request.user, chapter=chapter)
         return notes
 
     def get_note_404(self, request, note):
         """ get 1 note from 1 user in 1 chapter """
         note = get_object_or_404(
-            StudiesNotes, pk=note, users=request.user)
+            StudiesNotes, pk=note, chapter__book__users=request.user)
         return note
 
     def create_or_update_note(self, request, context, chapter):
         """ create a new chapter or update an existing one """
         form = StudiesNotesForm(
-            request.POST, instance=context["instance_note"])
+            request.POST)
         context["form"] = form
 
         if form.is_valid():
             if context["instance_note"] is not None:
-                form.save()
+                text_recto = form.cleaned_data['text_recto']
+                text_verso = form.cleaned_data['text_verso']
+                studie_recto = form.cleaned_data['studie_recto']
+                studie_verso = form.cleaned_data['studie_verso']
+                note_id = form.cleaned_data['note_id']
+                
+                list_users = Account.objects.filter(books__chapter__id=chapter)
+                is_note_progression_recto = StudiesNotesProgression.objects.filter(notes=note_id, is_recto=True).exists()
+                is_note_progression_verso = StudiesNotesProgression.objects.filter(notes=note_id, is_recto=False).exists()
+                
+                StudiesNotes.objects.filter(id=note_id, users=request.user).distinct().update(text_recto=text_recto, text_verso=text_verso, studie_recto=studie_recto, studie_verso=studie_verso)
+                objs = []
+                if studie_recto==True and is_note_progression_recto==False:
+                    for elt in list_users:
+                        objs.append(StudiesNotesProgression(
+                        user_id=elt.id,
+                        notes_id=note_id,
+                        is_recto=True,
+                        ))    
+                if studie_verso==True and is_note_progression_verso==False:
+                    for elt in list_users:
+                        objs.append(StudiesNotesProgression(
+                        user_id=elt.id,
+                        notes_id=note_id,
+                        is_recto=False,
+                        ))    
+                StudiesNotesProgression.objects.bulk_create(objs)
+                
+                    
+                    
+                if studie_recto==False and is_note_progression_recto==True:
+                    StudiesNotesProgression.objects.filter(notes=note_id, is_recto=True).delete()
+                    
+                if studie_verso==False and is_note_progression_verso==True:
+                    StudiesNotesProgression.objects.filter(notes=note_id, is_recto=False).delete()
+                
+                
+                     #add or update for each user
+                     
+                     
+                     
+                     
             else:
-                obj = form.save(commit=False)
+                text_recto = form.cleaned_data['text_recto']
+                text_verso = form.cleaned_data['text_verso']
+                studie_recto = form.cleaned_data['studie_recto']
+                studie_verso = form.cleaned_data['studie_verso']
+                
+                
+                new_note = StudiesNotes(text_recto=text_recto, text_verso=text_verso, studie_recto=studie_recto, studie_verso=studie_verso)
+                new_note.order_note = self.get_notes(request, chapter).distinct().count() + 1
+                new_note.chapter = self.get_chapter_404(request, chapter)
+                new_note.save()
 
-                obj.order_note = self.get_notes(request, chapter).count() + 1
-                obj.chapter = self.get_chapter_404(request, chapter)
-                obj.save()
-                obj.users.add(request.user, through_defaults={})
-                obj.save()
+                list_users = Account.objects.filter(books__chapter__id=chapter)
+                objs = []
+                for elt in list_users:
+                    if new_note.studie_recto == True :
+                        objs.append(StudiesNotesProgression(
+                        user_id=elt.id,
+                        notes_id=new_note.id,
+                        is_recto=True,
+                        ))
+                        
+                    if new_note.studie_verso == True:
+                        objs.append(StudiesNotesProgression(
+                        user_id=elt.id,
+                        notes_id=new_note.id,
+                        is_recto=False,
+                        ))
+            
+            
+                StudiesNotesProgression.objects.bulk_create(objs)
+                
