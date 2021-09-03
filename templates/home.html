@@ -53,91 +53,185 @@
   <div
     class="container-fluid img_custom2 pt-4"
     id="help-section"
-    style="min-height: 100vh; min-width: 100vw"
+    style="min-height: 150vh; min-width: 100vw"
   >
     <h1 class="new_font_daniel col-md-12 p-2 m-2">
       Well and how does it work ??
     </h1>
-    <div class="row">
-      <div class="col-lg-3">
-        <p class="new_font_daniel-m">Idea</p>
-        <p>
-          The idea is simple, study something as many times as necessary to
-          remember it.
-        </p>
-        <p>With a gradual spacing between 2 revisions of the same element.</p>
 
-        List of things to know where you are:
-        <ul class="rounded half-black">
-          <li>Total : number of notes</li>
-          <li>Todoo : number of notes recto or verso to study</li>
-          <li>Lvl average : level average of all notes</li>
-          <li>Today recap : number of notes studied today</li>
-          <li>Month recap : number of notes studied this month</li>
-        </ul>
+    <div class="accordion col-xl-6" id="accordionExample">
+      <div class="accordion-item half-black">
+        <h2 class="accordion-header" id="headingOne">
+          <button
+            class="accordion-button new_font_daniel-m text-light"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#collapseOne"
+            aria-expanded="true"
+            aria-controls="collapseOne"
+            style="background: rgba(0, 0, 0, 0.2)"
+          >
+            Idea
+          </button>
+        </h2>
+        <div
+          id="collapseOne"
+          class="accordion-collapse collapse show half-black"
+          aria-labelledby="headingOne"
+          data-bs-parent="#accordionExample"
+        >
+          <div class="accordion-body">
+            <p>
+              The idea is simple, study something as many times as necessary to
+              remember it.
+            </p>
+            <p>
+              With a gradual spacing between 2 revisions of the same element.
+            </p>
+            <hr />
+            List of things to know your progression (page home):
+            <ul class="rounded half-black">
+              <li>Total : number of all your notes</li>
+              <li>
+                Todoo : number of notes recto and/or verso you have to study
+              </li>
+              <li>Lvl average : level average of all your notes</li>
+              <li>Today recap : number of notes studied today</li>
+              <li>Month recap : number of notes studied this month</li>
+            </ul>
+          </div>
+        </div>
       </div>
-      <div class="col-lg-3">
-        <p class="new_font_daniel-m">Structure</p>
-        <ol>
-          <li>
-            Book: At the first level: the book, with the main concept to study
-            (example: "English" )
-          </li>
-          <li>
-            Chapter: then X chapters,to split the book in some parts(example:
-            vocabulary, grammar)
-          </li>
-          <li>
-            Notes: and finally, X notes on both sides (example: hello/bonjour in
-            the chapter "vocabulary"). You will learn in both directions recto
-            -> verso and verso -> recto (or just one direction if you want)
-          </li>
-          <p class="rounded half-black">Book->Chapter->Notes</p>
-        </ol>
+      <div class="accordion-item half-black">
+        <h2 class="accordion-header" id="heading2">
+          <button
+            class="accordion-button new_font_daniel-m text-light"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#collapse2"
+            aria-expanded="true"
+            aria-controls="collapse2"
+            style="background: rgba(0, 0, 0, 0.2)"
+          >
+            Structure
+          </button>
+        </h2>
+        <div
+          id="collapse2"
+          class="accordion-collapse collapse half-black"
+          aria-labelledby="heading2"
+          data-bs-parent="#accordionExample"
+        >
+          <div class="accordion-body">
+            <ol>
+              <li>
+                Book: At the first level: the book, with the main concept to
+                study (example: "English" )
+              </li>
+              <hr />
+              <li>
+                Chapter: then X chapters,to split the book in some
+                parts(example: vocabulary, grammar)
+              </li>
+              <hr />
+              <li>
+                Notes: and finally, X notes on both sides (example:
+                hello/bonjour in the chapter "vocabulary"). You will learn in
+                both directions recto -> verso and verso -> recto (or just one
+                direction if you want)
+              </li>
+              <p class="rounded half-black">Book->Chapter->Notes</p>
+            </ol>
+          </div>
+        </div>
       </div>
-      <div class="col-lg-3">
-        <p class="new_font_daniel-m">Spaced repetition</p>
-        <p>
-          If you know the element you go to the next level and you have to wait
-          x days to learn it again
-        </p>
-        <p>
-          But if you don't know the element then it goes back to the level 1
-        </p>
-        <ul class="rounded half-black">
-          <li>level: 1->2 = +1 day</li>
-          <li>level: 2->3 = +1 day</li>
-          <li>level: 3->4 = +1 day</li>
-          <li>level: 4->5 = +1 day</li>
-          <li>level: 5->6 = +3 days</li>
-          <li>level: 6->7 = +7 days</li>
-          <li>level: 7->8 = +20 days</li>
-          <li>level: 8->9 = +90 days</li>
-          <li>level: 9->10 = +182j</li>
-          <li>level: 10->10 = +364j</li>
-        </ul>
+      <div class="accordion-item half-black">
+        <h2 class="accordion-header" id="heading3">
+          <button
+            class="accordion-button new_font_daniel-m text-light"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#collapse3"
+            aria-expanded="true"
+            aria-controls="collapse3"
+            style="background: rgba(0, 0, 0, 0.2)"
+          >
+            Spaced repetition
+          </button>
+        </h2>
+        <div
+          id="collapse3"
+          class="accordion-collapse collapse half-black"
+          aria-labelledby="heading3"
+          data-bs-parent="#accordionExample"
+        >
+          <div class="accordion-body">
+            <p>
+              If you know the element you go to the next level and you have to
+              wait x days to learn it again
+            </p>
+            <p>
+              But if you don't know the element then it goes back to the level 1
+            </p>
+            <ul class="rounded half-black">
+              <li>level: 1->2 = +1 day</li>
+              <li>level: 2->3 = +1 day</li>
+              <li>level: 3->4 = +1 day</li>
+              <li>level: 4->5 = +1 day</li>
+              <li>level: 5->6 = +3 days</li>
+              <li>level: 6->7 = +7 days</li>
+              <li>level: 7->8 = +20 days</li>
+              <li>level: 8->9 = +90 days</li>
+              <li>level: 9->10 = +182j</li>
+              <li>level: 10->10 = +364j</li>
+            </ul>
+          </div>
+        </div>
       </div>
-      <div class="col-lg-3">
-        <p class="new_font_daniel-m">Study session</p>
-        <p>You can run the game with 4 levels of difficulty:</p>
-        <ol class="rounded half-black">
-          <li>40/10 (50 notes in the session)</li>
-          <li>100/50 (150 notes in the session)</li>
-          <li>200/100 (300 notes in the session)</li>
-          <li>250/250 (500 notes in the session)</li>
-        </ol>
-        <p>First number: number of notes with the level lower than 6</p>
-        <p>Second number: number of notes with the level higher than 5</p>
-        <p>BE CAREFUL! the game is based on:</p>
-        <ol>
-          <li>book order</li>
-          <li>chapter order</li>
-        </ol>
-        exemple :
-        <ul>
-          <li>book 1 is studied before book 2</li>
-          <li>book 1/chapter 1 is studied before book 1/chapter 2</li>
-        </ul>
+      <div class="accordion-item half-black">
+        <h2 class="accordion-header" id="heading4">
+          <button
+            class="accordion-button new_font_daniel-m text-light"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#collapse4"
+            aria-expanded="true"
+            aria-controls="collapse4"
+            style="background: rgba(0, 0, 0, 0.2)"
+          >
+            Study session
+          </button>
+        </h2>
+        <div
+          id="collapse4"
+          class="accordion-collapse collapse half-black"
+          aria-labelledby="heading4"
+          data-bs-parent="#accordionExample"
+        >
+          <div class="accordion-body">
+            <p>You can run the game with 4 levels of difficulty:</p>
+            <ol class="rounded half-black">
+              <li>40/10 (50 notes in the session)</li>
+              <li>100/50 (150 notes in the session)</li>
+              <li>200/100 (300 notes in the session)</li>
+              <li>250/250 (500 notes in the session)</li>
+            </ol>
+            <hr />
+            <p>First number: number of notes with the level lower than 6</p>
+            <p>Second number: number of notes with the level higher than 5</p>
+            <hr />
+            <p>BE CAREFUL! the game is based on:</p>
+            <ol>
+              <li>book order</li>
+              <li>chapter order</li>
+            </ol>
+            exemple :
+            <ul>
+              <li>book 1 is studied before book 2</li>
+              <li>book 1/chapter 1 is studied before book 1/chapter 2</li>
+            </ul>
+          </div>
+        </div>
       </div>
     </div>
   </div>

@@ -4,43 +4,43 @@
 
 <!-- BODY -->
 <div class="container-fluid mt-5 pt-5">
-    <h1 class="text-center new_font_daniel-lg">Student section</h1>
-
-
-
-
-
-
-
-<table class="table-dark table">
-      <thead>
-        <tr>
-          <th scope="col"style="width: 10%">Name</th>
-          <th scope="col" style="width: 10%">Description</th>
-          <th scope="col" style="width: 10%">Accept</th>
-          <th scope="col" style="width: 10%">Author</th>
-          <th scope="col" style="width: 10%">Number of notes</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for elt in book_to_check %}
-        <tr>
-          <th scope="row">{{elt.book.name}}</th>
-          <td>{{elt.book.description}}</td>
-          <td> <a
-              href="{% url 'studies:subscribe_book' book=elt.book.id%}"
-              class="btn btn-outline-light"
-              >Yes</a> <a
-              href="{% url 'studies:unsubscribe_book' book=elt.book.id%}"
-              class="btn btn-outline-light"
-              >No</a> </td>
-          <td></td>
-          <td></td>
-
-          
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+  <br />
+  <h1 class="text-center new_font_daniel-lg">Student section</h1>
+  <br />
+  <br />
+  <hr />
+  <table class="table-dark table">
+    <thead>
+      <tr>
+        <th scope="col" style="width: 10%">Name</th>
+        <th scope="col" style="width: 10%">Description</th>
+        <th scope="col" style="width: 10%">Accept</th>
+        <th scope="col" style="width: 10%">Author</th>
+        <th scope="col" style="width: 10%">Number of notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for elt in book_to_check %}
+      <tr>
+        <th scope="row">{{elt.book.name}}</th>
+        <td>{{elt.book.description}}</td>
+        <td>
+          <a
+            href="{% url 'studies:subscribe_book' book=elt.book.id%}"
+            class="btn btn-outline-light"
+            >Yes</a
+          >
+          <a
+            href="{% url 'studies:unsubscribe_book' book=elt.book.id%}"
+            class="btn btn-outline-light"
+            >No</a
+          >
+        </td>
+        <td></td>
+        <td></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>
 {% endblock content %}

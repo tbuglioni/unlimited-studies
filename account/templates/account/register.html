@@ -1,10 +1,12 @@
-{% extends 'account/base.html' %}
+{% extends 'base.html' %}
+<div>
+  {% block content %} {% include "snippets/navebar.html" with user=user %}
+  <br />
+  <div class="container-fluid mt-5 pt-5">
+    <h1 class="text-center new_font_daniel-lg">---=> Register <=---</h1>
+    <br />
 
-{% block title %}Register{% endblock title %}
-
-{% block account_body %}
-  <div>
-
+    <hr />
     <form method="post">
         {% csrf_token %}
         {% for field in registration_form %}
@@ -21,7 +23,29 @@
                 {% endfor %}
             </p>       
         {% endfor %}
-        <button type="submit" class="btn btn-primary">Register</button>
+        <button type="submit" class="btn btn-outline-light">Register</button>
     </form>
+    <br />
+    <hr />
+    <br />
+    <div class="row align-items-center d-flex">
+      <a
+        class="btn btn-outline-light new_font_daniel-m"
+        href="{% url 'reset_password'%}"
+        >Forgot your password ?</a
+      >
+    </div>
+    <p
+      class="
+        navbar-brand
+        align-items-center
+        d-flex
+        justify-content-center
+        new_font_daniel-lg
+      "
+    >
+      ∞
+    </p>
+  </div>
+  {% endblock content %}
 </div>
-{% endblock account_body %}

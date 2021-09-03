@@ -1,6 +1,6 @@
 <section class="container">
   <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-transparent p-2">
-    <a class="navbar-brand new_font_daniel" href="#">∞</a>
+    <a class="navbar-brand new_font_daniel-lg" href="{% url 'home' %}">∞</a>
     <button
       class="navbar-toggler"
       type="button"
@@ -17,11 +17,16 @@
       id="navbarSupportedContent"
     >
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        {% if user.is_authenticated == False %}
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'home' %}">Home</a>
+          <a class="nav-link" href="{% url 'login' %}">Login</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'studies:personal_home' %}">Data</a>
+          <a class="nav-link" href="{% url 'register' %}">Register</a>
+        </li>
+        {% else %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'studies:personal_home' %}">Home</a>
         </li>
         <li class="nav-item dropdown">
           <a
@@ -68,22 +73,19 @@
           </ul>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'admin:index' %}">Admin</a>
-        </li>
-        {% if user.is_authenticated == False %}
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'login' %}">Login</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'register' %}">Register</a>
-        </li>
-        {% else %}
-        <li class="nav-item">
           <a class="nav-link" href="{% url 'home' %}#help-section">Notice</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'account' %}">Settings</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="{% url 'logout' %}">Logout</a>
         </li>
+        {% endif %} {% if user.is_authenticated == True and user.is_superuser %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'admin:index' %}">Admin</a>
+        </li>
+
         {% endif %}
       </ul>
     </div>
