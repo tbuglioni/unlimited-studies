@@ -25,6 +25,9 @@ class TeacherView(TestCase):
         self.chapter_4 = speed_set_up.create_chapter(
             self.book_1, order_chapter=4)
 
+        self.chapter_5 = speed_set_up.create_chapter(
+            self.book_3, order_chapter=1)
+
         self.note_1 = speed_set_up.create_note(
             chapter=self.chapter_1, order_note=1, recto=True, verso=True)
         speed_set_up.add_user_to_notes(
@@ -34,6 +37,14 @@ class TeacherView(TestCase):
             chapter=self.chapter_2, order_note=1, recto=True, verso=True)
         speed_set_up.add_user_to_notes(
             user=self.user_a, note=self.note_2, lvl_recto=3, lvl_verso=8)
+
+        self.note_1 = speed_set_up.create_note(
+            chapter=self.chapter_5, order_note=1, recto=True, verso=True)
+        speed_set_up.add_user_to_notes(
+            user=self.user_a, note=self.note_1, lvl_recto=5, lvl_verso=5)
+
+        speed_set_up.add_user_to_notes(
+            user=self.user_b, note=self.note_1, lvl_recto=5, lvl_verso=5)
 
         self.student_1 = speed_set_up.add_student_to_book(
             self.user_a, self.book_4, to_accept=True, order_book=4)
@@ -72,7 +83,7 @@ class TeacherView(TestCase):
         self.assertEqual(
             self.response.context["user_in_acceptation"].count(), 0)
         self.assertEqual(
-            self.response.context["user_accepted"].count(), 0)
+            self.response.context["user_accepted"], [])
 
         # book2 (student in acceptation)
         self.response = self.client.get(
@@ -80,7 +91,7 @@ class TeacherView(TestCase):
         self.assertEqual(
             self.response.context["user_in_acceptation"].count(), 1)
         self.assertEqual(
-            self.response.context["user_accepted"].count(), 0)
+            self.response.context["user_accepted"], [])
 
         # book3 (student accepted)
         self.response = self.client.get(
@@ -88,4 +99,4 @@ class TeacherView(TestCase):
         self.assertEqual(
             self.response.context["user_in_acceptation"].count(), 0)
         self.assertEqual(
-            self.response.context["user_accepted"].count(), 1)
+            self.response.context["user_accepted"], [{'username': 'lee', 'lvl_avg': 5.0, 'user_id': 2}])

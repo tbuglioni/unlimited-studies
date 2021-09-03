@@ -4,81 +4,100 @@
 
 <!-- BODY -->
 <div class="container-fluid mt-5 pt-5">
-    <h1 class="text-center new_font_daniel-lg">Teacher section</h1>
+  <h1 class="text-center new_font_daniel-lg">Teacher section</h1>
+  <p>- Add new students in your current book</p>
+  <p>- Each student can study your notes but can't change the content</p>
 
-    <!-- form add email-->
-    <form action="{% url 'studies:add_new_student' book=book%}" method="POST">
-        {% csrf_token %}
-        <div class="form-group">
-            <label for="add_new_student" class="control-label">Username</label>
-            <input class="form-control" type="text" name="new_student" id="add_new_student">
-        </div>
-    </form>
-    {% if error %}
-    <p class="alert alert-warning">Username not found</p>
-    {% endif %}
-    <!-- list in acceptation (username, cancel)-->
-    
-    <p>IN VALIDATION</p>
-    <table class="table-dark table">
-        <thead>
-          <tr>
-            <th scope="col"style="width: 10%">Name</th>
-          </tr>
-        </thead>
-        <tbody>
-    {% for elt in user_in_acceptation %}
-    <tr>
+  <!-- form add email-->
+  <form action="{% url 'studies:add_new_student' book=book%}" method="POST">
+    {% csrf_token %}
+    <div class="form-group">
+      <input
+        class="form-control"
+        type="text"
+        name="new_student"
+        id="add_new_student"
+        placeholder="Username"
+      />
+    </div>
+  </form>
+  <hr />
+  {% if error %}
+  <p class="alert alert-warning">Username not found</p>
+  {% endif %}
+  <!-- list in acceptation (username, cancel)-->
+  <br />
+  <br />
+  {% if user_in_acceptation %}
+  <div class="row bg-light text-dark pt-1 d-flex justify-content-sm-center">
+    <span class="col-sm-12 text-center new_font_daniel-m"
+      >Student in acceptation:</span
+    >
+  </div>
+
+  <table class="table-dark table">
+    <thead>
+      <tr>
+        <th scope="col" style="width: 10%">Name</th>
+        <th scope="col" style="width: 10%">Delete</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for elt in user_in_acceptation %}
+      <tr>
         <th>{{elt.user.username}}</th>
         <td>
-            <a
-              href="{% url 'studies:unsubscribe_student' student=elt.user_id book=book %}"
-              class="btn btn-outline-light"
-              ><img
-                src="{% static 'studies/img/trash-2-outline.svg' %}"
-                alt="un triangle aux trois côtés égaux"
-                height="25px"
-                width="25px"
-            /></a>
-          </td>
-    </tr>
-    
-    {% endfor %}
-</tbody>
+          <a
+            href="{% url 'studies:unsubscribe_student' student=elt.user_id book=book %}"
+            class="btn btn-outline-light"
+            ><img
+              src="{% static 'studies/img/trash-2-outline.svg' %}"
+              alt="un triangle aux trois côtés égaux"
+              height="25px"
+              width="25px"
+          /></a>
+        </td>
+      </tr>
 
-
-
-</table>
-    <!-- list with progression -->
-    <p>Accepted :</p>
-    <table class="table-dark table">
-        <thead>
-          <tr>
-            <th scope="col"style="width: 10%">Name</th>
-          </tr>
-        </thead>
-        <tbody>
-    {% for elt in user_accepted %}
-    <tr>
-        <th>{{elt.user.username}}</th>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endif %} {% if user_accepted %}
+  <!-- list with progression -->
+  <div class="row bg-light text-dark pt-1 d-flex justify-content-sm-center">
+    <span class="col-sm-12 text-center new_font_daniel-m"
+      >Students accepted:</span
+    >
+  </div>
+  <table class="table-dark table">
+    <thead>
+      <tr>
+        <th scope="col" style="width: 10%">Name</th>
+        <th scope="col" style="width: 10%">Avg</th>
+        <th scope="col" style="width: 10%">Delete</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for elt in user_accepted %}
+      <tr>
+        <th>{{elt.username}}</th>
+        <td>{{elt.lvl_avg}}</td>
         <td>
-            <a
-              href="{% url 'studies:unsubscribe_student' student=elt.user_id book=book %}"
-              class="btn btn-outline-light"
-              ><img
-                src="{% static 'studies/img/trash-2-outline.svg' %}"
-                alt="un triangle aux trois côtés égaux"
-                height="25px"
-                width="25px"
-            /></a>
-          </td>
-    </tr>
-    
-    {% endfor %}
-</tbody>
-</table>
+          <a
+            href="{% url 'studies:unsubscribe_student' student=elt.user_id book=book %}"
+            class="btn btn-outline-light"
+            ><img
+              src="{% static 'studies/img/trash-2-outline.svg' %}"
+              alt="un triangle aux trois côtés égaux"
+              height="25px"
+              width="25px"
+          /></a>
+        </td>
+      </tr>
 
-
-
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
 </div>
 {% endblock content %}

@@ -10,9 +10,10 @@ TIME_NOW = timezone.now()
 
 class StartGameView(TestCase):
     def setUp(self):
+        self.time_now = timezone.now()
 
         speed_set_up = SpeedSetUP()
-        
+
         self.user_a = speed_set_up.set_up_user_a()
 
         self.book_1 = speed_set_up.create_book_owner(self.user_a, order_book=1)
@@ -40,21 +41,19 @@ class StartGameView(TestCase):
         self.client.login(email="john@invalid.com",
                           password="some_123_password")
         self.response = self.client.get(reverse("studies:game_auto"))
-        self.assertEqual(self.response.status_code, 200)
         self.assertTemplateUsed(self.response, "studies/auto_game.html")
 
     def __loop_lvl(self, data, lvl_target: int, days_added: int):
-        response = self.client.post(
-            reverse("studies:game_auto"), data, follow=True
+
+        self.client.post(
+            reverse("studies:game_auto"), data, follow=False
         )
-        status_code = response.status_code
-        self.assertEqual(status_code, 200)
 
         note_a = StudiesNotesProgression.objects.get(
             user=self.user_a, notes=self.note_1, is_recto=True)
         self.assertEqual(note_a.level, lvl_target)
         self.assertEqual(note_a.next_studied_date.strftime('%d/%m/%y'),
-                         (TIME_NOW + timedelta(days=days_added)).strftime('%d/%m/%y'))
+                         (self.time_now + timedelta(days=days_added)).strftime('%d/%m/%y'))
 
     def test_start_game_view_200_POST_win(self):
         """ start_game_view : login(yes), data(), POST"""

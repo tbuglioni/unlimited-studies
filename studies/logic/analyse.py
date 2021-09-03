@@ -137,3 +137,22 @@ class Analyse:
         """ update the number of notes studied this day and month)"""
         self.__update_notes_studied_today(note_true, note_false)
         self.__update_notes_studied_this_month(note_true, note_false)
+
+    def students_avg(self, book):
+        """ return list with each students in 1 book"""
+        list_user = UserBookMany.objects.filter(
+            user_fonction="student", to_accept=False, book=book).select_related('user')
+
+        list_note = StudiesNotesProgression.objects.filter(
+            user__userbookmany__user_fonction="student", user__userbookmany__to_accept=False, user__userbookmany__book=book).distinct()
+
+        exit_list = []
+
+        for elt in list_user:
+            username = elt.user.username
+            user_id = elt.user_id
+            lvl_avg = list_note.filter(user=elt.user).aggregate(
+                Avg('level'))["level__avg"]
+            exit_list.append(
+                {"username": username, "lvl_avg": lvl_avg, "user_id": user_id})
+        return exit_list

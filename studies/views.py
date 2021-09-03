@@ -95,8 +95,8 @@ def teacher_view(request, book: int, error: int = 0):
     context["error"] = error
     context["user_in_acceptation"] = UserBookMany.objects.filter(
         user_fonction="student", to_accept=True, book=book)
-    context["user_accepted"] = UserBookMany.objects.filter(
-        user_fonction="student", to_accept=False, book=book)
+    current_analyse = Analyse(request)
+    context["user_accepted"] = current_analyse.students_avg(book)
 
     return render(request, "studies/teacher.html", context)
 
