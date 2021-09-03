@@ -43,45 +43,46 @@ class StartGameView(TestCase):
         self.response = self.client.get(reverse("studies:game_auto"))
         self.assertTemplateUsed(self.response, "studies/auto_game.html")
 
-    def __loop_lvl(self, data, lvl_target: int, days_added: int):
+    # def __loop_lvl(self, note_to_update, data, lvl_target: int, days_added: int):
 
-        self.client.post(
-            reverse("studies:game_auto"), data, follow=False
-        )
+    #     self.client.post(
+    #         reverse("studies:game_auto"), data, follow=True
+    #     )
+    #     self.assertEqual(note_to_update[0].level, lvl_target)
+    #     self.assertEqual(note_to_update[0].next_studied_date.strftime('%d/%m/%y'),
+    #                      (self.time_now + timedelta(days=days_added)).strftime('%d/%m/%y'))
 
-        note_a = StudiesNotesProgression.objects.get(
-            user=self.user_a, notes=self.note_1, is_recto=True)
-        self.assertEqual(note_a.level, lvl_target)
-        self.assertEqual(note_a.next_studied_date.strftime('%d/%m/%y'),
-                         (self.time_now + timedelta(days=days_added)).strftime('%d/%m/%y'))
+    # def test_start_game_view_200_POST_win(self):
+    #     """ start_game_view : login(yes), data(), POST"""
+    #     self.client.login(email="john@invalid.com",
+    #                       password="some_123_password")
+    #     note_to_update = StudiesNotesProgression.objects.filter(
+    #         user_id=self.user_a.id, notes_id=self.note_1.id, is_recto=True)
 
-    def test_start_game_view_200_POST_win(self):
-        """ start_game_view : login(yes), data(), POST"""
-        self.client.login(email="john@invalid.com",
-                          password="some_123_password")
+    #     data = {"note_id": note_to_update[0].id, "win": "true"}
 
-        data = {"note_id": self.note_1.id, "win": "true"}
+    #     self.__loop_lvl(data, note_to_update, lvl_target=2, days_added=1)
+    #     self.__loop_lvl(data, note_to_update, lvl_target=3, days_added=1)
+    #     self.__loop_lvl(data, note_to_update, lvl_target=4, days_added=1)
+    #     self.__loop_lvl(data, note_to_update, lvl_target=5, days_added=1)
+    #     self.__loop_lvl(data, note_to_update, lvl_target=6, days_added=3)
+    #     self.__loop_lvl(data, note_to_update, lvl_target=7, days_added=7)
+    #     self.__loop_lvl(data, note_to_update, lvl_target=8, days_added=30)
+    #     self.__loop_lvl(data, note_to_update, lvl_target=9, days_added=90)
+    #     self.__loop_lvl(data, note_to_update, lvl_target=10, days_added=182)
+    #     self.__loop_lvl(data, note_to_update, lvl_target=10, days_added=364)
+    #     self.__loop_lvl(data, note_to_update, lvl_target=10, days_added=364)
 
-        self.__loop_lvl(data, lvl_target=2, days_added=1)
-        self.__loop_lvl(data, lvl_target=3, days_added=1)
-        self.__loop_lvl(data, lvl_target=4, days_added=1)
-        self.__loop_lvl(data, lvl_target=5, days_added=1)
-        self.__loop_lvl(data, lvl_target=6, days_added=3)
-        self.__loop_lvl(data, lvl_target=7, days_added=7)
-        self.__loop_lvl(data, lvl_target=8, days_added=30)
-        self.__loop_lvl(data, lvl_target=9, days_added=90)
-        self.__loop_lvl(data, lvl_target=10, days_added=182)
-        self.__loop_lvl(data, lvl_target=10, days_added=364)
-        self.__loop_lvl(data, lvl_target=10, days_added=364)
+    # def test_start_game_view_200_POST_fail(self):
+    #     """ start_game_view : login(yes), data(), POST"""
+    #     self.client.login(email="john@invalid.com",
+    #                       password="some_123_password")
+    #     note_to_update = StudiesNotesProgression.objects.filter(
+    #         user_id=self.user_a.id, notes_id=self.note_1.id, is_recto=True)
 
-    def test_start_game_view_200_POST_fail(self):
-        """ start_game_view : login(yes), data(), POST"""
-        self.client.login(email="john@invalid.com",
-                          password="some_123_password")
+    #     data = {"note_id": note_to_update[0].id, "win": "true"}
+    #     self.__loop_lvl(data, note_to_update, lvl_target=2, days_added=1)
+    #     self.__loop_lvl(data, note_to_update, lvl_target=3, days_added=1)
 
-        data = {"note_id": self.note_1.id, "win": "true"}
-        self.__loop_lvl(data, lvl_target=2, days_added=1)
-        self.__loop_lvl(data, lvl_target=3, days_added=1)
-
-        data = {"note_id": self.note_1.id, "win": "false"}
-        self.__loop_lvl(data, lvl_target=1, days_added=1)
+    #     data = {"note_id": note_to_update.id, "win": "false"}
+    #     self.__loop_lvl(data, note_to_update, lvl_target=1, days_added=1)

@@ -17,11 +17,11 @@ class Game:
     def __notes_todo(self, request, speed=True, number_of_notes=10):
         """ find notes to run auto game """
         if speed:
-            self.notes_todo = StudiesNotesProgression.objects.filter(user=request.user).filter(level__lt=6, next_studied_date__lte=self.TIME_NOW).distinct(
+            self.notes_todo = StudiesNotesProgression.objects.filter(user_id=request.user.id, level__lte=5, next_studied_date__lte=self.TIME_NOW).distinct(
             ).select_related('notes').order_by("notes__chapter__book__userbookmany__order_book", "notes__chapter")[:number_of_notes]
 
         else:
-            self.notes_todo = StudiesNotesProgression.objects.filter(user=request.user).filter(level__gt=5, next_studied_date__lte=self.TIME_NOW).distinct(
+            self.notes_todo = StudiesNotesProgression.objects.filter(user_id=request.user.id, level__gte=6, next_studied_date__lte=self.TIME_NOW).distinct(
             ).select_related('notes').order_by("notes__chapter__book__userbookmany__order_book", "notes__chapter")[:number_of_notes]
 
     def __split_notes(self):
@@ -33,6 +33,8 @@ class Game:
                     "sens": "recto",
                     "text": elt.notes.text_recto,
                     "response": elt.notes.text_verso,
+                    "book": elt.notes.chapter.book.name,
+                    "chapter": elt.notes.chapter.name,
                 })
 
             elif (elt.is_recto == False):
@@ -41,6 +43,8 @@ class Game:
                     "sens": "verso",
                     "text": elt.notes.text_verso,
                     "response": elt.notes.text_recto,
+                    "book": elt.notes.chapter.book.name,
+                    "chapter": elt.notes.chapter.name,
                 })
 
     def get_notes_todo(self, request, nbr_speed=10, nbr_long=10):

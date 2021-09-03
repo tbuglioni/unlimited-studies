@@ -99,4 +99,4 @@ class TeacherView(TestCase):
         self.assertEqual(
             self.response.context["user_in_acceptation"].count(), 0)
         self.assertEqual(
-            self.response.context["user_accepted"], [{'username': 'lee', 'lvl_avg': 5.0, 'user_id': 2}])
+            self.response.context["user_accepted"], [{'username': 'lee', 'lvl_avg': 5.0, 'user_id': self.user_b.id}])

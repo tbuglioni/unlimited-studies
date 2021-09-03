@@ -52,6 +52,9 @@
             onclick="showResponse('{{elt.id}}{{elt.sens}}', '{{elt.text}}', '{{elt.response}}')"
           >
             <div>
+              <p class="position-absolute top-0">
+                {{elt.book}}/{{elt.chapter}}
+              </p>
               <p id="{{elt.id}}{{elt.sens}}">{{elt.text}}</p>
             </div>
           </button>
