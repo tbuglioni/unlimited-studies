@@ -8,36 +8,37 @@
   <h1 class="text-center new_font_daniel-lg">Student section</h1>
   <br />
   <br />
+  <p>Here you can accept books when you are invited :</p>
   <hr />
   <table class="table-dark table">
     <thead>
       <tr>
         <th scope="col" style="width: 10%">Name</th>
         <th scope="col" style="width: 10%">Description</th>
-        <th scope="col" style="width: 10%">Accept</th>
         <th scope="col" style="width: 10%">Author</th>
         <th scope="col" style="width: 10%">Number of notes</th>
+        <th scope="col" style="width: 10%">Accept</th>
       </tr>
     </thead>
     <tbody>
       {% for elt in book_to_check %}
       <tr>
-        <th scope="row">{{elt.book.name}}</th>
-        <td>{{elt.book.description}}</td>
+        <th scope="row">{{elt.book_name}}</th>
+        <td>{{elt.book_description}}</td>
+        <td>{{elt.owner}}</td>
+        <td>{{elt.counter}}</td>
         <td>
           <a
-            href="{% url 'studies:subscribe_book' book=elt.book.id%}"
+            href="{% url 'studies:subscribe_book' book=elt.book_id%}"
             class="btn btn-outline-light"
             >Yes</a
           >
           <a
-            href="{% url 'studies:unsubscribe_book' book=elt.book.id%}"
+            href="{% url 'studies:unsubscribe_book' book=elt.book_id%}"
             class="btn btn-outline-light"
             >No</a
           >
         </td>
-        <td></td>
-        <td></td>
       </tr>
       {% endfor %}
     </tbody>

@@ -50,4 +50,12 @@ class StudentView(TestCase):
             reverse("studies:student_page"))
 
         self.assertEqual(
-            self.response.context["book_to_check"][0].book_id, self.book_1.id)
+            self.response.context["book_to_check"][0]["book_id"], self.book_1.id)
+        self.assertEqual(
+            self.response.context["book_to_check"][0]["book_name"], self.book_1.name)
+        self.assertEqual(
+            self.response.context["book_to_check"][0]["book_description"], self.book_1.description)
+        self.assertEqual(
+            self.response.context["book_to_check"][0]["counter"], 1)
+        self.assertEqual(
+            self.response.context["book_to_check"][0]["owner"], self.user_b.username)

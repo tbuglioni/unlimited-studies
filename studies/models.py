@@ -117,13 +117,13 @@ class StudiesNotesProgression(models.Model):
     is_recto = models.BooleanField(default=True)
     level = models.PositiveSmallIntegerField(
         default=1, choices=LVL, null=False)
-    last_studied_date= models.DateField(null=True, blank=True)
-    next_studied_date= models.DateField(
+    last_studied_date = models.DateField(null=True, blank=True)
+    next_studied_date = models.DateField(
         null=True, blank=True, default=timezone.now
     )
 
     class Meta:
-        ordering = ["user", "is_recto","notes"]
+        ordering = ["user", "is_recto", "notes"]
         indexes = [
             models.Index(fields=["user", "notes"]),
         ]
@@ -138,7 +138,6 @@ class GlobalDailyAnalysis(models.Model):
     number_of_studies = models.PositiveIntegerField(default=0, null=False)
     number_of_win = models.PositiveIntegerField(default=0, null=False)
     number_of_lose = models.PositiveIntegerField(default=0, null=False)
-    
 
     def __str__(self):
         return f"day, {self.user}"
@@ -159,7 +158,6 @@ class GlobalMonthlyAnalysis(models.Model):
     number_of_studies = models.PositiveIntegerField(default=0)
     number_of_win = models.PositiveIntegerField(default=0)
     number_of_lose = models.PositiveIntegerField(default=0)
-
 
     def __str__(self):
         return f"month, {self.user}"

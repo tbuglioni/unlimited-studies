@@ -82,8 +82,8 @@ def book_view(request, book: int, chapter: int = None):
 @ login_required
 def student_view(request):
     context = {}
-    context["book_to_check"] = UserBookMany.objects.filter(
-        user=request.user, to_accept=True).select_related('book')
+    current_analyse = Analyse(request)
+    context["book_to_check"] = current_analyse.book_to_add_as_student(request)
 
     return render(request, "studies/student.html", context)
 

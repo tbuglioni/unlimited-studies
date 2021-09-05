@@ -3,6 +3,7 @@ from django.db.models import Avg
 from django.db.models import Count, F, Value
 import datetime
 from django.utils import timezone
+from account.models import Account
 
 
 class Analyse:
@@ -155,4 +156,25 @@ class Analyse:
                 Avg('level'))["level__avg"]
             exit_list.append(
                 {"username": username, "lvl_avg": lvl_avg, "user_id": user_id})
+        return exit_list
+
+    def book_to_add_as_student(self, request):
+        """ return the book to add as student"""
+        data_list = UserBookMany.objects.filter(
+            user=request.user, to_accept=True).select_related('book').select_related('user')
+        exit_list = []
+
+        for elt in data_list:
+            book_name = elt.book.name
+            book_id = elt.book_id
+            book_description = elt.book.description
+            owner = Account.objects.filter(
+                userbookmany__user_fonction="owner", userbookmany__book_id=book_id).first().username
+            counter = StudiesNotes.objects.filter(
+                chapter__book_id=book_id).count()
+            if counter == None:
+                counter = 0
+
+            exit_list.append({"book_name": book_name, "book_id": book_id,
+                             "book_description": book_description, "owner": owner, "counter": counter})
         return exit_list

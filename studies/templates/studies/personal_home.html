@@ -11,7 +11,13 @@
   <h1 class="text-center new_font_daniel-lg">Home</h1>
   <p class="text-center">{{user.username}}</p>
   {% if new_book_from_teacher == True%}
-  <a class="btn btn-primary" href="{% url 'studies:student_page' %}">New book from Teacher to check</a>
+  <div class="row align-items-center d-flex">
+    <a
+      class="btn btn-outline-light new_font_daniel-m"
+      href="{% url 'studies:student_page'%}"
+      >New book from Teacher to check here</a
+    >
+  </div>
   {% endif %}
   <br />
   <div class="row  p-1 bg-light text-dark justify-content-between">
