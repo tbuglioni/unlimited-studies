@@ -1,33 +1,27 @@
-from studies.models import *
+from studies.models import (Book, Chapter, UserBookMany, StudiesNotes,
+                            StudiesNotesProgression, GlobalDailyAnalysis,
+                            GlobalMonthlyAnalysis)
 from django.db.models import Avg
-from django.db.models import Count, F, Value
+from django.db.models import F
 import datetime
-from django.utils import timezone
 from account.models import Account
 
 
 class Analyse:
+    """ get study analysis """
+
     def __init__(self, request):
         self.time_now = datetime.date.today()
         self.request = request
 
-    def update_data(self):
-        """ get repetitive query """
-        # data
-        self.notes = StudiesNotesProgression.objects.filter(
-            user=self.request.user).select_related('notes')
-
-        self.note_recto_true = self.notes.filter(
-            notes__studie_recto=True)
-        self.note_verso_true = self.notes.filter(
-            notes__studie_verso=True)
-
     def get_nbr_of_notes(self):
-        """ return the numbers of notes"""
-        return StudiesNotes.objects.filter(users=self.request.user).distinct().count()
+        """return the numbers of notes"""
+        return (
+            StudiesNotes.objects.filter(
+                users=self.request.user).distinct().count())
 
     def get_recap_daily_notes(self):
-        """ return a list with 10 lasts days and the number of win/fail"""
+        """return a list with 10 lasts days and the number of win/fail"""
 
         # precharge with head of list for pie graph
         recap_dict = {"list_date": ["Date"],
@@ -47,24 +41,30 @@ class Analyse:
             return self.time_now, 0, 0
 
     def get_global_lvl_avg(self):
-        """ return the lvl average of all the notes"""
+        """return the lvl average of all the notes"""
 
         try:
-            lvl_avg = round(StudiesNotesProgression.objects.filter(
-                user=self.request.user).aggregate(Avg('level'))["level__avg"], 2)
+            lvl_avg = round(
+                StudiesNotesProgression.objects.filter(
+                    user=self.request.user
+                ).aggregate(Avg("level"))["level__avg"],
+                2,
+            )
         except TypeError:
             lvl_avg = 0
         return lvl_avg
 
     def get_list_lvl_avg_each_book(self):
-        """ return a list of each book(level average)"""
+        """return a list of each book(level average)"""
         list_avg = []
         books = Book.objects.filter(users=self.request.user).order_by(
-            'userbookmany__order_book')
+            "userbookmany__order_book"
+        )
         for book in books:
             try:
                 lvl_avg = StudiesNotesProgression.objects.filter(
-                    user=self.request.user, notes__chapter__book_id=book.id).aggregate(Avg('level'))["level__avg"]
+                    user=self.request.user, notes__chapter__book_id=book.id
+                ).aggregate(Avg("level"))["level__avg"]
 
                 lvl_avg = round(lvl_avg, 2)
             except TypeError:
@@ -73,15 +73,17 @@ class Analyse:
 
         return list_avg
 
-    def get_list_lvl_avg_each_chapter_one_book(self, book_id):
-        """ return a list of each chapter(level average) in one book"""
+    def get_list_lvl_avg_each_chapter_one_book(self, book_id: int):
+        """return a list of each chapter(level average) in one book"""
         list_avg = []
         chapters = Chapter.objects.filter(
-            book__users=self.request.user, book_id=book_id)
+            book__users=self.request.user, book_id=book_id
+        )
         for chapter in chapters:
             try:
                 lvl_avg = StudiesNotesProgression.objects.filter(
-                    user=self.request.user, notes__chapter=chapter.id).aggregate(Avg('level'))["level__avg"]
+                    user=self.request.user, notes__chapter=chapter.id
+                ).aggregate(Avg("level"))["level__avg"]
                 lvl_avg = round(lvl_avg, 2)
 
             except TypeError:
@@ -91,90 +93,119 @@ class Analyse:
         return list_avg
 
     def get_nbr_notes_todoo(self):
-        """ return number of notes to studies"""
+        """return number of notes to studies"""
         todoo = StudiesNotesProgression.objects.filter(
-            user=self.request.user, next_studied_date__lte=self.time_now).count()
+            user=self.request.user, next_studied_date__lte=self.time_now
+        ).count()
         return todoo
 
     def get_notes_studied_today(self):
-        """ count all notes studied today"""
-        obj, created = GlobalDailyAnalysis.objects.get_or_create(
-            user=self.request.user, date=self.time_now)
+        """count all notes studied today"""
+        obj, _ = GlobalDailyAnalysis.objects.get_or_create(
+            user=self.request.user, date=self.time_now
+        )
         return obj.number_of_studies
 
-    def __update_notes_studied_today(self, note_true, note_false):
-        """ update the number of notes studied today"""
+    def __update_notes_studied_today(self, note_true: int, note_false: int):
+        """update the number of notes studied today"""
         self.time_now = datetime.date.today()
-        obj, created = GlobalDailyAnalysis.objects.get_or_create(
-            user=self.request.user, date=self.time_now)
+        obj, _ = GlobalDailyAnalysis.objects.get_or_create(
+            user=self.request.user, date=self.time_now
+        )
 
-        obj.number_of_studies = F('number_of_studies') + \
-            (note_true + note_false)
-        obj.number_of_win = F('number_of_win') + note_true
-        obj.number_of_lose = F('number_of_lose') + note_false
+        obj.number_of_studies = (
+            F("number_of_studies") + (note_true + note_false))
+        obj.number_of_win = F("number_of_win") + note_true
+        obj.number_of_lose = F("number_of_lose") + note_false
         obj.save()
 
     def get_notes_studied_this_month(self):
-        """ count all notes studied this month"""
+        """count all notes studied this month"""
 
         date_now = self.time_now
         obj, created = GlobalMonthlyAnalysis.objects.get_or_create(
-            user=self.request.user, date__month=date_now.month)
+            user=self.request.user, date__month=date_now.month
+        )
         return obj.number_of_studies
 
-    def __update_notes_studied_this_month(self, note_true, note_false):
-        """ update the number of notes studied this month"""
+    def __update_notes_studied_this_month(self,
+                                          note_true: int,
+                                          note_false: int):
+        """update the number of notes studied this month"""
         date_now = self.time_now
         obj, created = GlobalMonthlyAnalysis.objects.get_or_create(
-            user=self.request.user, date__month=date_now.month)
+            user=self.request.user, date__month=date_now.month
+        )
 
-        obj.number_of_studies = F('number_of_studies') + \
+        obj.number_of_studies = F("number_of_studies") + \
             (note_true + note_false)
-        obj.number_of_win = F('number_of_win') + note_true
-        obj.number_of_lose = F('number_of_lose') + note_false
+        obj.number_of_win = F("number_of_win") + note_true
+        obj.number_of_lose = F("number_of_lose") + note_false
         obj.save()
 
-    def update_analysis(self, note_true, note_false):
-        """ update the number of notes studied this day and month)"""
+    def update_analysis(self, note_true: int, note_false: int):
+        """update the number of notes studied this day and month)"""
         self.__update_notes_studied_today(note_true, note_false)
         self.__update_notes_studied_this_month(note_true, note_false)
 
-    def students_avg(self, book):
-        """ return list with each students in 1 book"""
+    def students_avg(self, book: int):
+        """return list with each students in 1 book"""
         list_user = UserBookMany.objects.filter(
-            user_fonction="student", to_accept=False, book=book).select_related('user')
+            user_fonction="student", to_accept=False, book=book
+        ).select_related("user")
 
         list_note = StudiesNotesProgression.objects.filter(
-            user__userbookmany__user_fonction="student", user__userbookmany__to_accept=False, user__userbookmany__book=book).distinct()
+            user__userbookmany__user_fonction="student",
+            user__userbookmany__to_accept=False,
+            user__userbookmany__book=book,
+        ).distinct()
 
         exit_list = []
 
         for elt in list_user:
             username = elt.user.username
             user_id = elt.user_id
-            lvl_avg = list_note.filter(user=elt.user).aggregate(
-                Avg('level'))["level__avg"]
+            lvl_avg = list_note.filter(user=elt.user).aggregate(Avg("level"))[
+                "level__avg"
+            ]
             exit_list.append(
-                {"username": username, "lvl_avg": lvl_avg, "user_id": user_id})
+                {"username": username, "lvl_avg": lvl_avg, "user_id": user_id}
+            )
         return exit_list
 
     def book_to_add_as_student(self, request):
-        """ return the book to add as student"""
-        data_list = UserBookMany.objects.filter(
-            user=request.user, to_accept=True).select_related('book').select_related('user')
+        """return the book to add as student"""
+        data_list = (
+            UserBookMany.objects.filter(user=request.user, to_accept=True)
+            .select_related("book")
+            .select_related("user")
+        )
         exit_list = []
 
         for elt in data_list:
             book_name = elt.book.name
             book_id = elt.book_id
             book_description = elt.book.description
-            owner = Account.objects.filter(
-                userbookmany__user_fonction="owner", userbookmany__book_id=book_id).first().username
+            owner = (
+                Account.objects.filter(
+                    userbookmany__user_fonction="owner",
+                    userbookmany__book_id=book_id
+                )
+                .first()
+                .username
+            )
             counter = StudiesNotes.objects.filter(
                 chapter__book_id=book_id).count()
-            if counter == None:
+            if counter is None:
                 counter = 0
 
-            exit_list.append({"book_name": book_name, "book_id": book_id,
-                             "book_description": book_description, "owner": owner, "counter": counter})
+            exit_list.append(
+                {
+                    "book_name": book_name,
+                    "book_id": book_id,
+                    "book_description": book_description,
+                    "owner": owner,
+                    "counter": counter,
+                }
+            )
         return exit_list

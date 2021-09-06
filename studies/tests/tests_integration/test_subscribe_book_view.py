@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
-from .speed_set_up import SpeedSetUP
-from studies.models import *
+from studies.tests.speed_set_up import SpeedSetUP
+from studies.models import (StudiesNotesProgression)
 
 
 class SubscribeBookView(TestCase):
@@ -20,52 +20,61 @@ class SubscribeBookView(TestCase):
             self.book_1, order_chapter=2)
 
         self.note_1 = speed_set_up.create_note(
-            chapter=self.chapter_1, order_note=1, recto=True, verso=True)
+            chapter=self.chapter_1, order_note=1, recto=True, verso=True
+        )
         speed_set_up.add_user_to_notes(
-            user=self.user_a, note=self.note_1, lvl_recto=5, lvl_verso=5)
+            user=self.user_a, note=self.note_1, lvl_recto=5, lvl_verso=5
+        )
 
         self.note_2 = speed_set_up.create_note(
-            chapter=self.chapter_2, order_note=1, recto=True, verso=False)
+            chapter=self.chapter_2, order_note=1, recto=True, verso=False
+        )
         speed_set_up.add_user_to_notes(
-            user=self.user_a, note=self.note_2, lvl_recto=3, lvl_verso=3)
+            user=self.user_a, note=self.note_2, lvl_recto=3, lvl_verso=3
+        )
 
         self.student_1 = speed_set_up.add_student_to_book(
-            self.user_b, self.book_1, to_accept=True, order_book=1)
+            self.user_b, self.book_1, to_accept=True, order_book=1
+        )
         self.student_2 = speed_set_up.add_student_to_book(
-            self.user_b, self.book_2, to_accept=True, order_book=2)
+            self.user_b, self.book_2, to_accept=True, order_book=2
+        )
 
     def test_subscribe_book_page_302_ok(self):
-        """ subscribe_book : login(yes)), GET"""
         self.client.login(email="john@invalid.com",
                           password="some_123_password")
         self.response = self.client.get(
-            reverse("studies:subscribe_book", kwargs={'book': self.book_1.id}))
+            reverse("studies:subscribe_book", kwargs={"book": self.book_1.id})
+        )
         self.assertEqual(self.response.status_code, 302)
 
     def test_subscribe_book_302(self):
-        """ subscribe_book : login(no), GET"""
 
         self.response = self.client.get(
-            reverse("studies:subscribe_book", kwargs={'book': self.book_1.id}))
+            reverse("studies:subscribe_book", kwargs={"book": self.book_1.id})
+        )
         self.assertEqual(self.response.status_code, 302)
 
     def test_subscribe_book(self):
-        """ subscribe_book : login(yes)), GET"""
         self.client.login(email="lee@invalid.com",
                           password="some_123_password")
 
         # book1 (note:recto:true, verso:true)
         self.response = self.client.get(
-            reverse("studies:subscribe_book", kwargs={'book': self.book_1.id}))
+            reverse("studies:subscribe_book", kwargs={"book": self.book_1.id})
+        )
         number_notes_to_b = StudiesNotesProgression.objects.filter(
-            user=self.user_b, notes_id=self.note_1.id).count()
+            user=self.user_b, notes_id=self.note_1.id
+        ).count()
 
         self.assertEqual(number_notes_to_b, 2)
 
         # book2 (note: recto:true, verso:false)
         self.response = self.client.get(
-            reverse("studies:subscribe_book", kwargs={'book': self.book_2.id}))
+            reverse("studies:subscribe_book", kwargs={"book": self.book_2.id})
+        )
         number_notes_to_b = StudiesNotesProgression.objects.filter(
-            user=self.user_b, notes_id=self.note_2.id).count()
+            user=self.user_b, notes_id=self.note_2.id
+        ).count()
 
         self.assertEqual(number_notes_to_b, 1)

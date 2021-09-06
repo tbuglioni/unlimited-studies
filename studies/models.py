@@ -1,6 +1,5 @@
 from django.db import models
 from django.conf import settings
-from django.db.models.expressions import F
 from django.utils import timezone
 
 
@@ -22,8 +21,10 @@ class UserBookMany(models.Model):
         ("student", "student"),
     )
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL,
-                             on_delete=models.CASCADE, null=False, blank=False)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=False,
+        blank=False
+    )
     book = models.ForeignKey(
         Book, on_delete=models.CASCADE, null=False, blank=False)
     order_book = models.PositiveSmallIntegerField(default=1)
@@ -119,8 +120,7 @@ class StudiesNotesProgression(models.Model):
         default=1, choices=LVL, null=False)
     last_studied_date = models.DateField(null=True, blank=True)
     next_studied_date = models.DateField(
-        null=True, blank=True, default=timezone.now
-    )
+        null=True, blank=True, default=timezone.now)
 
     class Meta:
         ordering = ["user", "is_recto", "notes"]
@@ -132,7 +132,8 @@ class StudiesNotesProgression(models.Model):
 class GlobalDailyAnalysis(models.Model):
     # 10 jours
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=False, null=False
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=False,
+        null=False
     )
     date = models.DateField(auto_now_add=True, null=False)
     number_of_studies = models.PositiveIntegerField(default=0, null=False)
@@ -152,7 +153,8 @@ class GlobalDailyAnalysis(models.Model):
 class GlobalMonthlyAnalysis(models.Model):
     # 12 mois
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=False, null=False
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=False,
+        null=False
     )
     date = models.DateField(auto_now_add=True, null=False)
     number_of_studies = models.PositiveIntegerField(default=0)
@@ -167,26 +169,3 @@ class GlobalMonthlyAnalysis(models.Model):
         indexes = [
             models.Index(fields=["user", "date"]),
         ]
-
-
-class Settings(models.Model):
-    LVL = (
-        (1, "1"),
-        (2, "2"),
-        (3, "3"),
-        (4, "4"),
-        (5, "5"),
-    )
-
-    user = models.OneToOneField(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=False, null=False
-    )
-    daily_target = models.PositiveSmallIntegerField(default=50, null=False)
-    default_lvl = models.PositiveSmallIntegerField(
-        default=1, choices=LVL, null=False)
-
-    def __str__(self):
-        return self.user
-
-    class Meta:
-        ordering = ["user"]

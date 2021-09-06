@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
-from .speed_set_up import SpeedSetUP
-from studies.models import *
+from studies.tests.speed_set_up import SpeedSetUP
+from studies.models import (Chapter)
 
 
 class BookView(TestCase):
@@ -26,69 +26,80 @@ class BookView(TestCase):
             self.book_1, order_chapter=4)
 
         self.note_1 = speed_set_up.create_note(
-            chapter=self.chapter_1, order_note=1, recto=True, verso=True)
+            chapter=self.chapter_1, order_note=1, recto=True, verso=True
+        )
         speed_set_up.add_user_to_notes(
-            user=self.user_a, note=self.note_1, lvl_recto=5, lvl_verso=5)
+            user=self.user_a, note=self.note_1, lvl_recto=5, lvl_verso=5
+        )
         self.note_2 = speed_set_up.create_note(
-            chapter=self.chapter_2, order_note=1, recto=True, verso=True)
+            chapter=self.chapter_2, order_note=1, recto=True, verso=True
+        )
         speed_set_up.add_user_to_notes(
-            user=self.user_a, note=self.note_2, lvl_recto=3, lvl_verso=8)
+            user=self.user_a, note=self.note_2, lvl_recto=3, lvl_verso=8
+        )
 
         self.student_1 = speed_set_up.add_student_to_book(
-            self.user_a, self.book_4, to_accept=True, order_book=4)
+            self.user_a, self.book_4, to_accept=True, order_book=4
+        )
 
     def test_book_page_200(self):
-        """ book_view : login(yes), data(book_id), GET"""
         self.client.login(email="john@invalid.com",
                           password="some_123_password")
         self.response = self.client.get(
-            reverse("studies:book_page", kwargs={'book': self.book_1.id}))
+            reverse("studies:book_page", kwargs={"book": self.book_1.id})
+        )
         self.assertEqual(self.response.status_code, 200)
         self.assertTemplateUsed(self.response, "studies/book.html")
 
     def test_book_page_with_chapter_200(self):
-        """ book_view : login(yes), data(book_id, chapter_id), GET"""
         self.client.login(email="john@invalid.com",
                           password="some_123_password")
         self.response = self.client.get(
-            reverse("studies:book_page", kwargs={'book': self.book_1.id, 'chapter': self.chapter_1.id}))
+            reverse(
+                "studies:book_page",
+                kwargs={"book": self.book_1.id, "chapter": self.chapter_1.id},
+            )
+        )
         self.assertEqual(self.response.status_code, 200)
         self.assertTemplateUsed(self.response, "studies/book.html")
 
     def test_book_page_with_chapter_302(self):
-        """ book_view : login(no), data(book_id, chapter_id), GET"""
         self.response = self.client.get(
-            reverse("studies:book_page", kwargs={'book': self.book_1.id, 'chapter': self.chapter_1.id}))
+            reverse(
+                "studies:book_page",
+                kwargs={"book": self.book_1.id, "chapter": self.chapter_1.id},
+            )
+        )
         self.assertEqual(self.response.status_code, 302)
 
     def test_add_new_chapter(self):
-        """ book_view : login(yes), data(book_id), POST
-        init : 4 chapters
-        end : 5 chapters
-
-        """
         self.client.login(email="john@invalid.com",
                           password="some_123_password")
         data = {"name": "hello world"}
         response = self.client.post(
-            reverse("studies:book_page", kwargs={'book': self.book_1.id}), data, follow=True
+            reverse("studies:book_page", kwargs={"book": self.book_1.id}),
+            data,
+            follow=True,
         )
         self.assertEqual(response.status_code, 200)
         chapter_a = Chapter.objects.filter(book__users=self.user_a).count()
         self.assertEqual(chapter_a, 5)
 
     def test_update_chapter(self):
-        """ book_view : login(yes), data(book_id,chapter_id), POST
-        init : 4 chapters (chapter1 order:1, chapter2 order:2, ...)
-        end : 4 chapters (chapter1 order:2, chapter2 order:1, ...)
-
-        """
         self.client.login(email="john@invalid.com",
                           password="some_123_password")
-        data = {"name": "hello world",
-                "chapter_id": self.chapter_1.id, "order_chapter": 2}
+        data = {
+            "name": "hello world",
+            "chapter_id": self.chapter_1.id,
+            "order_chapter": 2,
+        }
         response = self.client.post(
-            reverse("studies:book_page", kwargs={'book': self.book_1.id, 'chapter': self.chapter_1.id}), data, follow=True
+            reverse(
+                "studies:book_page",
+                kwargs={"book": self.book_1.id, "chapter": self.chapter_1.id},
+            ),
+            data,
+            follow=True,
         )
         self.assertEqual(response.status_code, 200)
 
@@ -104,11 +115,14 @@ class BookView(TestCase):
         self.assertEqual(chapter_end_3.order_chapter, 3)
 
     def test_context(self):
-        """ book_view : login(yes), data(book_id, chapter_id), GET"""
         self.client.login(email="john@invalid.com",
                           password="some_123_password")
         self.response = self.client.get(
-            reverse("studies:book_page", kwargs={'book': self.book_1.id, 'chapter': self.chapter_1.id}))
+            reverse(
+                "studies:book_page",
+                kwargs={"book": self.book_1.id, "chapter": self.chapter_1.id},
+            )
+        )
 
         self.assertEqual(self.response.context["user_fonction"], "owner")
         self.assertEqual(self.response.context["book"].name, "English")
@@ -116,5 +130,4 @@ class BookView(TestCase):
         self.assertEqual(
             self.response.context["chapters_notes_avg"], [5.0, 5.5, 0, 0])
         self.assertEqual(self.response.context["chapter"].name, "vocabulary 1")
-        self.assertEqual(
-            self.response.context["notes"].number, 1)
+        self.assertEqual(self.response.context["notes"].number, 1)

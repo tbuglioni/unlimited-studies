@@ -16,149 +16,334 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Book',
+            name="Book",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(blank=True, max_length=255, null=True)),
-                ('description', models.TextField(blank=True, max_length=1000, null=True)),
-                ('source_info', models.TextField(blank=True, max_length=1000, null=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(blank=True,
+                                          max_length=255, null=True)),
+                (
+                    "description",
+                    models.TextField(blank=True, max_length=1000, null=True),
+                ),
+                (
+                    "source_info",
+                    models.TextField(blank=True, max_length=1000, null=True),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Chapter',
+            name="Chapter",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255)),
-                ('order_chapter', models.PositiveSmallIntegerField(default=1)),
-                ('book', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='studies.book')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255)),
+                ("order_chapter", models.PositiveSmallIntegerField(default=1)),
+                (
+                    "book",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="studies.book"
+                    ),
+                ),
             ],
             options={
-                'ordering': ['book', 'order_chapter'],
+                "ordering": ["book", "order_chapter"],
             },
         ),
         migrations.CreateModel(
-            name='StudiesNotes',
+            name="StudiesNotes",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('order_note', models.PositiveSmallIntegerField(default=1)),
-                ('text_recto', models.TextField(max_length=1000)),
-                ('text_verso', models.TextField(max_length=1000)),
-                ('studie_recto', models.BooleanField(default=True)),
-                ('studie_verso', models.BooleanField(default=False)),
-                ('created_at', models.DateField(auto_now_add=True, null=True)),
-                ('chapter', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='studies.chapter')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("order_note", models.PositiveSmallIntegerField(default=1)),
+                ("text_recto", models.TextField(max_length=1000)),
+                ("text_verso", models.TextField(max_length=1000)),
+                ("studie_recto", models.BooleanField(default=True)),
+                ("studie_verso", models.BooleanField(default=False)),
+                ("created_at", models.DateField(auto_now_add=True, null=True)),
+                (
+                    "chapter",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="studies.chapter",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Note',
-                'verbose_name_plural': 'Notes to studies',
-                'ordering': ['order_note', 'created_at'],
+                "verbose_name": "Note",
+                "verbose_name_plural": "Notes to studies",
+                "ordering": ["order_note", "created_at"],
             },
         ),
         migrations.CreateModel(
-            name='UserBookMany',
+            name="UserBookMany",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('order_book', models.PositiveSmallIntegerField(default=1)),
-                ('user_fonction', models.CharField(choices=[('owner', 'owner'), ('student', 'student')], default='owner', max_length=255)),
-                ('to_accept', models.BooleanField(default=False)),
-                ('book', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='studies.book')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("order_book", models.PositiveSmallIntegerField(default=1)),
+                (
+                    "user_fonction",
+                    models.CharField(
+                        choices=[("owner", "owner"), ("student", "student")],
+                        default="owner",
+                        max_length=255,
+                    ),
+                ),
+                ("to_accept", models.BooleanField(default=False)),
+                (
+                    "book",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="studies.book"
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'ordering': ['user', 'order_book'],
+                "ordering": ["user", "order_book"],
             },
         ),
         migrations.CreateModel(
-            name='StudiesNotesProgression',
+            name="StudiesNotesProgression",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('is_recto', models.BooleanField(default=True)),
-                ('level', models.PositiveSmallIntegerField(choices=[(1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5'), (6, '6'), (7, '7'), (8, '8'), (9, '9'), (10, '10')], default=1)),
-                ('last_studied_date', models.DateField(blank=True, null=True)),
-                ('next_studied_date', models.DateField(blank=True, default=django.utils.timezone.now, null=True)),
-                ('notes', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='studies.studiesnotes')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("is_recto", models.BooleanField(default=True)),
+                (
+                    "level",
+                    models.PositiveSmallIntegerField(
+                        choices=[
+                            (1, "1"),
+                            (2, "2"),
+                            (3, "3"),
+                            (4, "4"),
+                            (5, "5"),
+                            (6, "6"),
+                            (7, "7"),
+                            (8, "8"),
+                            (9, "9"),
+                            (10, "10"),
+                        ],
+                        default=1,
+                    ),
+                ),
+                ("last_studied_date", models.DateField(blank=True, null=True)),
+                (
+                    "next_studied_date",
+                    models.DateField(
+                        blank=True, default=django.utils.timezone.now,
+                        null=True
+                    ),
+                ),
+                (
+                    "notes",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="studies.studiesnotes",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'ordering': ['user', 'is_recto', 'notes'],
+                "ordering": ["user", "is_recto", "notes"],
             },
         ),
         migrations.AddField(
-            model_name='studiesnotes',
-            name='users',
-            field=models.ManyToManyField(related_name='notes', through='studies.StudiesNotesProgression', to=settings.AUTH_USER_MODEL),
+            model_name="studiesnotes",
+            name="users",
+            field=models.ManyToManyField(
+                related_name="notes",
+                through="studies.StudiesNotesProgression",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.CreateModel(
-            name='Settings',
+            name="Settings",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('daily_target', models.PositiveSmallIntegerField(default=50)),
-                ('default_lvl', models.PositiveSmallIntegerField(choices=[(1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5')], default=1)),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("daily_target", models.PositiveSmallIntegerField(default=50)),
+                (
+                    "default_lvl",
+                    models.PositiveSmallIntegerField(
+                        choices=[(1, "1"), (2, "2"), (3, "3"),
+                                 (4, "4"), (5, "5")],
+                        default=1,
+                    ),
+                ),
+                (
+                    "user",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'ordering': ['user'],
+                "ordering": ["user"],
             },
         ),
         migrations.CreateModel(
-            name='GlobalMonthlyAnalysis',
+            name="GlobalMonthlyAnalysis",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('date', models.DateField(auto_now_add=True)),
-                ('number_of_studies', models.PositiveIntegerField(default=0)),
-                ('number_of_win', models.PositiveIntegerField(default=0)),
-                ('number_of_lose', models.PositiveIntegerField(default=0)),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("date", models.DateField(auto_now_add=True)),
+                ("number_of_studies", models.PositiveIntegerField(default=0)),
+                ("number_of_win", models.PositiveIntegerField(default=0)),
+                ("number_of_lose", models.PositiveIntegerField(default=0)),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'ordering': ['user', 'date'],
+                "ordering": ["user", "date"],
             },
         ),
         migrations.CreateModel(
-            name='GlobalDailyAnalysis',
+            name="GlobalDailyAnalysis",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('date', models.DateField(auto_now_add=True)),
-                ('number_of_studies', models.PositiveIntegerField(default=0)),
-                ('number_of_win', models.PositiveIntegerField(default=0)),
-                ('number_of_lose', models.PositiveIntegerField(default=0)),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("date", models.DateField(auto_now_add=True)),
+                ("number_of_studies", models.PositiveIntegerField(default=0)),
+                ("number_of_win", models.PositiveIntegerField(default=0)),
+                ("number_of_lose", models.PositiveIntegerField(default=0)),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'ordering': ['user', 'date'],
+                "ordering": ["user", "date"],
             },
         ),
         migrations.AddField(
-            model_name='book',
-            name='users',
-            field=models.ManyToManyField(related_name='books', through='studies.UserBookMany', to=settings.AUTH_USER_MODEL),
+            model_name="book",
+            name="users",
+            field=models.ManyToManyField(
+                related_name="books",
+                through="studies.UserBookMany",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AddIndex(
-            model_name='userbookmany',
-            index=models.Index(fields=['user', 'order_book'], name='studies_use_user_id_5474be_idx'),
+            model_name="userbookmany",
+            index=models.Index(
+                fields=["user", "order_book"],
+                name="studies_use_user_id_5474be_idx"
+            ),
         ),
         migrations.AlterUniqueTogether(
-            name='userbookmany',
-            unique_together={('user', 'book')},
+            name="userbookmany",
+            unique_together={("user", "book")},
         ),
         migrations.AddIndex(
-            model_name='studiesnotesprogression',
-            index=models.Index(fields=['user', 'notes'], name='studies_stu_user_id_2108ec_idx'),
+            model_name="studiesnotesprogression",
+            index=models.Index(
+                fields=["user", "notes"], name="studies_stu_user_id_2108ec_idx"
+            ),
         ),
         migrations.AddIndex(
-            model_name='studiesnotes',
-            index=models.Index(fields=['chapter', 'order_note'], name='studies_stu_chapter_1339a3_idx'),
+            model_name="studiesnotes",
+            index=models.Index(
+                fields=["chapter", "order_note"],
+                name="studies_stu_chapter_1339a3_idx"
+            ),
         ),
         migrations.AddIndex(
-            model_name='globalmonthlyanalysis',
-            index=models.Index(fields=['user', 'date'], name='studies_glo_user_id_b97d2d_idx'),
+            model_name="globalmonthlyanalysis",
+            index=models.Index(
+                fields=["user", "date"], name="studies_glo_user_id_b97d2d_idx"
+            ),
         ),
         migrations.AddIndex(
-            model_name='globaldailyanalysis',
-            index=models.Index(fields=['user', 'date'], name='studies_glo_user_id_7ed0fd_idx'),
+            model_name="globaldailyanalysis",
+            index=models.Index(
+                fields=["user", "date"], name="studies_glo_user_id_7ed0fd_idx"
+            ),
         ),
         migrations.AddIndex(
-            model_name='chapter',
-            index=models.Index(fields=['book', 'order_chapter'], name='studies_cha_book_id_25d1c1_idx'),
+            model_name="chapter",
+            index=models.Index(
+                fields=["book", "order_chapter"],
+                name="studies_cha_book_id_25d1c1_idx"
+            ),
         ),
     ]

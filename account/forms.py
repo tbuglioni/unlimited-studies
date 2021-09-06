@@ -41,11 +41,13 @@ class AccountUpdateForm(forms.ModelForm):
         if self.is_valid():
             email = self.cleaned_data["email"]
             try:
-                account = Account.objects.exclude(pk=self.instance.pk).get(email=email)
+                account = Account.objects.exclude(
+                    pk=self.instance.pk).get(email=email)
 
             except Account.DoesNotExist:
                 return email
-            raise forms.ValidationError('Email "%s" is already in use.' % account.email)
+            raise forms.ValidationError(
+                'Email "%s" is already in use.' % account.email)
 
     def username(self):
         if self.is_valid():
