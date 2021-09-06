@@ -47,58 +47,244 @@ class StartGameView(TestCase):
         self.response = self.client.get(reverse("studies:game_auto"))
         self.assertTemplateUsed(self.response, "studies/auto_game.html")
 
-    def __loop_lvl(self, data, note_to_update,
-                   lvl_target: int, days_added: int):
+    def test_update_lvl_1_2(self):
+
+        note_to_update = StudiesNotesProgression.objects.get(
+            user_id=self.user_a.id, notes_id=self.note_1.id, is_recto=True)
+        note_to_update.level = 1
+        note_to_update.save()
+
+        self.client.login(email="john@invalid.com",
+                          password="some_123_password")
+
+        data = {"note_id": note_to_update.id, "win": "true"}
         self.client.post(
             reverse("studies:game_auto"), data, follow=True
         )
         note_to_update = StudiesNotesProgression.objects.get(
             user_id=self.user_a.id, notes_id=self.note_1.id, is_recto=True)
-        self.assertEqual(note_to_update.level, lvl_target)
+
+        self.assertEqual(note_to_update.level, 2)
         self.assertEqual(note_to_update.next_studied_date.strftime('%d/%m/%y'),
                          (self.time_now + timedelta(
-                             days=days_added)).strftime('%d/%m/%y'))
+                             days=1)).strftime('%d/%m/%y'))
 
-    def test_update_notes(self):
+    def test_update_lvl_2_3(self):
+
+        note_to_update = StudiesNotesProgression.objects.get(
+            user_id=self.user_a.id, notes_id=self.note_1.id, is_recto=True)
+        note_to_update.level = 2
+        note_to_update.save()
+
         self.client.login(email="john@invalid.com",
                           password="some_123_password")
 
-        data = {"note_id": self.note_1.id, "win": "true"}
-        self.__loop_lvl(data=data, note_to_update=self.note_1,
-                        lvl_target=2, days_added=1)
-        self.__loop_lvl(data=data, note_to_update=self.note_1,
-                        lvl_target=3, days_added=1)
-        self.__loop_lvl(data=data, note_to_update=self.note_1,
-                        lvl_target=4, days_added=1)
-        self.__loop_lvl(data=data, note_to_update=self.note_1,
-                        lvl_target=5, days_added=1)
-        self.__loop_lvl(data=data, note_to_update=self.note_1,
-                        lvl_target=6, days_added=3)
-        self.__loop_lvl(data=data, note_to_update=self.note_1,
-                        lvl_target=7, days_added=7)
-        self.__loop_lvl(data=data, note_to_update=self.note_1,
-                        lvl_target=8, days_added=30)
-        self.__loop_lvl(data=data, note_to_update=self.note_1,
-                        lvl_target=9, days_added=90)
-        self.__loop_lvl(data=data, note_to_update=self.note_1,
-                        lvl_target=10, days_added=182)
-        self.__loop_lvl(data=data, note_to_update=self.note_1,
-                        lvl_target=10, days_added=364)
-        self.__loop_lvl(data=data, note_to_update=self.note_1,
-                        lvl_target=10, days_added=364)
+        data = {"note_id": note_to_update.id, "win": "true"}
+        self.client.post(
+            reverse("studies:game_auto"), data, follow=True
+        )
+        note_to_update = StudiesNotesProgression.objects.get(
+            user_id=self.user_a.id, notes_id=self.note_1.id, is_recto=True)
 
-    def test_start_game_view_200_POST_fail(self):
+        self.assertEqual(note_to_update.level, 3)
+        self.assertEqual(note_to_update.next_studied_date.strftime('%d/%m/%y'),
+                         (self.time_now + timedelta(
+                             days=1)).strftime('%d/%m/%y'))
+
+    def test_update_lvl_3_4(self):
+
+        note_to_update = StudiesNotesProgression.objects.get(
+            user_id=self.user_a.id, notes_id=self.note_1.id, is_recto=True)
+        note_to_update.level = 3
+        note_to_update.save()
+
         self.client.login(email="john@invalid.com",
                           password="some_123_password")
 
-        data = {"note_id": self.note_1.id, "win": "true"}
-        self.__loop_lvl(data=data, note_to_update=self.note_1,
-                        lvl_target=2, days_added=1)
-        self.__loop_lvl(data=data, note_to_update=self.note_1,
-                        lvl_target=3, days_added=1)
-        self.__loop_lvl(data=data, note_to_update=self.note_1,
-                        lvl_target=4, days_added=1)
+        data = {"note_id": note_to_update.id, "win": "true"}
+        self.client.post(
+            reverse("studies:game_auto"), data, follow=True
+        )
+        note_to_update = StudiesNotesProgression.objects.get(
+            user_id=self.user_a.id, notes_id=self.note_1.id, is_recto=True)
 
-        data = {"note_id": self.note_1.id, "win": "false"}
-        self.__loop_lvl(data=data, note_to_update=self.note_1,
-                        lvl_target=1, days_added=1)
+        self.assertEqual(note_to_update.level, 4)
+        self.assertEqual(note_to_update.next_studied_date.strftime('%d/%m/%y'),
+                         (self.time_now + timedelta(
+                             days=1)).strftime('%d/%m/%y'))
+
+    def test_update_lvl_4_5(self):
+
+        note_to_update = StudiesNotesProgression.objects.get(
+            user_id=self.user_a.id, notes_id=self.note_1.id, is_recto=True)
+        note_to_update.level = 4
+        note_to_update.save()
+
+        self.client.login(email="john@invalid.com",
+                          password="some_123_password")
+
+        data = {"note_id": note_to_update.id, "win": "true"}
+        self.client.post(
+            reverse("studies:game_auto"), data, follow=True
+        )
+        note_to_update = StudiesNotesProgression.objects.get(
+            user_id=self.user_a.id, notes_id=self.note_1.id, is_recto=True)
+
+        self.assertEqual(note_to_update.level, 5)
+        self.assertEqual(note_to_update.next_studied_date.strftime('%d/%m/%y'),
+                         (self.time_now + timedelta(
+                             days=1)).strftime('%d/%m/%y'))
+
+    def test_update_lvl_5_6(self):
+
+        note_to_update = StudiesNotesProgression.objects.get(
+            user_id=self.user_a.id, notes_id=self.note_1.id, is_recto=True)
+        note_to_update.level = 5
+        note_to_update.save()
+
+        self.client.login(email="john@invalid.com",
+                          password="some_123_password")
+
+        data = {"note_id": note_to_update.id, "win": "true"}
+        self.client.post(
+            reverse("studies:game_auto"), data, follow=True
+        )
+        note_to_update = StudiesNotesProgression.objects.get(
+            user_id=self.user_a.id, notes_id=self.note_1.id, is_recto=True)
+
+        self.assertEqual(note_to_update.level, 6)
+        self.assertEqual(note_to_update.next_studied_date.strftime('%d/%m/%y'),
+                         (self.time_now + timedelta(
+                             days=3)).strftime('%d/%m/%y'))
+
+    def test_update_lvl_6_7(self):
+
+        note_to_update = StudiesNotesProgression.objects.get(
+            user_id=self.user_a.id, notes_id=self.note_1.id, is_recto=True)
+        note_to_update.level = 6
+        note_to_update.save()
+
+        self.client.login(email="john@invalid.com",
+                          password="some_123_password")
+
+        data = {"note_id": note_to_update.id, "win": "true"}
+        self.client.post(
+            reverse("studies:game_auto"), data, follow=True
+        )
+        note_to_update = StudiesNotesProgression.objects.get(
+            user_id=self.user_a.id, notes_id=self.note_1.id, is_recto=True)
+
+        self.assertEqual(note_to_update.level, 7)
+        self.assertEqual(note_to_update.next_studied_date.strftime('%d/%m/%y'),
+                         (self.time_now + timedelta(
+                             days=7)).strftime('%d/%m/%y'))
+
+    def test_update_lvl_7_8(self):
+
+        note_to_update = StudiesNotesProgression.objects.get(
+            user_id=self.user_a.id, notes_id=self.note_1.id, is_recto=True)
+        note_to_update.level = 7
+        note_to_update.save()
+
+        self.client.login(email="john@invalid.com",
+                          password="some_123_password")
+
+        data = {"note_id": note_to_update.id, "win": "true"}
+        self.client.post(
+            reverse("studies:game_auto"), data, follow=True
+        )
+        note_to_update = StudiesNotesProgression.objects.get(
+            user_id=self.user_a.id, notes_id=self.note_1.id, is_recto=True)
+
+        self.assertEqual(note_to_update.level, 8)
+        self.assertEqual(note_to_update.next_studied_date.strftime('%d/%m/%y'),
+                         (self.time_now + timedelta(
+                             days=30)).strftime('%d/%m/%y'))
+
+    def test_update_lvl_8_9(self):
+
+        note_to_update = StudiesNotesProgression.objects.get(
+            user_id=self.user_a.id, notes_id=self.note_1.id, is_recto=True)
+        note_to_update.level = 8
+        note_to_update.save()
+
+        self.client.login(email="john@invalid.com",
+                          password="some_123_password")
+
+        data = {"note_id": note_to_update.id, "win": "true"}
+        self.client.post(
+            reverse("studies:game_auto"), data, follow=True
+        )
+        note_to_update = StudiesNotesProgression.objects.get(
+            user_id=self.user_a.id, notes_id=self.note_1.id, is_recto=True)
+
+        self.assertEqual(note_to_update.level, 9)
+        self.assertEqual(note_to_update.next_studied_date.strftime('%d/%m/%y'),
+                         (self.time_now + timedelta(
+                             days=90)).strftime('%d/%m/%y'))
+
+    def test_update_lvl_9_10(self):
+
+        note_to_update = StudiesNotesProgression.objects.get(
+            user_id=self.user_a.id, notes_id=self.note_1.id, is_recto=True)
+        note_to_update.level = 9
+        note_to_update.save()
+
+        self.client.login(email="john@invalid.com",
+                          password="some_123_password")
+
+        data = {"note_id": note_to_update.id, "win": "true"}
+        self.client.post(
+            reverse("studies:game_auto"), data, follow=True
+        )
+        note_to_update = StudiesNotesProgression.objects.get(
+            user_id=self.user_a.id, notes_id=self.note_1.id, is_recto=True)
+
+        self.assertEqual(note_to_update.level, 10)
+        self.assertEqual(note_to_update.next_studied_date.strftime('%d/%m/%y'),
+                         (self.time_now + timedelta(
+                             days=182)).strftime('%d/%m/%y'))
+
+    def test_update_lvl_10_10(self):
+
+        note_to_update = StudiesNotesProgression.objects.get(
+            user_id=self.user_a.id, notes_id=self.note_1.id, is_recto=True)
+        note_to_update.level = 10
+        note_to_update.save()
+
+        self.client.login(email="john@invalid.com",
+                          password="some_123_password")
+
+        data = {"note_id": note_to_update.id, "win": "true"}
+        self.client.post(
+            reverse("studies:game_auto"), data, follow=True
+        )
+        note_to_update = StudiesNotesProgression.objects.get(
+            user_id=self.user_a.id, notes_id=self.note_1.id, is_recto=True)
+
+        self.assertEqual(note_to_update.level, 10)
+        self.assertEqual(note_to_update.next_studied_date.strftime('%d/%m/%y'),
+                         (self.time_now + timedelta(
+                             days=364)).strftime('%d/%m/%y'))
+
+    def test_update_lvl_10_1_when_fail(self):
+
+        note_to_update = StudiesNotesProgression.objects.get(
+            user_id=self.user_a.id, notes_id=self.note_1.id, is_recto=True)
+        note_to_update.level = 10
+        note_to_update.save()
+
+        self.client.login(email="john@invalid.com",
+                          password="some_123_password")
+
+        data = {"note_id": note_to_update.id, "win": "false"}
+        self.client.post(
+            reverse("studies:game_auto"), data, follow=True
+        )
+        note_to_update = StudiesNotesProgression.objects.get(
+            user_id=self.user_a.id, notes_id=self.note_1.id, is_recto=True)
+
+        self.assertEqual(note_to_update.level, 1)
+        self.assertEqual(note_to_update.next_studied_date.strftime('%d/%m/%y'),
+                         (self.time_now + timedelta(
+                             days=1)).strftime('%d/%m/%y'))

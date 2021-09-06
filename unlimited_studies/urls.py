@@ -19,7 +19,7 @@ from django.contrib import admin
 from django.urls import include, path
 from account import views
 from django.contrib.auth import views as auth_views
-from .views import home_screen_view
+from .views import home_screen_view, legal_view
 
 urlpatterns = [
     path("", home_screen_view, name="home"),
@@ -30,6 +30,7 @@ urlpatterns = [
     path("logout/", views.logout_view, name="logout"),
     path("login/", views.login_view, name="login"),
     path("account/", views.account_view, name="account"),
+    path("legal/", legal_view, name="legal"),
     path(
         "reset_password/",
         auth_views.PasswordResetView.as_view(

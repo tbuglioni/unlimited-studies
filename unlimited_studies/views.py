@@ -8,5 +8,5 @@ def home_screen_view(request):
     return render(request, "home.html", context)
 
 
-def mention_legal_view(request):
-    return render(request, "mention_legales.html")
+def legal_view(request):
+    return render(request, "term_use.html")
