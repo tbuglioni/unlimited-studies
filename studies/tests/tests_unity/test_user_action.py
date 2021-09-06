@@ -150,7 +150,7 @@ class UserActionTest(TestCase):
         request = self.factory.get("/a/test/path/")
         request.user = self.user_a
 
-        element = self.user_action.get_note_404(request, self.chapter_1.id)
+        element = self.user_action.get_note_404(request, self.note_1.id)
 
         self.assertEqual(element, self.note_1)
 
