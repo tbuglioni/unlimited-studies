@@ -1,5 +1,7 @@
 data/
 coverage*
+production.py
+staticfiles/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
