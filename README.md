@@ -46,8 +46,7 @@ be careful --> mac os : psycopg2-binary / windows : psycopg2
 1.0
 
 ## Production link
-
-[206.189.51.144](206.189.51.144)
+206.189.51.144
 
 ## Authors
 
