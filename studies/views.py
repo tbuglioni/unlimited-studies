@@ -217,11 +217,15 @@ def unsubscribe_student_by_owner_view(request, book: int, student: int):
         user=request.user, book=book, user_fonction="owner"
     ).exists()
     if check_owner:
-        user_to_delete = UserBookMany.objects.get(user=student, book=book)
+        user_to_delete = UserBookMany.objects.get(user_id=student, book_id=book)
         if user_to_delete.to_accept is True:
             user_to_delete.delete()
         else:
             user_to_delete.delete()
+            StudiesNotesProgression.objects.filter(
+                user_id=student, notes__chapter__book_id=book
+            ).delete()
+            
             books = UserBookMany.objects.filter(user=student, to_accept=False)
             loop = 1
             for elt in books:

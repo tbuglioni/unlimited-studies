@@ -130,6 +130,7 @@ class StudiesNotesProgressionAdmin(admin.ModelAdmin):
 @admin.register(GlobalDailyAnalysis)
 class GlobalDailyAnalysisAdmin(admin.ModelAdmin):
     list_display = (
+        "date",
         "user",
         "date",
         "number_of_studies",
@@ -141,6 +142,7 @@ class GlobalDailyAnalysisAdmin(admin.ModelAdmin):
 @admin.register(GlobalMonthlyAnalysis)
 class GlobalMonthlyAnalysissAdmin(admin.ModelAdmin):
     list_display = (
+        "date",
         "user",
         "date",
         "number_of_studies",

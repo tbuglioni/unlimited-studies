@@ -82,7 +82,13 @@ class Game:
         self.__notes_todo(request, speed=False, number_of_notes=nbr_long)
         self.__split_notes()
         random.shuffle(self.game_list_auto)
-        return self.game_list_auto
+        
+        exit_list = []
+        for elt in self.game_list_auto:
+            if elt not in exit_list:
+                exit_list.append(elt)
+
+        return exit_list
 
     def __update_lvl(self, note, days: int):
         """Update the current level of the given note"""
