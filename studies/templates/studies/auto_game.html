@@ -33,23 +33,35 @@
           class="
             glide__slide
             border
-            new_font_daniel-lg
+            
             d-flex
             justify-content-center
             align-items-center
           "
-        >
-          Start
+        ><div class="row container m-5 p-5 w-75">
+          <p class="new_font_daniel-lg text-center">Start</p> 
+          <br>
+          <br>
+          <hr />
+          <p class=" row text-center">Notice:</p>
+          <ul>
+            <li>click "next" to start --></li>
+            <li>click on the center to show the answer</li>
+            <li>valid = you know the answer</li>
+            <li>fail = you don't know the answer</li>
+          </ul>
+        </div>
         </li>
         {% for elt in game_list_auto %}
 
         <!-- slide data -->
         <li id="slide{{elt.id}}{{elt.sens}}" class="glide__slide border">
+          
           <button
             type="button"
             style="height: 70%; width: 100%; background-color: transparent"
             class="btn btn-dark"
-            onclick="showResponse('{{elt.id}}{{elt.sens}}', '{{elt.text}}', '{{elt.response}}')"
+            onclick="showResponse(`{{elt.id}}{{elt.sens}}`, `{{elt.text}}`, `{{elt.response}}`)"
           >
             <div>
               <p class="position-absolute top-0">
@@ -68,7 +80,7 @@
           >
             <div class="col-6" data-glide-el="controls">
               <button
-                class="btn btn-dark col-12"
+                class="btn btn-dark col-12 new_font_daniel-m"
                 style="height: 100%"
                 data-glide-dir=">"
                 onclick="manageResult('slide{{elt.id}}{{elt.sens}}', false,'{{elt.id}}', '{{elt.sens}}','button{{elt.id}}{{elt.sens}}')"
@@ -78,7 +90,7 @@
             </div>
             <div class="col-6" data-glide-el="controls">
               <button
-                class="btn btn-dark col-12"
+                class="btn btn-dark col-12 new_font_daniel-m"
                 style="height: 100%"
                 data-glide-dir=">"
                 onclick="manageResult('slide{{elt.id}}{{elt.sens}}', true,'{{elt.id}}', '{{elt.sens}}' ,'button{{elt.id}}{{elt.sens}}')"
@@ -114,7 +126,7 @@
 
     <!-- arrow button -->
     <div class="glide__arrows" data-glide-el="controls">
-      <button class="glide__arrow glide__arrow--left" data-glide-dir="<">
+      <button class="glide__arrow glide__arrow--left " data-glide-dir="<">
         prev
       </button>
       <button class="glide__arrow glide__arrow--right" data-glide-dir=">">

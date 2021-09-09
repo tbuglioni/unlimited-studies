@@ -43,7 +43,8 @@ class BookAdmin(admin.ModelAdmin):
 class UserBookManyAdmin(admin.ModelAdmin):
     list_display = ("id", "user", "order_book",
                     "book", "user_fonction", "__str__")
-    search_fields = ("book", "id", "user")
+    search_fields = ("id",
+                     "user__username")
 
 
 @admin.register(Chapter)
@@ -121,8 +122,7 @@ class StudiesNotesProgressionAdmin(admin.ModelAdmin):
         "next_studied_date",
     )
     search_fields = (
-        "id",
-        "user",
+        "id", "user__username"
     )
     list_filter = ("level",)
 
