@@ -187,13 +187,17 @@ class UserAction:
 
         if form.is_valid():
             if context["instance_note"] is not None:
+                #extract data from post
                 text_recto = form.cleaned_data["text_recto"]
                 text_verso = form.cleaned_data["text_verso"]
                 studie_recto = form.cleaned_data["studie_recto"]
                 studie_verso = form.cleaned_data["studie_verso"]
                 note_id = form.cleaned_data["note_id"]
 
+                #get all user with this note
                 list_users = Account.objects.filter(books__chapter__id=chapter)
+                
+                #check previous date in the selected note
                 is_note_progression_recto = (
                     StudiesNotesProgression.objects.filter(
                         notes=note_id, is_recto=True
@@ -202,15 +206,20 @@ class UserAction:
                     StudiesNotesProgression.objects.filter(
                         notes=note_id, is_recto=False
                     ).exists())
-
+                
+                
+                #update note
                 StudiesNotes.objects.filter(
-                    id=note_id, users=request.user
-                ).distinct().update(
+                    id=note_id, chapter__book__users=request.user
+                ).update(
                     text_recto=text_recto,
                     text_verso=text_verso,
                     studie_recto=studie_recto,
                     studie_verso=studie_verso,
                 )
+                
+                #update note_progression for each user by comparaison 
+                # with the previous data
                 objs = []
                 if studie_recto and is_note_progression_recto is False:
                     for elt in list_users:
@@ -232,6 +241,7 @@ class UserAction:
                         )
                 StudiesNotesProgression.objects.bulk_create(objs)
 
+                #delete notes if require
                 if studie_recto is False and is_note_progression_recto:
                     StudiesNotesProgression.objects.filter(
                         notes=note_id, is_recto=True
@@ -242,9 +252,8 @@ class UserAction:
                         notes=note_id, is_recto=False
                     ).delete()
 
-                    # add or update for each user
-
             else:
+                #extract data from post
                 text_recto = form.cleaned_data["text_recto"]
                 text_verso = form.cleaned_data["text_verso"]
                 studie_recto = form.cleaned_data["studie_recto"]

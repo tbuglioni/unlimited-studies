@@ -16,11 +16,11 @@ class Game:
         
     def __filter_text(self, entry:str):
         """ remove specials characteres """
-        exit_text = entry.replace('"', "\\" + "\"")
+        exit_text = entry.replace('"', " ")
         exit_text = exit_text.replace("`", " ")
-        exit_text = exit_text.replace("'","\\" + "\'")
-        exit_text = exit_text.replace(">","")
-        exit_text = exit_text.replace("<","")
+        exit_text = exit_text.replace("'", " ")
+        exit_text = exit_text.replace(">", " ")
+        exit_text = exit_text.replace("<", "")
         return exit_text
 
     def __notes_todo(self, request,
@@ -30,12 +30,12 @@ class Game:
         if speed:
             self.notes_todo = (
                 StudiesNotesProgression.objects.filter(
-                    user_id=request.user.id,
+                    user=request.user,
                     level__lte=5,
                     next_studied_date__lte=self.TIME_NOW,
                 )
-                .distinct()
                 .select_related("notes")
+                .distinct()
                 .order_by(
                     "notes__chapter__book__userbookmany__order_book",
                     "notes__chapter"
@@ -45,12 +45,12 @@ class Game:
         else:
             self.notes_todo = (
                 StudiesNotesProgression.objects.filter(
-                    user_id=request.user.id,
+                    user=request.user,
                     level__gte=6,
                     next_studied_date__lte=self.TIME_NOW,
                 )
-                .distinct()
                 .select_related("notes")
+                .distinct()
                 .order_by(
                     "notes__chapter__book__userbookmany__order_book",
                     "notes__chapter"
