@@ -8,6 +8,7 @@ from studies.models import (Book, Chapter, UserBookMany, StudiesNotes,
 from studies.logic.userAction import UserAction
 from studies.logic.analyse import Analyse
 from studies.logic.game import Game
+from django.urls import reverse
 
 
 @login_required
@@ -175,7 +176,9 @@ def note_add_or_update_view(request, chapter=None, note=None):
     if request.POST:
         user_action.create_or_update_note(request, context, chapter)
 
-    return redirect("studies:book_page", chapter=chapter, book=book)
+    return redirect(
+        reverse("studies:book_page",
+                kwargs={"chapter": chapter, "book": book}) + '#note_divider')
 
 
 @login_required
@@ -217,7 +220,8 @@ def unsubscribe_student_by_owner_view(request, book: int, student: int):
         user=request.user, book=book, user_fonction="owner"
     ).exists()
     if check_owner:
-        user_to_delete = UserBookMany.objects.get(user_id=student, book_id=book)
+        user_to_delete = UserBookMany.objects.get(
+            user_id=student, book_id=book)
         if user_to_delete.to_accept is True:
             user_to_delete.delete()
         else:
@@ -225,7 +229,7 @@ def unsubscribe_student_by_owner_view(request, book: int, student: int):
             StudiesNotesProgression.objects.filter(
                 user_id=student, notes__chapter__book_id=book
             ).delete()
-            
+
             books = UserBookMany.objects.filter(user=student, to_accept=False)
             loop = 1
             for elt in books:

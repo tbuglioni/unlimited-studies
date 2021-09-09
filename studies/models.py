@@ -132,7 +132,8 @@ class StudiesNotesProgression(models.Model):
 class GlobalDailyAnalysis(models.Model):
     # 10 jours
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=False, null=False
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE, blank=False, null=False
     )
     date = models.DateField(auto_now_add=True, null=False)
     number_of_studies = models.PositiveIntegerField(default=0, null=False)
@@ -152,7 +153,8 @@ class GlobalDailyAnalysis(models.Model):
 class GlobalMonthlyAnalysis(models.Model):
     # 12 mois
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=False, null=False
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE, blank=False, null=False
     )
     date = models.DateField(auto_now_add=True, null=False)
     number_of_studies = models.PositiveIntegerField(default=0)

@@ -154,20 +154,23 @@ class Analyse:
             user_fonction="student", to_accept=False, book=book
         ).select_related("user")
 
-        list_note = StudiesNotesProgression.objects.filter(
-            user__userbookmany__user_fonction="student",
-            user__userbookmany__to_accept=False,
-            user__userbookmany__book=book,
-        ).distinct()
-
         exit_list = []
 
         for elt in list_user:
             username = elt.user.username
             user_id = elt.user_id
-            lvl_avg = list_note.filter(user=elt.user).aggregate(Avg("level"))[
-                "level__avg"
-            ]
+            try:
+                lvl_avg = (
+                    StudiesNotesProgression.objects
+                    .filter(
+                        user=elt.user, notes__chapter__book_id=book)
+                    .aggregate(Avg("level"))[
+                        "level__avg"
+                    ])
+                lvl_avg = round(lvl_avg, 2)
+
+            except TypeError:
+                lvl_avg = 0
             exit_list.append(
                 {"username": username, "lvl_avg": lvl_avg, "user_id": user_id}
             )

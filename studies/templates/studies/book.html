@@ -43,6 +43,12 @@
       >°º¤ø,¸¸,ø¤º°`°º¤ø,¸,ø¤°º¤ø,¸¸,ø¤º°`°º¤ø,¸</span
     >
   </div>
+  {% if user_fonction == "owner"%}
+  <div class=" row align-items-center d-flex">
+    {% include 'studies/snippets/add_chapter_snippet.html' with book_id=book.id%}
+  </div>
+          
+  {% endif %}
 
   <!-- Table -->
   <div class="row">
@@ -50,10 +56,10 @@
       <table class="table-dark table">
         <thead>
           <tr>
-            <th scope="col" style="width: 10%">Order</th>
-            <th scope="col" style="width: 10%">Chapter</th>
-            <th scope="col" style="width: 20%">Update</th>
-            <th scope="col" style="width: 30%">Delete</th>
+            <th scope="col" style="width: 5%">Order</th>
+            <th scope="col" style="width: 80%">Chapter</th>
+            <th scope="col" style="width: 7%">Update</th>
+            <th scope="col" style="width: 7%">Delete</th>
           </tr>
         </thead>
         <tbody>
@@ -64,7 +70,7 @@
             <td>
               <a
                 class="link-light"
-                href="{% url 'studies:book_page' book=book.id chapter=chapter.id %}"
+                href="{% url 'studies:book_page' book=book.id chapter=chapter.id %}#note_divider"
                 >{{chapter.name}}</a
               >
             </td>
@@ -89,23 +95,18 @@
             {% endif %}
           </tr>
           {% endfor %}
-          {% if user_fonction == "owner"%}
-          <tr>
-            <td colspan="4">
-              {% include 'studies/snippets/add_chapter_snippet.html' with book_id=book.id%}
-            </td>
-          </tr>
-          {% endif %}
+          
         </tbody>
       </table>
     </section>
-
     <section name="spider graph" class="col-xl-6 rounded" style="height: 25em">
       {% include "studies/snippets/spider_graph_snippet.html" with data_avg=chapters_notes_avg data=chapters %}
     </section>
   </div>
 
-  <div class="row bg-light text-dark pt-1 d-flex justify-content-sm-center">
+  <div id="note_divider" class="m-5"></div>
+  <br>
+  <div class="row bg-light text-dark mt-5 pt-1 d-flex justify-content-sm-center">
     <span class="col-sm-5 text-center"
       >°º¤ø,¸¸,ø¤º°`°º¤ø,¸,ø¤°º¤ø,¸¸,ø¤º°`°º¤ø,¸</span
     >
@@ -114,16 +115,23 @@
       >°º¤ø,¸¸,ø¤º°`°º¤ø,¸,ø¤°º¤ø,¸¸,ø¤º°`°º¤ø,¸</span
     >
   </div>
+
+
+  {% if chapter and user_fonction == "owner"%}  
+  <div class=" row align-items-center d-flex" style="padding-top: 40px; margin-top: -40px;">
+    {% include 'studies/snippets/add_note_snippet.html' with chapter_id=chapter.id %}
+  </div>
+  {% endif %}
   {% if notes %}
   <section name="book table" class="col">
     <table class="table-dark table">
       <thead>
         <tr>
-          <th scope="col" style="width: 10%">Order</th>
-          <th scope="col" style="width: 10%">Recto</th>
-          <th scope="col" style="width: 10%">Verso</th>
-          <th scope="col" style="width: 20%">Update</th>
-          <th scope="col" style="width: 30%">Delete</th>
+          <th scope="col" style="width: 5%">Order</th>
+          <th scope="col" style="width: 40%">Recto</th>
+          <th scope="col" style="width: 40%">Verso</th>
+          <th scope="col" style="width: 7%">Update</th>
+          <th scope="col" style="width: 7%">Delete</th>
         </tr>
       </thead>
       <tbody>
@@ -152,13 +160,7 @@
           <td>---</td>
           {% endif %}
         </tr>
-        {% endfor %} {% if chapter and user_fonction == "owner"%}
-        <tr>
-          <td colspan="5">
-            {% include 'studies/snippets/add_note_snippet.html' with chapter_id=chapter.id %}
-          </td>
-        </tr>
-        {% endif %}
+        {% endfor %} 
       </tbody>
     </table>
   </section>
@@ -167,7 +169,6 @@
   {% include 'studies/snippets/paginator_snippet.html' with notes=notes %} 
   {% endif %} 
 
-  {% if chapter and not notes and user_fonction == "owner"%} {% include 'studies/snippets/add_note_snippet.html' with chapter_id=chapter.id %} 
-  {% endif %}
+  
 </div>
 {% endblock content %}

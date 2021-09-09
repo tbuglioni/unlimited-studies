@@ -1,8 +1,9 @@
 <!-- Button to Open the Modal -->
 {% load static %}{% if not note_selected %}
+
 <button
   type="button"
-  class="btn btn-primary"
+  class="btn btn-outline-light new_font_daniel-m"
   data-bs-toggle="modal"
   data-bs-target="#noteModalAdd{{chapter_id}}"
   id="buttonModalNoteAdd{{chapter_id}}"
@@ -11,7 +12,7 @@ src="{% static 'studies/img/plus-circle-outline.svg' %}"
 alt="un triangle aux trois côtés égaux"
 height="25px"
 width="25px"
-/></button>
+/> Add new notes</button>
 
 <!-- Modal -->
 <div
