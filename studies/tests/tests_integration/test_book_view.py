@@ -128,6 +128,10 @@ class BookView(TestCase):
         self.assertEqual(self.response.context["book"].name, "English")
         self.assertEqual(self.response.context["chapters"].count(), 4)
         self.assertEqual(
-            self.response.context["chapters_notes_avg"], [5.0, 5.5, 0, 0])
+            self.response.context["chapters_notes_avg"], [
+                {'level': 5.0, 'name': 'vocabulary 1'},
+                {'level': 5.5, 'name': 'vocabulary 1'},
+                {'level': 0, 'name': 'vocabulary 1'},
+                {'level': 0, 'name': 'vocabulary 1'}])
         self.assertEqual(self.response.context["chapter"].name, "vocabulary 1")
         self.assertEqual(self.response.context["notes"].number, 1)

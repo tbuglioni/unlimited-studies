@@ -118,7 +118,10 @@ class PersonalHome(TestCase):
         self.assertEqual(self.response.context["todoo"], 4)
         self.assertEqual(self.response.context["all_notes"], 2)
         self.assertEqual(self.response.context["all_notes_avg"], 3.25)
-        self.assertEqual(self.response.context["books_avg"], [1.0, 5.5, 0, 0])
+        self.assertEqual(self.response.context["books_avg"], [
+            {'name': 'English', 'level': 1.0},
+            {'name': 'English', 'level': 5.5},
+            {'name': 'English', 'level': 0}, ])
         self.assertEqual(self.response.context["Today_recap"], 0)
         self.assertEqual(self.response.context["month_recap"], 0)
         self.assertEqual(

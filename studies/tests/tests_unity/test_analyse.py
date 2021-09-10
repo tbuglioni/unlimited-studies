@@ -84,7 +84,9 @@ class AnalyseTest(TestCase):
 
         elements = self.analyse.get_list_lvl_avg_each_book()
 
-        self.assertEqual(elements, [5.0, 2.0])
+        self.assertEqual(elements, [
+            {'level': 5.0, 'name': 'English'},
+            {'level': 2.0, 'name': 'English'}])
 
     def test_get_list_lvl_avg_each_chapter_one_book(self):
         request = self.factory.get("hello/world")
@@ -95,7 +97,7 @@ class AnalyseTest(TestCase):
         elements = self.analyse.get_list_lvl_avg_each_chapter_one_book(
             self.book_1.id)
 
-        self.assertEqual(elements, [5.0])
+        self.assertEqual(elements, [{'level': 5.0, 'name': 'vocabulary 1'}])
 
     def test_get_nbr_notes_todoo(self):
         request = self.factory.get("hello/world")

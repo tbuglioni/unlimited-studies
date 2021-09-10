@@ -4,6 +4,7 @@ from django.core.paginator import Paginator
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.db import IntegrityError
 
 from studies.logic.analyse import Analyse
 from studies.logic.game import Game
@@ -121,7 +122,7 @@ def add_new_student_in_book_view(request, book: int):
                 user_fonction="student",
                 to_accept=True,
             )
-        except Account.DoesNotExist:
+        except (Account.DoesNotExist, IntegrityError):
             return redirect("studies:teacher_page", book=book, error=1)
 
     return redirect("studies:teacher_page", book=book)

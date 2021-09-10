@@ -148,13 +148,13 @@ class UserAction:
                 self.__create_new_chapter(form_chapter, book, request, context)
 
     def __create_new_chapter(self, form_chapter, book, request, context):
+        """ create new chapter and add order"""
         name = form_chapter.cleaned_data["name"]
         chapter_counter = (
             Chapter.objects.filter(
                 book=book, book__users=request.user).count()
             + 1
         )
-
         Chapter.objects.create(
             name=name,
             order_chapter=chapter_counter,
@@ -162,14 +162,21 @@ class UserAction:
         )
 
     def __update_existing_chapter(self, form_chapter, request, book):
+        """ update chapter and order """
         name = form_chapter.cleaned_data["name"]
         order_chapter = form_chapter.cleaned_data["order_chapter"]
         chapter_id = form_chapter.cleaned_data["chapter_id"]
+
         Chapter.objects.filter(id=chapter_id,
                                book__users=request.user).update(
             name=name, order_chapter=order_chapter
         )
+        self.__update_existing_chapters_order(
+            book, request, chapter_id, order_chapter)
 
+    def __update_existing_chapters_order(self, book,
+                                         request, chapter_id, order_chapter):
+        """ update existing chapters order """
         chapters_before = (
             Chapter.objects.filter(book=book, book__users=request.user)
             .order_by("order_chapter")
@@ -218,108 +225,149 @@ class UserAction:
 
         if form.is_valid():
             if context["instance_note"] is not None:
-                # extract data from post
-                text_recto = form.cleaned_data["text_recto"]
-                text_verso = form.cleaned_data["text_verso"]
-                studie_recto = form.cleaned_data["studie_recto"]
-                studie_verso = form.cleaned_data["studie_verso"]
-                note_id = form.cleaned_data["note_id"]
-
-                # get all user with this note
-                list_users = Account.objects.filter(books__chapter__id=chapter)
-
-                # check previous date in the selected note
-                is_note_progression_recto = (
-                    StudiesNotesProgression.objects.filter(
-                        notes=note_id, is_recto=True
-                    ).exists())
-                is_note_progression_verso = (
-                    StudiesNotesProgression.objects.filter(
-                        notes=note_id, is_recto=False
-                    ).exists())
-
-                # update note
-                StudiesNotes.objects.filter(
-                    id=note_id, chapter__book__users=request.user
-                ).update(
-                    text_recto=text_recto,
-                    text_verso=text_verso,
-                    studie_recto=studie_recto,
-                    studie_verso=studie_verso,
-                )
-
-                # update note_progression for each user by comparaison
-                # with the previous data
-                objs = []
-                if studie_recto and is_note_progression_recto is False:
-                    for elt in list_users:
-                        objs.append(
-                            StudiesNotesProgression(
-                                user_id=elt.id,
-                                notes_id=note_id,
-                                is_recto=True,
-                            )
-                        )
-                if studie_verso and is_note_progression_verso is False:
-                    for elt in list_users:
-                        objs.append(
-                            StudiesNotesProgression(
-                                user_id=elt.id,
-                                notes_id=note_id,
-                                is_recto=False,
-                            )
-                        )
-                StudiesNotesProgression.objects.bulk_create(objs)
-
-                # delete notes if require
-                if studie_recto is False and is_note_progression_recto:
-                    StudiesNotesProgression.objects.filter(
-                        notes=note_id, is_recto=True
-                    ).delete()
-
-                if studie_verso is False and is_note_progression_verso:
-                    StudiesNotesProgression.objects.filter(
-                        notes=note_id, is_recto=False
-                    ).delete()
+                self.__update_existing_note(form, chapter, request)
 
             else:
-                # extract data from post
-                text_recto = form.cleaned_data["text_recto"]
-                text_verso = form.cleaned_data["text_verso"]
-                studie_recto = form.cleaned_data["studie_recto"]
-                studie_verso = form.cleaned_data["studie_verso"]
+                self.__create_new_note(form, request, chapter)
 
-                new_note = StudiesNotes(
-                    text_recto=text_recto,
-                    text_verso=text_verso,
-                    studie_recto=studie_recto,
-                    studie_verso=studie_verso,
+    def __create_new_note(self, form, request, chapter):
+        """Create a new note"""
+        text_recto, text_verso, studie_recto, studie_verso = (
+            self.__extract_data_note_post(
+                form))
+
+        new_note = StudiesNotes(
+            text_recto=text_recto,
+            text_verso=text_verso,
+            studie_recto=studie_recto,
+            studie_verso=studie_verso,
+        )
+
+        new_note.order_note = (
+            self.get_notes(request, chapter).distinct().count() + 1
+        )
+        new_note.chapter = self.get_chapter_404(request, chapter)
+        new_note.save()
+
+        self.create_note_progression_each_users(chapter, new_note)
+
+    def create_note_progression_each_users(self, chapter, new_note):
+        """create note progression for each owner/students of this note"""
+        list_users = Account.objects.filter(books__chapter__id=chapter)
+        objs = []
+        for elt in list_users:
+            if new_note.studie_recto:
+                objs.append(
+                    StudiesNotesProgression(
+                        user_id=elt.id,
+                        notes_id=new_note.id,
+                        is_recto=True,
+                    )
                 )
-                new_note.order_note = (
-                    self.get_notes(request, chapter).distinct().count() + 1
+
+            if new_note.studie_verso:
+                objs.append(
+                    StudiesNotesProgression(
+                        user_id=elt.id,
+                        notes_id=new_note.id,
+                        is_recto=False,
+                    )
                 )
-                new_note.chapter = self.get_chapter_404(request, chapter)
-                new_note.save()
+        StudiesNotesProgression.objects.bulk_create(objs)
 
-                list_users = Account.objects.filter(books__chapter__id=chapter)
-                objs = []
-                for elt in list_users:
-                    if new_note.studie_recto:
-                        objs.append(
-                            StudiesNotesProgression(
-                                user_id=elt.id,
-                                notes_id=new_note.id,
-                                is_recto=True,
-                            )
-                        )
+    def __update_existing_note(self, form, chapter, request):
+        """ update an existing note and all ratached note_progression"""
+        text_recto, text_verso, studie_recto, studie_verso = (
+            self.__extract_data_note_post(form))
+        note_id = form.cleaned_data["note_id"]
 
-                    if new_note.studie_verso:
-                        objs.append(
-                            StudiesNotesProgression(
-                                user_id=elt.id,
-                                notes_id=new_note.id,
-                                is_recto=False,
-                            )
-                        )
+        list_users_with_this_note = Account.objects.filter(
+            books__chapter__id=chapter)
 
-                StudiesNotesProgression.objects.bulk_create(objs)
+        is_note_progression_recto, is_note_progression_verso = (
+            self.__check_previous_data_in_note(note_id))
+
+        self.__update_note_selected(note_id, request, text_recto,
+                                    text_verso, studie_recto, studie_verso)
+
+        self.__if_add_note_progression_for_each_users(
+            studie_recto, is_note_progression_recto,
+            list_users_with_this_note, note_id, studie_verso,
+            is_note_progression_verso)
+
+        self.__if_delete_note_progression_for_each_users(
+            studie_recto, is_note_progression_recto,
+            note_id, studie_verso, is_note_progression_verso)
+
+    def __if_delete_note_progression_for_each_users(
+            self, studie_recto, is_note_progression_recto,
+            note_id, studie_verso, is_note_progression_verso):
+        """delete notes-progression if required by comparaison
+        between previous and new data
+        """
+        if studie_recto is False and is_note_progression_recto:
+            StudiesNotesProgression.objects.filter(
+                notes=note_id, is_recto=True
+            ).delete()
+
+        if studie_verso is False and is_note_progression_verso:
+            StudiesNotesProgression.objects.filter(
+                notes=note_id, is_recto=False
+            ).delete()
+
+    def __if_add_note_progression_for_each_users(
+            self, studie_recto, is_note_progression_recto,
+            list_users_with_this_note, note_id, studie_verso,
+            is_note_progression_verso):
+        """add note progression if required by comparaison
+        between previous and new data
+        """
+        objs = []
+        if studie_recto and is_note_progression_recto is False:
+            for elt in list_users_with_this_note:
+                objs.append(
+                    StudiesNotesProgression(
+                        user_id=elt.id,
+                        notes_id=note_id,
+                        is_recto=True,))
+        if studie_verso and is_note_progression_verso is False:
+            for elt in list_users_with_this_note:
+                objs.append(
+                    StudiesNotesProgression(
+                        user_id=elt.id,
+                        notes_id=note_id,
+                        is_recto=False,))
+        StudiesNotesProgression.objects.bulk_create(objs)
+
+    def __update_note_selected(
+            self, note_id, request, text_recto,
+            text_verso, studie_recto, studie_verso):
+        """ update existing note with new data"""
+        StudiesNotes.objects.filter(
+            id=note_id, chapter__book__users=request.user
+        ).update(
+            text_recto=text_recto,
+            text_verso=text_verso,
+            studie_recto=studie_recto,
+            studie_verso=studie_verso,
+        )
+
+    def __check_previous_data_in_note(self, note_id):
+        """ check note(study_recto/study__verso) before update"""
+        is_note_progression_recto = (
+            StudiesNotesProgression.objects.filter(
+                notes=note_id, is_recto=True
+            ).exists())
+        is_note_progression_verso = (
+            StudiesNotesProgression.objects.filter(
+                notes=note_id, is_recto=False
+            ).exists())
+        return is_note_progression_recto, is_note_progression_verso
+
+    def __extract_data_note_post(self, form):
+        """ get data from POST"""
+        text_recto = form.cleaned_data["text_recto"]
+        text_verso = form.cleaned_data["text_verso"]
+        studie_recto = form.cleaned_data["studie_recto"]
+        studie_verso = form.cleaned_data["studie_verso"]
+        return text_recto, text_verso, studie_recto, studie_verso

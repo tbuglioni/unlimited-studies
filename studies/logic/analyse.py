@@ -57,7 +57,8 @@ class Analyse:
     def get_list_lvl_avg_each_book(self):
         """return a list of each book(level average)"""
         list_avg = []
-        books = Book.objects.filter(users=self.request.user).order_by(
+        books = Book.objects.filter(
+            users=self.request.user, userbookmany__to_accept=False).order_by(
             "userbookmany__order_book"
         )
         for book in books:
@@ -69,7 +70,7 @@ class Analyse:
                 lvl_avg = round(lvl_avg, 2)
             except TypeError:
                 lvl_avg = 0
-            list_avg.append(lvl_avg)
+            list_avg.append({"name": book.name, "level": lvl_avg})
 
         return list_avg
 
@@ -77,7 +78,9 @@ class Analyse:
         """return a list of each chapter(level average) in one book"""
         list_avg = []
         chapters = Chapter.objects.filter(
-            book__users=self.request.user, book_id=book_id
+            book__users=self.request.user,
+            book__userbookmany__to_accept=False,
+            book_id=book_id
         )
         for chapter in chapters:
             try:
@@ -88,7 +91,7 @@ class Analyse:
 
             except TypeError:
                 lvl_avg = 0
-            list_avg.append(lvl_avg)
+            list_avg.append({"name": chapter.name, "level": lvl_avg})
 
         return list_avg
 

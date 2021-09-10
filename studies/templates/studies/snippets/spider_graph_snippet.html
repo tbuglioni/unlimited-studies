@@ -28,13 +28,11 @@
 
 // Schema:
 // date,AQIindex,PM2.5,PM10,CO,NO2,SO2
-var dataBJ = [
-    {% if data_avg %}
-    {{data_avg}},
+var dataBJ = [[
+    {% if data_avg %}{% for elt in data_avg%}{{elt.level}}, {% endfor %}
     {% else %}
     [0]
-    {% endif %}
-];
+    {% endif %}]];
 
 var lineStyle = {
     normal: {
@@ -59,8 +57,8 @@ optionSpider = {
     radar: {
         indicator: [
               {% if data %}
-              {% for book in data %}
-              {name: "{{book.name}}", max: 10},
+              {% for elt in data_avg%}
+              {name: "{{elt.name}}", max: 10},
               {% endfor %}
               {% else %}
               {name: "", max: 10}
