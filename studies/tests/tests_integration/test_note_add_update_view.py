@@ -1,8 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
+from studies.models import StudiesNotes, StudiesNotesProgression
 from studies.tests.speed_set_up import SpeedSetUP
-from studies.models import (StudiesNotes,
-                            StudiesNotesProgression)
 
 
 class NoteAddUpdateView(TestCase):

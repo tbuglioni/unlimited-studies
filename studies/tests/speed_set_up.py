@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
-from studies.models import (Book, Chapter, UserBookMany, StudiesNotes,
-                            StudiesNotesProgression)
+from studies.models import (Book, Chapter, StudiesNotes,
+                            StudiesNotesProgression, UserBookMany)
 
 User = get_user_model()
 
@@ -9,6 +9,7 @@ class SpeedSetUP:
     """new class"""
 
     def set_up_user_a(self):
+        """ create user a """
         user_a = User(username="john", email="john@invalid.com")
         user_a_pw = "some_123_password"
         user_a.is_staff = True
@@ -19,6 +20,7 @@ class SpeedSetUP:
         return user_a
 
     def set_up_user_b(self):
+        """ create user b """
         user_b = User(username="lee", email="lee@invalid.com")
         user_b_pw = "some_123_password"
         user_b.is_staff = False
@@ -29,6 +31,7 @@ class SpeedSetUP:
         return user_b
 
     def create_book_owner(self, user, order_book: int):
+        """ create book with 1 owner """
         new_book = Book.objects.create(
             name="English",
             description="book to learn english",
@@ -40,6 +43,7 @@ class SpeedSetUP:
     def add_student_to_book(
         self, student, book, to_accept: bool = True, order_book: int = 1
     ):
+        """ Add a student to the book. """
         new_student = UserBookMany.objects.create(
             user=student,
             user_fonction="student",
@@ -50,12 +54,14 @@ class SpeedSetUP:
         return new_student
 
     def create_chapter(self, book, order_chapter: int):
+        """ Create a chapter"""
         new_chapter = Chapter.objects.create(
             name="vocabulary 1", order_chapter=order_chapter, book=book
         )
         return new_chapter
 
     def create_note(self, chapter, order_note: int, recto: bool, verso: bool):
+        """ create new note """
         new_note = StudiesNotes.objects.create(
             text_recto="good morning",
             text_verso="bonjour",
@@ -68,6 +74,7 @@ class SpeedSetUP:
 
     def add_user_to_notes(self, user, note, lvl_recto: int = 1,
                           lvl_verso: int = 1):
+        """ add user to notes and add conditional progressions recto/verso"""
         if note.studie_recto:
             StudiesNotesProgression.objects.create(
                 user=user, notes=note, level=lvl_recto, is_recto=True

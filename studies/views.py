@@ -2,13 +2,14 @@ from account.models import Account
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.http import JsonResponse
-from django.shortcuts import render, get_object_or_404, redirect
-from studies.models import (Book, Chapter, UserBookMany, StudiesNotes,
-                            StudiesNotesProgression)
-from studies.logic.userAction import UserAction
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
+
 from studies.logic.analyse import Analyse
 from studies.logic.game import Game
-from django.urls import reverse
+from studies.logic.userAction import UserAction
+from studies.models import (Book, Chapter, StudiesNotes,
+                            StudiesNotesProgression, UserBookMany)
 
 
 @login_required

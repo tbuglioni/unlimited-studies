@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
+from studies.models import Book, UserBookMany
 from studies.tests.speed_set_up import SpeedSetUP
-from studies.models import (Book, UserBookMany)
 
 
 class DeleteBookView(TestCase):

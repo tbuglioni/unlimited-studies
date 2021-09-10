@@ -1,8 +1,8 @@
 from django.test import TestCase
 from django.urls import reverse
-from studies.tests.speed_set_up import SpeedSetUP
-from studies.models import (Book, UserBookMany)
 from django.utils import timezone
+from studies.models import Book, UserBookMany
+from studies.tests.speed_set_up import SpeedSetUP
 
 
 class PersonalHome(TestCase):

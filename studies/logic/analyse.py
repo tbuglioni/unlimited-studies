@@ -1,10 +1,10 @@
-from studies.models import (Book, Chapter, UserBookMany, StudiesNotes,
-                            StudiesNotesProgression, GlobalDailyAnalysis,
-                            GlobalMonthlyAnalysis)
-from django.db.models import Avg
-from django.db.models import F
 import datetime
+
 from account.models import Account
+from django.db.models import Avg, F
+from studies.models import (Book, Chapter, GlobalDailyAnalysis,
+                            GlobalMonthlyAnalysis, StudiesNotes,
+                            StudiesNotesProgression, UserBookMany)
 
 
 class Analyse:

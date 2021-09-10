@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
+from studies.models import StudiesNotesProgression
 from studies.tests.speed_set_up import SpeedSetUP
-from studies.models import (StudiesNotesProgression)
 
 
 class SubscribeBookView(TestCase):

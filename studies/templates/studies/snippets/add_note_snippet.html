@@ -25,7 +25,7 @@ width="25px"
   <div class="modal-dialog">
     <div class="modal-content bg-dark">
       <div class="modal-header">
-        <h5 class="modal-title" id="noteModalLabel">Add Chapter</h5>
+        <h5 class="modal-title" id="noteModalLabel">Add note</h5>
         <button
           type="button"
           class="btn-close"
@@ -46,7 +46,7 @@ width="25px"
                 class="form-control"
                 name="text_recto"
                 cols="40"
-                rows="10"
+                rows="5"
                 maxlength="1000"
                 required
                 id="id_text_recto{{chapter_id}}"
@@ -54,6 +54,7 @@ width="25px"
               ></textarea>
             </p>
           </div>
+          <hr />
           <div>
             <p><label for="id_text_verso">Text verso :</label></p>
             <p>
@@ -61,16 +62,17 @@ width="25px"
                 class="form-control"
                 name="text_verso"
                 cols="40"
-                rows="10"
+                rows="5"
                 maxlength="1000"
                 required
                 id="id_text_verso"
               ></textarea>
             </p>
           </div>
+          <hr />
           <div>
-            <p><label for="id_studie_recto">Studie recto :</label></p>
-            <p>
+            <span><label for="id_studie_recto">Studie recto :</label></span>
+            <span>
               <input
                 class="form-check-input"
                 type="checkbox"
@@ -78,14 +80,16 @@ width="25px"
                 id="id_studie_recto"
                 checked
               />
-            </p>
+            </span>
           </div>
+          <hr />
           <div>
-            <p><label for="id_studie_verso">Studie verso :</label></p>
-            <p>
+            <span><label for="id_studie_verso">Studie verso :</label></span>
+            <span>
               <input class="form-check-input" type="checkbox" name="studie_verso" id="id_studie_verso" />
-            </p>
+            </span>
           </div>
+          <hr />
           <button type="submit" class="btn btn-primary">save</button>
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
             Close
@@ -134,7 +138,7 @@ width="25px" /></button>
   <div class="modal-dialog">
     <div class="modal-content bg-dark">
       <div class="modal-header">
-        <h5 class="modal-title" id="noteModalLabel">modify Chapter</h5>
+        <h5 class="modal-title" id="noteModalLabel">modify note</h5>
         <button
           type="button"
           class="btn-close"
@@ -155,7 +159,7 @@ width="25px" /></button>
                 class="form-control"
                 name="text_recto"
                 cols="40"
-                rows="10"
+                rows="5"
                 maxlength="1000"
                 required
                 id="id_text_recto{{note_selected.id}}"
@@ -166,6 +170,7 @@ width="25px" /></button>
               >{{note_selected.text_recto}}</textarea>
             </p>
           </div>
+          <hr />
           <div>
             <p><label class="form-label" for="id_text_verso">Text verso :</label></p>
             <p>
@@ -173,16 +178,17 @@ width="25px" /></button>
                 class="form-control"
                 name="text_verso"
                 cols="40"
-                rows="10"
+                rows="5"
                 maxlength="1000"
                 required
                 id="id_text_verso"
               >{{note_selected.text_verso}}</textarea>
             </p>
           </div>
+          <hr />
           <div>
-            <p><label class="form-label" for="id_studie_recto">Studie recto :</label></p>
-            <p>
+            <span><label class="form-label" for="id_studie_recto">Studie recto :</label></span>
+            <span>
             {% if note_selected.studie_recto %}
             <input type="checkbox" name="studie_recto" id="id_studie_recto" checked />
               {% else %}
@@ -190,17 +196,18 @@ width="25px" /></button>
             
             {% endif %}
               
-            </p>
+            </span>
           </div>
+          <hr />
           <div>
-            <p><label class="form-label" for="id_studie_verso">Studie verso :</label></p>
-            <p>
+            <span><label class="form-label" for="id_studie_verso">Studie verso :</label></span>
+            <span>
             {% if note_selected.studie_verso %}
             <input class="form-check-input" type="checkbox" name="studie_verso" id="id_studie_verso" checked />
             {% else %}
             <input class="form-check-input" type="checkbox" name="studie_verso" id="id_studie_verso"/>
             {% endif %}
-            </p>
+            </span>
           </div>
           <div>
             <input

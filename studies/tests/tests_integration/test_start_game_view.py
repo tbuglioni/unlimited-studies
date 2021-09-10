@@ -1,9 +1,11 @@
+from datetime import timedelta
+
 from django.test import TestCase
 from django.urls import reverse
-from studies.tests.speed_set_up import SpeedSetUP
 from django.utils import timezone
-from datetime import timedelta
 from studies.models import StudiesNotesProgression
+from studies.tests.speed_set_up import SpeedSetUP
+
 TIME_NOW = timezone.now()
 
 

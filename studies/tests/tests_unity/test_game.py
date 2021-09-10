@@ -1,6 +1,6 @@
 from django.test import RequestFactory, TestCase
-from studies.models import (StudiesNotesProgression,)
 from studies.logic.game import Game
+from studies.models import StudiesNotesProgression
 from studies.tests.speed_set_up import SpeedSetUP
 
 

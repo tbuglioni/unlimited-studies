@@ -1,9 +1,9 @@
 import random
-from studies.models import (StudiesNotesProgression)
+from datetime import timedelta
+
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
-
-from datetime import timedelta
+from studies.models import StudiesNotesProgression
 
 
 class Game:
@@ -13,8 +13,8 @@ class Game:
         self.game_list_auto = []
         self.notes_todo = []
         self.TIME_NOW = timezone.now()
-        
-    def __filter_text(self, entry:str):
+
+    def __filter_text(self, entry: str):
         """ remove specials characteres """
         exit_text = entry.replace('"', " ")
         exit_text = exit_text.replace("`", " ")

@@ -1,6 +1,6 @@
 from django.test import RequestFactory, TestCase
-from studies.models import (Book, Chapter, StudiesNotes)
 from studies.logic.userAction import UserAction
+from studies.models import Book, Chapter, StudiesNotes
 from studies.tests.speed_set_up import SpeedSetUP
 
 

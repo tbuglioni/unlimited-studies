@@ -1,9 +1,9 @@
-from django.test import RequestFactory, TestCase
-from studies.models import (GlobalDailyAnalysis,
-                            GlobalMonthlyAnalysis)
-from studies.logic.analyse import Analyse
-from studies.tests.speed_set_up import SpeedSetUP
 import datetime
+
+from django.test import RequestFactory, TestCase
+from studies.logic.analyse import Analyse
+from studies.models import GlobalDailyAnalysis, GlobalMonthlyAnalysis
+from studies.tests.speed_set_up import SpeedSetUP
 
 
 class AnalyseTest(TestCase):
