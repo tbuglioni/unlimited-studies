@@ -12,19 +12,51 @@
 />
 <!-- BODY (glide library)-->
 <div class="container">
-  <div class="mt-2 pt-3 row justify-content-between">
-    <span class="col-3 new_font_daniel-m"
-      >Result: <span id="result"></span
-    ></span>
-
-    <span class="col-3 d-grid gap-2">
-      <button class="btn btn-outline-light new_font_daniel-m" onclick="quit()">
-        Quit
-      </button>
-    </span>
-  </div>
-
   <div class="glide">
+    <!-- arrow button -->
+    <div
+      class="glide__arrows mt-2 pt-3 row justify-content-between"
+      data-glide-el="controls"
+    >
+      <div class="col-md-3 order-first new_font_daniel-m">
+        Result: <span id="result"></span>
+      </div>
+
+      <button
+        class="
+          order-2
+          glide__arrow--left
+          col-3
+          btn btn-outline-light
+          new_font_daniel-m
+        "
+        data-glide-dir="<"
+      >
+        prev
+      </button>
+      <span class="order-3 order-md-4 col-3 d-grid gap-2">
+        <button
+          class="btn btn-outline-light new_font_daniel-m"
+          onclick="quit()"
+        >
+          Quit
+        </button>
+      </span>
+
+      <button
+        id="glide_next_go"
+        class="
+          order-4 order-md-3
+          glide__arrow--right
+          col-3
+          btn btn-outline-light
+          new_font_daniel-m
+        "
+        data-glide-dir=">"
+      >
+        next
+      </button>
+    </div>
     <div class="glide__track" data-glide-el="track">
       <!-- slides -->
       <ul class="glide__slides" style="height: 90vh">
@@ -33,42 +65,56 @@
           class="
             glide__slide
             border
-            
             d-flex
             justify-content-center
             align-items-center
           "
-        ><div class="row container m-5 p-5 w-75">
-          <p class="new_font_daniel-lg text-center">Start</p> 
-          <br>
-          <br>
-          <hr />
-          <p class=" row text-center">Notice:</p>
-          <ul>
-            <li>click "next" to start --></li>
-            <li>click on the center to show the answer</li>
-            <li>valid = you know the answer</li>
-            <li>fail = you don't know the answer</li>
-          </ul>
-        </div>
+        >
+          <div class="row col-md-8 m-5 p-5">
+            <p class="new_font_daniel-lg text-center">Start</p>
+            <br />
+            <br />
+            <hr />
+            <p class="row text-center">Notice:</p>
+            <ul>
+              <li>click "next" to start --></li>
+              <li>click on the center to show the answer</li>
+              <li>valid = you know the answer</li>
+              <li>fail = you don't know the answer</li>
+            </ul>
+          </div>
         </li>
         {% for elt in game_list_auto %}
 
         <!-- slide data -->
         <li id="slide{{elt.id}}{{elt.sens}}" class="glide__slide border">
-          
           <button
             type="button"
             style="height: 70%; width: 100%; background-color: transparent"
             class="btn btn-dark"
             onclick="showResponse(`{{elt.id}}{{elt.sens}}`)"
           >
-            <div>
-              <p class="position-absolute top-0">
-                {{elt.book}}/{{elt.chapter}}
-              </p>
-              <p id="{{elt.id}}{{elt.sens}}text">{{elt.text}}</p>
-              <p id="{{elt.id}}{{elt.sens}}response" class="d-none">{{elt.response}}</p>
+            <div class="row" style="height: 10%; min-height: 2em">
+              <p class="col-12">{{elt.book}}/{{elt.chapter}}</p>
+              <hr />
+            </div>
+            <div
+              class="row d-flex justify-content-center"
+              style="
+                height: 90%;
+                min-height: 10em;
+                text-align: left;
+                overflow: auto;
+              "
+            >
+              <div class="col-md-8 d-flex align-items-center">
+                <div id="{{elt.id}}{{elt.sens}}text">
+                  {{elt.text |linebreaks}}
+                </div>
+                <div id="{{elt.id}}{{elt.sens}}response" class="d-none">
+                  {{elt.response |linebreaks}}
+                </div>
+              </div>
             </div>
           </button>
           <!-- response buttons -->
@@ -84,7 +130,6 @@
                 class="btn btn-dark col-12 new_font_daniel-m"
                 style="height: 100%"
                 onclick="manageResult('slide{{elt.id}}{{elt.sens}}', false,'{{elt.id}}', '{{elt.sens}}','button{{elt.id}}{{elt.sens}}')"
-                
               >
                 Fail
               </button>
@@ -122,16 +167,6 @@
           </button>
         </li>
       </ul>
-    </div>
-
-    <!-- arrow button -->
-    <div class="glide__arrows" data-glide-el="controls">
-      <button  class="glide__arrow glide__arrow--left " data-glide-dir="<">
-        prev
-      </button>
-      <button id="glide_next_go" class="glide__arrow glide__arrow--right" data-glide-dir=">">
-        next
-      </button>
     </div>
   </div>
 </div>
@@ -230,7 +265,7 @@
     gameData.updateListed(elt, win, note_id, note_sens);
     gameData.updateResult(elt, win);
     gameData.sendData(note_id, note_sens, win);
-    document.getElementById("glide_next_go").click()
+    document.getElementById("glide_next_go").click();
   }
 
   function showResponse(elt_id) {

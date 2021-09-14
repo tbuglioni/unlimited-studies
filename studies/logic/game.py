@@ -65,8 +65,8 @@ class Game:
                     {
                         "id": elt.id,
                         "sens": "recto",
-                        "text": self.__filter_text(elt.notes.text_recto),
-                        "response": self.__filter_text(elt.notes.text_verso),
+                        "text": elt.notes.text_recto,
+                        "response": elt.notes.text_verso,
                         "book": elt.notes.chapter.book.name,
                         "chapter": elt.notes.chapter.name,
                     }
@@ -77,8 +77,8 @@ class Game:
                     {
                         "id": elt.id,
                         "sens": "verso",
-                        "text": self.__filter_text(elt.notes.text_verso),
-                        "response": self.__filter_text(elt.notes.text_recto),
+                        "text": elt.notes.text_verso,
+                        "response": elt.notes.text_recto,
                         "book": elt.notes.chapter.book.name,
                         "chapter": elt.notes.chapter.name,
                     }

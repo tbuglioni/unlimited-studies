@@ -236,7 +236,7 @@ width="25px" /></button>
 <script type="text/javascript">
 $(document).ready(function(){
   $("#noteModal{{note_selected.id}}").on('shown.bs.modal', function(){
-      $(this).find('#id_text_recto{{note_selected.id}}').focus().val('').val("{{note_selected.text_recto}}");
+      $(this).find('#id_text_recto{{note_selected.id}}').focus();
   });
 });
 
