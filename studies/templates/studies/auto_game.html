@@ -61,13 +61,14 @@
             type="button"
             style="height: 70%; width: 100%; background-color: transparent"
             class="btn btn-dark"
-            onclick="showResponse(`{{elt.id}}{{elt.sens}}`, `{{elt.text}}`, `{{elt.response}}`)"
+            onclick="showResponse(`{{elt.id}}{{elt.sens}}`)"
           >
             <div>
               <p class="position-absolute top-0">
                 {{elt.book}}/{{elt.chapter}}
               </p>
-              <p id="{{elt.id}}{{elt.sens}}">{{elt.text}}</p>
+              <p id="{{elt.id}}{{elt.sens}}text">{{elt.text}}</p>
+              <p id="{{elt.id}}{{elt.sens}}response" class="d-none">{{elt.response}}</p>
             </div>
           </button>
           <!-- response buttons -->
@@ -78,21 +79,20 @@
             style="height: 30%; width: 100"
             id="button{{elt.id}}{{elt.sens}}"
           >
-            <div class="col-6" data-glide-el="controls">
+            <div class="col-6">
               <button
                 class="btn btn-dark col-12 new_font_daniel-m"
                 style="height: 100%"
-                data-glide-dir=">"
                 onclick="manageResult('slide{{elt.id}}{{elt.sens}}', false,'{{elt.id}}', '{{elt.sens}}','button{{elt.id}}{{elt.sens}}')"
+                
               >
                 Fail
               </button>
             </div>
-            <div class="col-6" data-glide-el="controls">
+            <div class="col-6">
               <button
                 class="btn btn-dark col-12 new_font_daniel-m"
                 style="height: 100%"
-                data-glide-dir=">"
                 onclick="manageResult('slide{{elt.id}}{{elt.sens}}', true,'{{elt.id}}', '{{elt.sens}}' ,'button{{elt.id}}{{elt.sens}}')"
               >
                 Valid
@@ -126,10 +126,10 @@
 
     <!-- arrow button -->
     <div class="glide__arrows" data-glide-el="controls">
-      <button class="glide__arrow glide__arrow--left " data-glide-dir="<">
+      <button  class="glide__arrow glide__arrow--left " data-glide-dir="<">
         prev
       </button>
-      <button class="glide__arrow glide__arrow--right" data-glide-dir=">">
+      <button id="glide_next_go" class="glide__arrow glide__arrow--right" data-glide-dir=">">
         next
       </button>
     </div>
@@ -190,13 +190,11 @@
         (this.win_id_list.length + this.fail_id_list.length);
     }
 
-    showResponse(elt, text, response) {
-      var x = document.getElementById(elt);
-      if (x.innerHTML === text) {
-        x.innerHTML = response;
-      } else {
-        x.innerHTML = text;
-      }
+    showResponse(elt) {
+      var x = document.getElementById(elt + "text");
+      var y = document.getElementById(elt + "response");
+      x.classList.toggle("d-none");
+      y.classList.toggle("d-none");
     }
 
     sendData(note_id, note_sens, win) {
@@ -232,10 +230,11 @@
     gameData.updateListed(elt, win, note_id, note_sens);
     gameData.updateResult(elt, win);
     gameData.sendData(note_id, note_sens, win);
+    document.getElementById("glide_next_go").click()
   }
 
-  function showResponse(elt_id, elt_text, elt_response) {
-    gameData.showResponse(elt_id, elt_text, elt_response);
+  function showResponse(elt_id) {
+    gameData.showResponse(elt_id);
   }
 
   function quit() {
