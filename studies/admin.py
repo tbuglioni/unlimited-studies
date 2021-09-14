@@ -21,6 +21,10 @@ class NoteAdminForm(admin.TabularInline):
     model = StudiesNotes
 
 
+class StudiesNotesProgressionForm(admin.TabularInline):
+    model = StudiesNotesProgression
+
+
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
     list_display = ("id", "name", "view_chapter_link")
@@ -98,6 +102,7 @@ class StudiesNotesAdmin(admin.ModelAdmin):
         "text_recto",
         "text_verso",
     )
+    inlines = [StudiesNotesProgressionForm]
 
     def view_chapter_link(self, obj):
         url = (

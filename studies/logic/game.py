@@ -14,15 +14,6 @@ class Game:
         self.notes_todo = []
         self.TIME_NOW = timezone.now()
 
-    def __filter_text(self, entry: str):
-        """ remove specials characteres """
-        exit_text = entry.replace('"', " ")
-        exit_text = exit_text.replace("`", " ")
-        exit_text = exit_text.replace("'", " ")
-        exit_text = exit_text.replace(">", " ")
-        exit_text = exit_text.replace("<", "")
-        return exit_text
-
     def __notes_todo(self, request,
                      speed: bool = True,
                      number_of_notes: int = 10):
