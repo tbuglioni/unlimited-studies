@@ -27,7 +27,7 @@ class Analyse:
         # precharge with head of list for pie graph
         recap_dict = {"list_date": ["Date"],
                       "list_win": ["Win"], "list_fail": ["Fail"]}
-        data = GlobalDailyAnalysis.objects.filter(user=self.request.user)[:10]
+        data = GlobalDailyAnalysis.objects.filter(user=self.request.user)[:11]
         if data:
             for elt in data:
                 recap_dict["list_date"].append(
@@ -44,9 +44,9 @@ class Analyse:
     def __delete_old_data(self):
         """ delete daily > 10j and month > 12"""
         GlobalDailyAnalysis.objects.filter(
-            user=self.request.user, date__lt=self.time_now - timedelta(days=10)).delete()
+            user=self.request.user, date__lte=self.time_now - timedelta(days=10)).delete()
         GlobalMonthlyAnalysis.objects.filter(
-            user=self.request.user, date__lt=self.time_now - timedelta(days=12)).delete()
+            user=self.request.user, date__lte=self.time_now - timedelta(days=12)).delete()
 
     def get_global_lvl_avg(self):
         """return the lvl average of all the notes"""
