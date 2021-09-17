@@ -1,5 +1,5 @@
 import datetime
-
+from datetime import timedelta
 from account.models import Account
 from django.db.models import Avg, F
 from studies.models import (Book, Chapter, GlobalDailyAnalysis,
@@ -22,6 +22,7 @@ class Analyse:
 
     def get_recap_daily_notes(self):
         """return a list with 10 lasts days and the number of win/fail"""
+        self.__delete_old_data()
 
         # precharge with head of list for pie graph
         recap_dict = {"list_date": ["Date"],
@@ -39,6 +40,13 @@ class Analyse:
         else:
             self.time_now = datetime.date.today()
             return self.time_now, 0, 0
+
+    def __delete_old_data(self):
+        """ delete daily > 10j and month > 12"""
+        GlobalDailyAnalysis.objects.filter(
+            user=self.request.user, date__lt=self.time_now - timedelta(days=10)).delete()
+        GlobalMonthlyAnalysis.objects.filter(
+            user=self.request.user, date__lt=self.time_now - timedelta(days=12)).delete()
 
     def get_global_lvl_avg(self):
         """return the lvl average of all the notes"""
