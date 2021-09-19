@@ -46,7 +46,7 @@ class Analyse:
         GlobalDailyAnalysis.objects.filter(
             user=self.request.user, date__lte=self.time_now - timedelta(days=10)).delete()
         GlobalMonthlyAnalysis.objects.filter(
-            user=self.request.user, date__lte=self.time_now - timedelta(days=12)).delete()
+            user=self.request.user, date__lte=self.time_now - timedelta(days=364)).delete()
 
     def get_global_lvl_avg(self):
         """return the lvl average of all the notes"""
