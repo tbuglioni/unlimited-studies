@@ -14,7 +14,7 @@
   {% if user_fonction == "owner" %}
   <p class="text-center">{{book.name}}</p>
   <a
-                class="btn btn-outline-light d-flex  justify-content-center col-2"
+                class="btn btn-outline-light d-flex  justify-content-center col-md-2"
                 href="{% url 'studies:teacher_page' book=book.id %}"
                 >Add student</a
               >
@@ -52,7 +52,11 @@
 
   <!-- Table -->
   <div class="row">
-    <section name="book table" class="col-md-6">
+    <section name="spider graph" class="col-xl-6 rounded" style="height: 25em">
+      {% include "studies/snippets/spider_graph_snippet.html" with data_avg=chapters_notes_avg data=chapters %}
+    </section>
+
+    <section name="book table" class="order-xl-first col-xl-6 table-responsive" style="word-wrap: break-word;">
       <table class="table-dark table">
         <thead>
           <tr>
@@ -99,9 +103,7 @@
         </tbody>
       </table>
     </section>
-    <section name="spider graph" class="col-xl-6 rounded" style="height: 25em">
-      {% include "studies/snippets/spider_graph_snippet.html" with data_avg=chapters_notes_avg data=chapters %}
-    </section>
+    
   </div>
 
   <div id="note_divider" class="m-5"></div>
@@ -123,7 +125,7 @@
   </div>
   {% endif %}
   {% if notes %}
-  <section name="book table" class="col">
+  <section name="book table" class="col table-responsive" style="word-wrap: break-word;">
     <table class="table-dark table">
       <thead>
         <tr>
