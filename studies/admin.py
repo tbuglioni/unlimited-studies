@@ -9,14 +9,17 @@ from .models import (Book, Chapter, GlobalDailyAnalysis, GlobalMonthlyAnalysis,
 
 class ChapterAdminForm(admin.TabularInline):
     model = Chapter
+    extra = 0 # how many extra forms should be displayed
 
 
 class NoteAdminForm(admin.TabularInline):
     model = StudiesNotes
+    extra = 0
 
 
 class StudiesNotesProgressionForm(admin.TabularInline):
     model = StudiesNotesProgression
+    extra = 0
 
 
 @admin.register(Book)
@@ -39,14 +42,16 @@ class BookAdmin(admin.ModelAdmin):
 
 @admin.register(UserBookMany)
 class UserBookManyAdmin(admin.ModelAdmin):
+    autocomplete_fields = ("user", "book")
     list_display = ("id", "user", "order_book",
                     "book", "user_fonction", "__str__")
     search_fields = ("id",
-                     "user__username")
+                     "user__email")
 
 
 @admin.register(Chapter)
 class ChapterAdmin(admin.ModelAdmin):
+    autocomplete_fields = ("book",) #add search bar in field book linked to book search_field
     list_display = (
         "id",
         "name",
@@ -80,6 +85,7 @@ class ChapterAdmin(admin.ModelAdmin):
 
 @admin.register(StudiesNotes)
 class StudiesNotesAdmin(admin.ModelAdmin):
+    autocomplete_fields = ("chapter",)
     list_display = (
         "id",
         "order_note",
@@ -113,6 +119,8 @@ class StudiesNotesAdmin(admin.ModelAdmin):
 
 @admin.register(StudiesNotesProgression)
 class StudiesNotesProgressionAdmin(admin.ModelAdmin):
+    autocomplete_fields = ("notes",)
+    actions = ['update_lvl_5', 'update_lvl_6', 'update_lvl_7', 'update_lvl_8']
     list_display = (
         "id",
         "user",
@@ -127,15 +135,36 @@ class StudiesNotesProgressionAdmin(admin.ModelAdmin):
     list_per_page = 200
     list_select_related = ['notes', 'user']
     search_fields = (
-        "id", "user__username"
+        "id", "user__email__istartswith"
     )
     list_filter = ("level",)
 
     def note_text(self, obj):
         return obj.notes.text_recto
+    
+    @admin.action(description="update lvl to 5")
+    def update_lvl_5(self, request, queryset):
+        queryset.update(level=5)
+        self.message_user(request, "updated to lvl 5")
+        
+    @admin.action(description="update lvl to 6")
+    def update_lvl_6(self, request, queryset):
+        queryset.update(level=6)
+        self.message_user(request, "updated to lvl 6")
+        
+    @admin.action(description="update lvl to 7")
+    def update_lvl_7(self, request, queryset):
+        queryset.update(level=7)
+        self.message_user(request, "updated to lvl 7")
+    
+    @admin.action(description="update lvl to 8")
+    def update_lvl_8(self, request, queryset):
+        queryset.update(level=8)
+        self.message_user(request, "updated to lvl 8")
 
 @admin.register(GlobalDailyAnalysis)
 class GlobalDailyAnalysisAdmin(admin.ModelAdmin):
+    autocomplete_fields = ("user",)
     list_display = (
         "date",
         "user",
@@ -148,10 +177,11 @@ class GlobalDailyAnalysisAdmin(admin.ModelAdmin):
 
 @admin.register(GlobalMonthlyAnalysis)
 class GlobalMonthlyAnalysissAdmin(admin.ModelAdmin):
+    autocomplete_fields = ("user",)
+    fields = []
     list_display = (
         "date",
         "user",
-        "date",
         "number_of_studies",
         "number_of_win",
         "number_of_lose",
