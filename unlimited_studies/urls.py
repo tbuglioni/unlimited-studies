@@ -21,6 +21,9 @@ from account import views
 from django.contrib.auth import views as auth_views
 from .views import home_screen_view, legal_view
 
+admin.site.site_header = "Unlimited Studies Administration"
+admin.site.index_title = "Unlimited Studies Administration Portal"
+
 urlpatterns = [
     path("", home_screen_view, name="home"),
     path("studies/", include("studies.urls")),

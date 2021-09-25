@@ -1,16 +1,10 @@
-from django.urls import reverse
-from django.utils.http import urlencode
 from django.contrib import admin
-from .models import (
-    Book,
-    Chapter,
-    StudiesNotes,
-    StudiesNotesProgression,
-    UserBookMany,
-    GlobalDailyAnalysis,
-    GlobalMonthlyAnalysis,
-)
+from django.urls import reverse
 from django.utils.html import format_html
+from django.utils.http import urlencode
+
+from .models import (Book, Chapter, GlobalDailyAnalysis, GlobalMonthlyAnalysis,
+                     StudiesNotes, StudiesNotesProgression, UserBookMany)
 
 
 class ChapterAdminForm(admin.TabularInline):
@@ -61,6 +55,8 @@ class ChapterAdmin(admin.ModelAdmin):
         "view_book_link",
         "view_notes_link",
     )
+    
+    list_select_related = ['book']
     search_fields = ("name", "id", "book__users__email")
     inlines = [NoteAdminForm]
 
@@ -79,7 +75,7 @@ class ChapterAdmin(admin.ModelAdmin):
         )
         return format_html('<a href="{}">{} Notes</a>', url, count)
 
-    view_notes_link.short_description = "Notes"
+    view_notes_link.short_description = "Notes" #change the colomn name
 
 
 @admin.register(StudiesNotes)
@@ -120,17 +116,23 @@ class StudiesNotesProgressionAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "user",
+        "note_text",
         "is_recto",
         "notes",
         "level",
         "last_studied_date",
         "next_studied_date",
     )
+    list_editable = ("level",)
+    list_per_page = 200
+    list_select_related = ['notes', 'user']
     search_fields = (
         "id", "user__username"
     )
     list_filter = ("level",)
 
+    def note_text(self, obj):
+        return obj.notes.text_recto
 
 @admin.register(GlobalDailyAnalysis)
 class GlobalDailyAnalysisAdmin(admin.ModelAdmin):
