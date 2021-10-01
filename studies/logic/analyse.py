@@ -69,15 +69,26 @@ class Analyse:
             users=self.request.user, userbookmany__to_accept=False).order_by(
             "userbookmany__order_book"
         )
+
+        notes_progression = StudiesNotesProgression.objects.filter(
+            user=self.request.user, notes__chapter__book__in=books
+        ).values("notes__chapter__book_id", "level")
+
         for book in books:
             try:
-                lvl_avg = StudiesNotesProgression.objects.filter(
-                    user=self.request.user, notes__chapter__book_id=book.id
-                ).aggregate(Avg("level"))["level__avg"]
+                data_list = (
+                    [nbr["level"] for nbr in notes_progression
+                     if nbr["notes__chapter__book_id"] == book.id])
 
-                lvl_avg = round(lvl_avg, 2)
+                data_sum, date_len = sum(data_list), len(data_list)
+                if data_sum and date_len:
+                    lvl_avg = data_sum / date_len
+                    lvl_avg = round(lvl_avg, 2)
+                else:
+                    lvl_avg = 0
             except TypeError:
                 lvl_avg = 0
+
             list_avg.append({"name": book.name, "level": lvl_avg})
 
         return list_avg

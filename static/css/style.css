@@ -19,10 +19,16 @@
 
 .new_font_daniel-lg {
   font-family: "daniel hand";
-  font-size: 3rem;
+  font-size: 3em;
+}
+
+.new_font_daniel-title {
+  font-family: "daniel hand";
+  font-size: 3em;
   word-wrap: break-word;
   overflow: auto;
 }
+
 
 .half-black {
   background-color: rgba(29, 34, 40, 0.6);
