@@ -170,7 +170,8 @@ class Analyse:
         self.__update_notes_studied_today(note_true, note_false)
         self.__update_notes_studied_this_month(note_true, note_false)
 
-    def students_avg(self, book: int):
+    @staticmethod
+    def students_avg(book: int):
         """return list with each students in 1 book"""
         list_user = UserBookMany.objects.filter(
             user_fonction="student", to_accept=False, book=book
@@ -198,7 +199,8 @@ class Analyse:
             )
         return exit_list
 
-    def book_to_add_as_student(self, request):
+    @staticmethod
+    def book_to_add_as_student(request):
         """return the book to add as student"""
         data_list = (
             UserBookMany.objects.filter(user=request.user, to_accept=True)
