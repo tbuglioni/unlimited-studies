@@ -2,9 +2,9 @@ import time
 
 
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from django.contrib.auth import get_user_model
 from unlimited_studies.settings import BASE_DIR
 from selenium import webdriver
-from django.contrib.auth import get_user_model
 
 chrome_options = webdriver.ChromeOptions()
 chrome_options.add_argument("--headless")
