@@ -59,8 +59,7 @@ class UserActionTest(TestCase):
         }
         request = factory.post("/a/test/path/", data)
         request.user = self.user_a
-        context = {}
-        context["selectedBook"] = None
+        context = {"selectedBook": None}
 
         self.user_action.create_or_update_book(request, context)
 
@@ -78,8 +77,7 @@ class UserActionTest(TestCase):
         }
         request = factory.post("/a/test/path/", data)
         request.user = self.user_a
-        context = {}
-        context["selectedBook"] = self.book_1.id
+        context = {"selectedBook": self.book_1.id}
 
         self.user_action.create_or_update_book(request, context)
 
@@ -110,9 +108,7 @@ class UserActionTest(TestCase):
         }
         request = factory.post("/a/test/path/", data)
         request.user = self.user_a
-        context = {}
-        context["chapter"] = None
-        context["book"] = self.book_1
+        context = {"chapter": None, "book": self.book_1}
 
         self.user_action.create_or_update_chapter(
             request, context, self.book_1.id)
@@ -129,8 +125,7 @@ class UserActionTest(TestCase):
         }
         request = factory.post("/a/test/path/", data)
         request.user = self.user_a
-        context = {}
-        context["chapter"] = self.chapter_1.id
+        context = {"chapter": self.chapter_1.id}
 
         self.user_action.create_or_update_chapter(
             request, context, self.book_1.id)
@@ -164,8 +159,7 @@ class UserActionTest(TestCase):
         }
         request = factory.post("/a/test/path/", data)
         request.user = self.user_a
-        context = {}
-        context["instance_note"] = None
+        context = {"instance_note": None}
 
         self.user_action.create_or_update_note(
             request, context, self.chapter_1.id)
@@ -184,8 +178,7 @@ class UserActionTest(TestCase):
         }
         request = factory.post("/a/test/path/", data)
         request.user = self.user_a
-        context = {}
-        context["instance_note"] = self.note_1.id
+        context = {"instance_note": self.note_1.id}
 
         self.user_action.create_or_update_note(
             request, context, self.chapter_1.id)
