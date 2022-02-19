@@ -294,10 +294,7 @@ def start_game_view(request, speed=200, long=10):
 
         note_id = request.POST.get("note_id")
         win = request.POST.get("win")
-        if win == "true":
-            win = True
-        else:
-            win = False
+        win = win == "true"
         new_game.change_lvl(request, note_id, win)
 
         win_counter = 0
