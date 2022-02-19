@@ -8,7 +8,8 @@ User = get_user_model()
 class SpeedSetUP:
     """new class"""
 
-    def set_up_user_a(self):
+    @staticmethod
+    def set_up_user_a():
         """ create user a """
         user_a = User(username="john", email="john@invalid.com")
         user_a_pw = "some_123_password"
@@ -19,7 +20,8 @@ class SpeedSetUP:
         user_a.save()
         return user_a
 
-    def set_up_user_b(self):
+    @staticmethod
+    def set_up_user_b():
         """ create user b """
         user_b = User(username="lee", email="lee@invalid.com")
         user_b_pw = "some_123_password"
@@ -30,7 +32,8 @@ class SpeedSetUP:
         user_b.save()
         return user_b
 
-    def create_book_owner(self, user, order_book: int):
+    @staticmethod
+    def create_book_owner(user, order_book: int):
         """ create book with 1 owner """
         new_book = Book.objects.create(
             name="English",
@@ -40,8 +43,9 @@ class SpeedSetUP:
         new_book.users.add(user, through_defaults={"order_book": order_book})
         return new_book
 
+    @staticmethod
     def add_student_to_book(
-        self, student, book, to_accept: bool = True, order_book: int = 1
+        student, book, to_accept: bool = True, order_book: int = 1
     ):
         """ Add a student to the book. """
         new_student = UserBookMany.objects.create(
@@ -53,14 +57,16 @@ class SpeedSetUP:
         )
         return new_student
 
-    def create_chapter(self, book, order_chapter: int):
+    @staticmethod
+    def create_chapter(book, order_chapter: int):
         """ Create a chapter"""
         new_chapter = Chapter.objects.create(
             name="vocabulary 1", order_chapter=order_chapter, book=book
         )
         return new_chapter
 
-    def create_note(self, chapter, order_note: int, recto: bool, verso: bool):
+    @staticmethod
+    def create_note(chapter, order_note: int, recto: bool, verso: bool):
         """ create new note """
         new_note = StudiesNotes.objects.create(
             text_recto="good morning",

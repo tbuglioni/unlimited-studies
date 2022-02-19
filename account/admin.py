@@ -26,7 +26,8 @@ class AccountAdmin(UserAdmin):
         "is_teacher",
     )
 
-    def view_books_link(self, obj):
+    @staticmethod
+    def view_books_link(obj):
         count = obj.books.count()
         url = (
             reverse("admin:studies_book_changelist")

@@ -28,7 +28,8 @@ class BookAdmin(admin.ModelAdmin):
     search_fields = ("name", "id", "users__email")
     inlines = [ChapterAdminForm]
 
-    def view_chapter_link(self, obj):
+    @staticmethod
+    def view_chapter_link(obj):
         count = obj.chapter_set.count()
         url = (
             reverse("admin:studies_chapter_changelist")
@@ -65,13 +66,15 @@ class ChapterAdmin(admin.ModelAdmin):
     search_fields = ("name", "id", "book__users__email")
     inlines = [NoteAdminForm]
 
-    def view_book_link(self, obj):
+    @staticmethod
+    def view_book_link(obj):
         return format_html(
             '<a href="/admin/studies/book/%s/">%s</a>' % (
                 obj.book.id, obj.book.name)
         )
 
-    def view_notes_link(self, obj):
+    @staticmethod
+    def view_notes_link(obj):
         count = obj.studiesnotes_set.count()
         url = (
             reverse("admin:studies_studiesnotes_changelist")
@@ -106,7 +109,8 @@ class StudiesNotesAdmin(admin.ModelAdmin):
     )
     inlines = [StudiesNotesProgressionForm]
 
-    def view_chapter_link(self, obj):
+    @staticmethod
+    def view_chapter_link(obj):
         url = (
             reverse("admin:studies_chapter_changelist")
             + "?"
@@ -139,7 +143,8 @@ class StudiesNotesProgressionAdmin(admin.ModelAdmin):
     )
     list_filter = ("level",)
 
-    def note_text(self, obj):
+    @staticmethod
+    def note_text(obj):
         return obj.notes.text_recto
     
     @admin.action(description="update lvl to 5")

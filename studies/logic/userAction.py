@@ -8,19 +8,22 @@ from studies.models import (Book, Chapter, StudiesNotes,
 class UserAction:
     """ create/read/update/delete books/chapter/notes """
 
-    def get_books(self, request):
+    @staticmethod
+    def get_books(request):
         """get all books from 1 user"""
         books = Book.objects.filter(
             users=request.user, userbookmany__to_accept=False
         ).order_by("userbookmany__order_book")
         return books
 
-    def get_UserBookMany(self, request):
+    @staticmethod
+    def get_UserBookMany(request):
         """get all books from 1 user"""
         data = UserBookMany.objects.filter(user=request.user, to_accept=False)
         return data
 
-    def get_book_404(self, request, book: int):
+    @staticmethod
+    def get_book_404(request, book: int):
         """get 1 book from 1 user"""
         book = get_object_or_404(Book, pk=book, users=request.user)
         return book
@@ -49,7 +52,8 @@ class UserAction:
 
         self.__update_new_book_order(request, new_book)
 
-    def __update_new_book_order(self, request, new_book):
+    @staticmethod
+    def __update_new_book_order(request, new_book):
         """ update new book counter """
         book_counter = (
             UserBookMany.objects.filter(
@@ -62,7 +66,8 @@ class UserAction:
         )
         new_book.save()
 
-    def __extract_data_book_post(self, form_book):
+    @staticmethod
+    def __extract_data_book_post(form_book):
         """ get data, via POST, and create/return variables """
         name = form_book.cleaned_data["name"]
         description = form_book.cleaned_data["description"]
@@ -81,7 +86,8 @@ class UserAction:
 
         self.__update_existing_books_order(request, book_id, order_book)
 
-    def __update_existing_books_order(self, request, book_id, order_book):
+    @staticmethod
+    def __update_existing_books_order(request, book_id, order_book):
         """ update order for each books to 1 user """
         books_before = (
             UserBookMany.objects.filter(
@@ -115,7 +121,8 @@ class UserAction:
             loop += 1
             elt.save()
 
-    def __update_book_if_data(self, name, book_id,
+    @staticmethod
+    def __update_book_if_data(name, book_id,
                               request, description, source_info):
         """ update book if data is not empty """
         if name:
@@ -125,12 +132,14 @@ class UserAction:
                 source_info=source_info
             )
 
-    def get_chapters(self, request, book: int):
+    @staticmethod
+    def get_chapters(request, book: int):
         """get all chapters from 1 user in 1 book"""
         chapters = Chapter.objects.filter(book__users=request.user, book=book)
         return chapters
 
-    def get_chapter_404(self, request, chapter: int):
+    @staticmethod
+    def get_chapter_404(request, chapter: int):
         """get 1 chapter from 1 user in 1 book"""
         chapter = get_object_or_404(
             Chapter, pk=chapter, book__users=request.user)
@@ -147,7 +156,8 @@ class UserAction:
             else:
                 self.__create_new_chapter(form_chapter, book, request, context)
 
-    def __create_new_chapter(self, form_chapter, book, request, context):
+    @staticmethod
+    def __create_new_chapter(form_chapter, book, request, context):
         """ create new chapter and add order"""
         name = form_chapter.cleaned_data["name"]
         chapter_counter = (
@@ -174,7 +184,8 @@ class UserAction:
         self.__update_existing_chapters_order(
             book, request, chapter_id, order_chapter)
 
-    def __update_existing_chapters_order(self, book,
+    @staticmethod
+    def __update_existing_chapters_order(book,
                                          request, chapter_id, order_chapter):
         """ update existing chapters order """
         chapters_before = (
@@ -204,14 +215,16 @@ class UserAction:
             loop += 1
             elt.save()
 
-    def get_notes(self, request, chapter: int):
+    @staticmethod
+    def get_notes(request, chapter: int):
         """get all notes from 1 user in 1 chapter"""
         notes = StudiesNotes.objects.filter(
             chapter__book__users=request.user, chapter=chapter
         )
         return notes
 
-    def get_note_404(self, request, note: int):
+    @staticmethod
+    def get_note_404(request, note: int):
         """get 1 note from 1 user in 1 chapter"""
         note = get_object_or_404(
             StudiesNotes, pk=note, chapter__book__users=request.user
@@ -251,7 +264,8 @@ class UserAction:
 
         self.create_note_progression_each_users(chapter, new_note)
 
-    def create_note_progression_each_users(self, chapter, new_note):
+    @staticmethod
+    def create_note_progression_each_users(chapter, new_note):
         """create note progression for each owner/students of this note"""
         list_users = Account.objects.filter(books__chapter__id=chapter)
         objs = []
@@ -299,8 +313,9 @@ class UserAction:
             studie_recto, is_note_progression_recto,
             note_id, studie_verso, is_note_progression_verso)
 
+    @staticmethod
     def __if_delete_note_progression_for_each_users(
-            self, studie_recto, is_note_progression_recto,
+            studie_recto, is_note_progression_recto,
             note_id, studie_verso, is_note_progression_verso):
         """delete notes-progression if required by comparaison
         between previous and new data
@@ -315,8 +330,9 @@ class UserAction:
                 notes=note_id, is_recto=False
             ).delete()
 
+    @staticmethod
     def __if_add_note_progression_for_each_users(
-            self, studie_recto, is_note_progression_recto,
+            studie_recto, is_note_progression_recto,
             list_users_with_this_note, note_id, studie_verso,
             is_note_progression_verso):
         """add note progression if required by comparaison
@@ -339,8 +355,9 @@ class UserAction:
                         is_recto=False,))
         StudiesNotesProgression.objects.bulk_create(objs)
 
+    @staticmethod
     def __update_note_selected(
-            self, note_id, request, text_recto,
+            note_id, request, text_recto,
             text_verso, studie_recto, studie_verso):
         """ update existing note with new data"""
         StudiesNotes.objects.filter(
@@ -352,7 +369,8 @@ class UserAction:
             studie_verso=studie_verso,
         )
 
-    def __check_previous_data_in_note(self, note_id):
+    @staticmethod
+    def __check_previous_data_in_note(note_id):
         """ check note(study_recto/study__verso) before update"""
         is_note_progression_recto = (
             StudiesNotesProgression.objects.filter(
@@ -364,7 +382,8 @@ class UserAction:
             ).exists())
         return is_note_progression_recto, is_note_progression_verso
 
-    def __extract_data_note_post(self, form):
+    @staticmethod
+    def __extract_data_note_post(form):
         """ get data from POST"""
         text_recto = form.cleaned_data["text_recto"]
         text_verso = form.cleaned_data["text_verso"]
