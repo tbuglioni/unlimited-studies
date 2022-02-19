@@ -17,8 +17,8 @@ import debug_toolbar
 
 from django.contrib import admin
 from django.urls import include, path
-from account import views
 from django.contrib.auth import views as auth_views
+from account import views
 from .views import home_screen_view, legal_view
 
 admin.site.site_header = "Unlimited Studies Administration"
