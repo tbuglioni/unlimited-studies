@@ -36,10 +36,8 @@ class Analyse:
                 recap_dict["list_fail"].append(elt.number_of_lose)
 
             return recap_dict
-
-        else:
-            self.time_now = datetime.date.today()
-            return self.time_now, 0, 0
+        self.time_now = datetime.date.today()
+        return self.time_now, 0, 0
 
     def __delete_old_data(self):
         """ delete daily > 10j and month > 12"""

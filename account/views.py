@@ -21,8 +21,7 @@ def registration_view(request):
             account = authenticate(email=email, password=raw_password)
             login(request, account)
             return redirect("home")
-        else:  # invalid form
-            context["registration_form"] = form
+        context["registration_form"] = form
 
     else:  # GET request
         form = RegistrationForm()
