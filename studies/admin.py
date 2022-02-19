@@ -61,7 +61,7 @@ class ChapterAdmin(admin.ModelAdmin):
         "view_book_link",
         "view_notes_link",
     )
-    
+
     list_select_related = ['book']
     search_fields = ("name", "id", "book__users__email")
     inlines = [NoteAdminForm]
@@ -146,22 +146,22 @@ class StudiesNotesProgressionAdmin(admin.ModelAdmin):
     @staticmethod
     def note_text(obj):
         return obj.notes.text_recto
-    
+
     @admin.action(description="update lvl to 5")
     def update_lvl_5(self, request, queryset):
         queryset.update(level=5)
         self.message_user(request, "updated to lvl 5")
-        
+
     @admin.action(description="update lvl to 6")
     def update_lvl_6(self, request, queryset):
         queryset.update(level=6)
         self.message_user(request, "updated to lvl 6")
-        
+
     @admin.action(description="update lvl to 7")
     def update_lvl_7(self, request, queryset):
         queryset.update(level=7)
         self.message_user(request, "updated to lvl 7")
-    
+
     @admin.action(description="update lvl to 8")
     def update_lvl_8(self, request, queryset):
         queryset.update(level=8)
