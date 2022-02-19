@@ -98,12 +98,9 @@ def student_view(request):
 
 @login_required
 def teacher_view(request, book: int, error: int = 0):
-    context = {}
-    context["book"] = book
-    context["error"] = error
-    context["user_in_acceptation"] = UserBookMany.objects.filter(
+    context = {"book": book, "error": error, "user_in_acceptation": UserBookMany.objects.filter(
         user_fonction="student", to_accept=True, book=book
-    )
+    )}
     current_analyse = Analyse(request)
     context["user_accepted"] = current_analyse.students_avg(book)
 
@@ -170,8 +167,7 @@ def subscribe_book_view(request, book):
 def note_add_or_update_view(request, chapter=None, note=None):
     """1 note to add / change"""
     user_action = UserAction()
-    context = {}
-    context["chapter"] = chapter
+    context = {"chapter": chapter}
     book = Chapter.objects.get(pk=chapter).book.id
 
     if note is not None:
