@@ -22,8 +22,7 @@ class Game:
             self.notes_todo = (
                 StudiesNotesProgression.objects.filter(
                     user=request.user,
-                    level__lte=5,
-                    next_studied_date__lte=self.TIME_NOW,
+                    level__lte=5
                 )
                 .select_related("notes")
                 .distinct()
